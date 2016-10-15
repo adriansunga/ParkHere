@@ -1,21 +1,27 @@
+
+
 <ion-view title="Login" id="page4">
     <ion-content padding="true" class="has-header">
+    <h3> Login </h3>
+    <div id="invalid" style="color: red;"></div>
         <form id="login-form1" class="list">
             <ion-list id="login-list2">
                 <label class="item item-input" id="login-input1">
-                    <span class="input-label">Username</span>
-                    <input type="text" placeholder="">
+                    <span class="input-label" id="username">Username</span>
+                    <input type="text" id="usernameInput" placeholder="">
                 </label>
-                <label class="item item-input" id="login-input2">
+                <label class="item item-input" id="password">
                     <span class="input-label">Password</span>
-                    <input type="password" placeholder="">
+                    <input type="password" id="passwordInput" placeholder="">
                 </label>
             </ion-list>
-            <ion-radio id="login-radio1" name="loginType">Parker</ion-radio>
-            <ion-radio id="login-radio3" name="loginType">Owner</ion-radio>
+            <ion-radio id="login-radio1" name="loginType" value="parker">Parker</ion-radio>
+            <ion-radio id="login-radio3" name="loginType" value = "owner">Owner</ion-radio>
             <div class="spacer" style="height: 40px;"></div>
-            <button id="login-button1" class="button button-stable  button-block">Log in</button>
-            <a href="#" onclick="window.open('#/app/signup', '_system', 'location=yes'); return false;" id="login-button2" class="button button-positive  button-block button-clear">Or create an account</a>
+            <button id="login-button1" class="button button-stable  button-block" onclick="validate()">Log in</button>
+            <a href="#" onclick="window.open('#/signup', '_system', 'location=yes'); return false;" id="login-button2" class="button button-positive  button-block button-clear">Or create an account</a>
         </form>
     </ion-content>
 </ion-view>
+
+

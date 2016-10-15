@@ -23,19 +23,26 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
+
   $stateProvider
 
     .state('app', {
     url: '/app',
-    abstract: true,
+    //abstract: true,
     templateUrl: 'templates/login.html',
     controller: 'AppCtrl'
   })
-  .state('app.signUp', {
+    .state('login', {
+    url: '/login',
+    abstract: true,
+    templateUrl: 'templates/login.html',
+    controller: 'loginCtr'
+  })
+  .state('signUp', {
     url: '/signup',
     //abstract: true,
     templateUrl: 'templates/signUp.html',
-    //controller: 'AppCtrl'
+    controller: 'AppCtrl'
   })
   .state('app.search', {
     url: '/search',
@@ -45,8 +52,6 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       }
     }
   })
-
-  
     .state('app.playlists', {
       url: '/playlists',
       views: {
