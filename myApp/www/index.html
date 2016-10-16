@@ -37,68 +37,6 @@
   <body ng-app="starter">
     <ion-nav-view></ion-nav-view>
 
-<script>
 
-function validate(){
-    
-    var username = ""+ document.getElementById("usernameInput").value;
-    var password = ""+ document.getElementById("passwordInput").value;
-    var userType = document.querySelector('input[name = "loginType"]:checked');
-    console.log(username );
-    console.log(password );
-    
-    if(userType == null){
-      var div = document.getElementById('invalid');
-        div.innerHTML = 'Please select parker or owner';
-        return;
-    }
-    userType = userType.value;
-    console.log(userType );
-    
-    if(password.length == 0 ||  username.length == 0){
-        //invalid login
-        var div = document.getElementById('invalid');
-        div.innerHTML = 'Please insert all fields';
-        return;
-    }
-
-    //post to parse,
-    //get user info back 
-
-
-}
-
-function signUp(){
-    var regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
-    var username = ""+ document.getElementById("usernameInput").value;
-    var password = ""+ document.getElementById("passwordInput").value;
-    var userType = document.querySelector('input[name = "loginType"]:checked');
-    console.log(username );
-    console.log(password );
-    
-    if(userType == null){
-      var div = document.getElementById('invalid');
-        div.innerHTML = 'Please select parker or owner';
-        return;
-    }
-    userType = userType.value;
-    console.log(userType );
-    
-    if(password.length == 0 ||  username.length == 0){
-        //invalid login
-        var div = document.getElementById('invalid');
-        div.innerHTML = 'Please insert all fields';
-        return;
-    }
-
-  if(password.length < 10 ||  !regularExpression.test(password)){
-        //invalid login
-        var div = document.getElementById('invalid');
-        div.innerHTML = 'Your password must contain special letter and be longer than 10 chars, please try again';
-        return;
-  }
-  //
-}
-</script>
   </body>
 </html>

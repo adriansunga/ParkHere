@@ -7,19 +7,19 @@
         <form id="login-form1" class="list">
             <ion-list id="login-list2">
                 <label class="item item-input" id="login-input1">
-                    <span class="input-label" id="username">Username</span>
-                    <input type="text" id="usernameInput" placeholder="">
+                    <span class="input-label" id="username">Email</span>
+                    <input type="text" id="usernameInput" ng-model="data.username" placeholder="">
                 </label>
                 <label class="item item-input" id="password">
                     <span class="input-label">Password</span>
-                    <input type="password" id="passwordInput" placeholder="">
+                    <input type="password" id="passwordInput" ng-model="data.password" placeholder="">
                 </label>
             </ion-list>
             <ion-radio id="login-radio1" name="loginType" value="parker">Parker</ion-radio>
             <ion-radio id="login-radio3" name="loginType" value = "owner">Owner</ion-radio>
             <div class="spacer" style="height: 40px;"></div>
-            <button id="login-button1" class="button button-stable  button-block" onclick="validate()">Log in</button>
-            <a href="#" onclick="window.open('#/signup', '_system', 'location=yes'); return false;" id="login-button2" class="button button-positive  button-block button-clear">Or create an account</a>
+            <button id="login-button1" class="button button-stable  button-block" ng-click="login()">Log in</button>
+            <a href='#/signup'  id="login-button2" ng-click="signUpClicked()"class="button button-positive  button-block button-clear">Or create an account</a>
         </form>
     </ion-content>
 </ion-view>

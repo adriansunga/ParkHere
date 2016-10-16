@@ -1,24 +1,25 @@
 <ion-view title="Signup" id="page5">
     <ion-content padding="true" class="has-header">
     <h3> Sign up </h3>
+    <div id="invalid" style="color: red;"></div>
         <form id="signup-form2" class="list">
             <ion-list id="signup-list3">
                 <label class="item item-input" id="signup-input3">
                     <span class="input-label">Name</span>
-                    <input type="text" placeholder="">
+                    <input type="text" ng-model="data.username" placeholder="First Name Last Name">
                 </label>
                 <label class="item item-input" id="signup-input4">
                     <span class="input-label">Email</span>
-                    <input type="text" id ="usernameInput" placeholder="">
+                    <input type="text" ng-model="data.email" id ="usernameInput" placeholder="">
                 </label>
                 <label class="item item-input" id="signup-input5">
                     <span class="input-label">Password</span>
-                    <input type="text" id="passwordInput" placeholder="">
+                    <input type="password" id="passwordInput"  ng-model="data.password" placeholder="">
                 </label>
                 <ion-radio id="signup-radio4" name="signUpType" value="parker">Parker</ion-radio>
                 <ion-radio id="signup-radio5" name="signUpType" value="owner">Owner</ion-radio>
             </ion-list>
-            <button id="signup-button3" class="button button-stable  button-block" onclick="signUp()">Sign up</button>
+            <button id="signup-button3" class="button button-stable  button-block" ng-click="signUp()">Sign up</button>
         </form>
     </ion-content>
 </ion-view>
