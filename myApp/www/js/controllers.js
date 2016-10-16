@@ -115,7 +115,28 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('parkerMenuCtrl', function($scope, $ionicPopup, $state) {
+.controller('parkerMenuCtrl', function($scope, $ionicPopup, $state, $ionicLoading, $ionicHistory) {
+  $scope.showLogout = function() {
+    console.log("in show logout");
+   var confirmPopup = $ionicPopup.confirm({
+     title: 'Logout',
+     template: 'Are you sure you want to Logout?'
+   });
+
+   confirmPopup.then(function(res) {
+     if(res) {
+       console.log('You are sure');
+       //logout
+        $ionicLoading.hide();
+        $ionicHistory.clearCache();
+        $ionicHistory.clearHistory();
+        $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
+        $state.go('login');
+     } else {
+       console.log('You are not sure');
+     }
+   });
+ };
 })
 
 .controller('parkerSearchCtrl', function($scope, $ionicPopup, $state) {
