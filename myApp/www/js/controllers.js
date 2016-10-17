@@ -1,48 +1,5 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
-
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
-
-  // Form data for the login modal
-  $scope.loginData = {};
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
-
-  // Open the login modal
-  /*$scope.login = function() {
-    $scope.modal.show();
-  };*/
-
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
-  };
-  
-})
-
-
 //LogIn Controller
 .controller('LoginCtrl', function($scope, $ionicPopup, $state) {
     $scope.data = {};
@@ -68,13 +25,22 @@ angular.module('starter.controllers', [])
           div.innerHTML = 'Please insert all fields';
           return;
       }
-      $state.go("parker.search");
+      //need to get user info to populate whatever page we do next
+      //figure out how to send variables across pages
+      //check if parker or owner
+      if(userType == 'parker'){
+        $state.go("parker.search");
+      }else if(userType == 'owner'){
+        $state.go("owner.home")
+      }
+      
     }
 
     $scope.signUpClicked = function() {
       console.log("sign up clicked");
       $state.go("signUp");
     }
+
 })
 
 //SignUp Controller
@@ -116,6 +82,10 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerMenuCtrl', function($scope, $ionicPopup, $state, $ionicLoading, $ionicHistory) {
+  $scope.payment = function() {
+      console.log("payment clicked");
+      $state.go("parker.paypal");
+    }
   $scope.showLogout = function() {
     console.log("in show logout");
    var confirmPopup = $ionicPopup.confirm({
@@ -142,6 +112,120 @@ angular.module('starter.controllers', [])
 .controller('parkerSearchCtrl', function($scope, $ionicPopup, $state) {
 })
 
+.controller('paypalCtrl', function($scope, $ionicPopup, $state) {
+})
+
+//owner controller
+.controller('ownerMenuCtrl', function($scope, $ionicPopup, $state, $ionicLoading, $ionicHistory, ionicTimePicker) {
+  $scope.addSpace = function(){
+    $state.go("owner.addSpace");
+  }
+  $scope.goHome = function(){
+    $state.go("owner.home");
+  }
+  $scope.goProfile = function(){
+    $state.go("owner.profile");
+  }
+  $scope.payment = function() {
+      console.log("payment clicked");
+      $state.go("parker.paypal");
+    }
+ $scope.ratingsObject = {
+        iconOn : 'ion-ios-star',
+        iconOff : 'ion-ios-star-outline',
+        iconOnColor: 'rgb(251, 212, 1)',
+        iconOffColor:  'rgb(224, 224, 224)',
+        rating:  5,
+        minRating:1,
+        readOnly: true,
+        callback: function(rating) {
+          $scope.ratingsCallback(rating);
+        }
+      };
+
+      $scope.ratingsCallback = function(rating) {
+        console.log('Selected rating is : ', rating);
+      };
+
+
+  $scope.openTimePicker = function(){
+    console.log("Open timepicker");
+      var ipObj1 = {
+      callback: function (val) {      //Mandatory
+        if (typeof (val) === 'undefined') {
+          console.log('Time not selected');
+        } else {
+          var selectedTime = new Date(val * 1000);
+          console.log('Selected epoch is : ', val, 'and the time is ', selectedTime.getUTCHours(), 'H :', selectedTime.getUTCMinutes(), 'M');
+        }
+      },
+      inputTime: ((new Date()).getHours() * 60 * 60),   
+      format: 24,         
+      step: 60,           
+      setLabel: 'Add'    
+    };
+
+    ionicTimePicker.openTimePicker(ipObj1);
+  }
+   //logout 
+  $scope.showLogout = function() {
+    console.log("in show logout");
+   var confirmPopup = $ionicPopup.confirm({
+     title: 'Logout',
+     template: 'Are you sure you want to Logout?'
+   });
+
+   confirmPopup.then(function(res) {
+     if(res) {
+       console.log('You are sure');
+       //logout
+        $ionicLoading.hide();
+        $ionicHistory.clearCache();
+        $ionicHistory.clearHistory();
+        $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
+        $state.go('login');
+     } else {
+       console.log('You are not sure');
+     }
+   });
+ };
+})
+
+.controller('ownerHomeCtrl', function($scope, $ionicPopup, $state) {
+  
+  $scope.addSpace = function(){
+    $state.go("owner.addSpace");
+
+  }
+})
+
+.controller('ownerAddSpaceCtrl', function($scope, $ionicPopup, $state/*, ionicTimePickerProvider*/) {
+  $scope.openTimePicker() = function(){
+    console.log("Open timepicker");
+  }
+
+  /*$scope.openTimePicker = function(){
+      console.log("Open timepicker");
+      var ipObj1 = {
+      callback: function (val) {      //Mandatory
+        if (typeof (val) === 'undefined') {
+          console.log('Time not selected');
+        } else {
+          var selectedTime = new Date(val * 1000);
+          console.log('Selected epoch is : ', val, 'and the time is ', selectedTime.getUTCHours(), 'H :', selectedTime.getUTCMinutes(), 'M');
+        }
+      },
+      inputTime: (((new Date()).getHours() * 60 * 60) + ((new Date()).getMinutes() * 60)),   
+      format: 24,         
+      step: 60,           
+      setLabel: 'Add'    
+    };
+
+    ionicTimePicker.openTimePicker(ipObj1);
+  }*/
+ 
+
+})
 
 
 

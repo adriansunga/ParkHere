@@ -4,8 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers'])
-
+angular.module('starter', ['ionic', 'ionic-timepicker','ionic-ratings','starter.controllers'])
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -43,13 +42,56 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   .state('parker.search', {
     url: '/parkerSearch',
     views: {
-      'menuContent': {
+      'side-menu21': {
         templateUrl: 'templates/search.html'
       }
     },
     controller: 'parkerSearchCtrl'
   })
+   .state('parker.paypal', {
+    url: '/paypal',
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/paypal.html'
+      }
+    },
+    controller: 'paypalCtrl'
+  })
+  .state('owner', {
+    url: '/owner',
+    templateUrl: 'templates/ownerMenu.html',
+    controller: 'ownerMenuCtrl'
+  })
+  .state('owner.home', {
+    url: '/home',
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/ownerHome.html'
+      }
+    },
+    controller: 'ownerHomeCtrl'
+  })
+  .state('owner.addSpace', {
+    url: '/addSpace',
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/ownerAddSpace.html'
+      }
+    },
+    controller: 'ownerAddSpaceCtrl'
+  })
+  .state('owner.profile', {
+    url: '/profile',
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/ownerProfile.html'
+      }
+    },
+    //controller: 'ownerAddSpaceCtrl'
+  })
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
 });
+
+angular.module('time', ['ionic', 'ionic-timepicker'])

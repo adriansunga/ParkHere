@@ -10,14 +10,15 @@
     </ion-side-menu-content>
     <ion-side-menu side="left" id="side-menu21">
         <ion-header-bar class="bar-stable">
-            <div class="title">Parker Menu</div>
+            <div class="title">Owner Menu</div>
         </ion-header-bar>
         <ion-content padding="false" class="side-menu-left has-header ">
-            <ion-list id="parkerMenu-list1">
-                <ion-item id="parkerMenu-list-item1"  menu-close="">Search</ion-item>
-                <ion-item id="parkerMenu-list-item2" ng-click="payment()" menu-close="">Payment</ion-item>
-                <ion-item id="parkerMenu-list-item3"  menu-close="">Upcoming Spaces</ion-item>
-                <ion-item id="parkerMenu-list-item4"  ng-click="showLogout()" menu-close="">Logout</ion-item>
+            <ion-list id="ownerMenu-list1">
+                <ion-item id="ownerMenu-list-item1" ng-click="goHome()" menu-close="">Home</ion-item>
+                <ion-item id="ownerMenu-list-item2"  ng-click="addSpace()" menu-close="">Add Space</ion-item>
+                <ion-item id="ownerMenu-list-item3"  ng-click="goProfile()" menu-close="">Profile</ion-item>
+                <ion-item id="ownerMenu-list-item4"  ng-click="payment()" menu-close="">Payment</ion-item>
+                <ion-item id="ownerMenu-list-item5"  ng-click="showLogout()" menu-close="">Logout</ion-item>
             </ion-list>
         </ion-content>
     </ion-side-menu>
