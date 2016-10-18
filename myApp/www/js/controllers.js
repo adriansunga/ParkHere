@@ -130,7 +130,8 @@ angular.module('starter.controllers', [])
       console.log("payment clicked");
       $state.go("parker.paypal");
     }
- $scope.ratingsObject = {
+    //rating
+  $scope.ratingsObject = {
         iconOn : 'ion-ios-star',
         iconOff : 'ion-ios-star-outline',
         iconOnColor: 'rgb(251, 212, 1)',
@@ -143,11 +144,20 @@ angular.module('starter.controllers', [])
         }
       };
 
-      $scope.ratingsCallback = function(rating) {
+  $scope.ratingsCallback = function(rating) {
         console.log('Selected rating is : ', rating);
-      };
-
-
+    };
+  //image uploader
+  var imageUploader = new ImageUploader();
+  $scope.file = {};
+  $scope.upload = function() {
+    imageUploader.push($scope.file, function(data){
+      console.log('File uploaded Successfully', $scope.file, data);
+      $scope.uploadUri = data.url;
+      $scope.$digest();
+    });
+  };
+  
   $scope.openTimePicker = function(){
     console.log("Open timepicker");
       var ipObj1 = {
@@ -190,6 +200,19 @@ angular.module('starter.controllers', [])
    });
  };
 })
+
+.controller('UploadController', function ($scope){
+  var imageUpload = new ImageUpload();
+  $scope.file = {};
+  $scope.upload = function() {
+    imageUpload.push($scope.file, function(data){
+      console.log('File uploaded Successfully', $scope.file, data);
+      $scope.uploadUri = data.url;
+      $scope.$digest();
+    });
+  };
+})
+
 
 .controller('ownerHomeCtrl', function($scope, $ionicPopup, $state) {
   

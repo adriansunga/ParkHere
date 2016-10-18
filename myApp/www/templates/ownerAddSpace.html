@@ -22,7 +22,13 @@
                 <input type="text" placeholder="Picture url">
             </label>
         </form>
+        <!--<ion-content ng-controller="UploadController">-->
+            <input class="bottom-marg-15" type="file" name="file" file="file">
+            <button class="button button-small button-full button-positive" ng-disabled="file.size&amp;&amp;false || uploadProgress&gt;0" ng-click="upload()" ng-cloak="">Upload</button>
+            <img class="fit" ng-if="uploadUri" ng-src="">
+            <a ng-href="" ng-bind="uploadUri"></a>
+        <!--</ion-content>-->
         <button id="ownerAddSpace-button4" class="button button-positive  button-block icon ion-android-add-circle" ng-click="openTimePicker()">Add Additional Timeslot</button>
-        <button id="ownerAddSpace-button5" style="border-radius:0px 0px 0px 0px;" class="button button-balanced  button-block">Confirm Space</button>
+        <button id="ownerAddSpace-button5" style="border-radius:0px 0px 0px 0px;" class="button button-balanced  button-block" >Confirm Space</button>
     </ion-content>
 </ion-view>
