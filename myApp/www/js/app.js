@@ -43,7 +43,7 @@ angular.module('starter', ['ionic', 'ionic-timepicker','ionic-ratings', 'ionic-d
     url: '/parkerSearch',
     views: {
       'side-menu21': {
-        templateUrl: 'templates/search.html',
+        templateUrl: 'templates/parkingSearch.html',
         controller: 'parkerSearchCtrl'
       }
     },
