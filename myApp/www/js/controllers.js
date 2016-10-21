@@ -210,6 +210,7 @@ angular.module('starter.controllers', [])
       step: 60,           
       setLabel: 'Set End Time'    
     };
+  }
 })
 
 .controller('paypalCtrl', function($scope, $ionicPopup, $state) {
