@@ -114,7 +114,6 @@ angular.module('starter.controllers', [])
  };
 })
 
-
 .controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker) {
   $scope.openTimePicker = function(){
     //date picker
