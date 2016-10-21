@@ -1,3 +1,4 @@
+
 angular.module('starter.controllers', [])
 
 //LogIn Controller
@@ -116,7 +117,7 @@ angular.module('starter.controllers', [])
 })
 
 //owner controller
-.controller('ownerMenuCtrl', function($scope, $ionicPopup, $state, $ionicLoading, $ionicHistory, ionicTimePicker) {
+.controller('ownerMenuCtrl', function($scope, $ionicPopup, $state, $ionicLoading, $ionicHistory) {
   $scope.addSpace = function(){
     $state.go("owner.addSpace");
   }
@@ -147,37 +148,9 @@ angular.module('starter.controllers', [])
   $scope.ratingsCallback = function(rating) {
         console.log('Selected rating is : ', rating);
     };
-  //image uploader
-  var imageUploader = new ImageUploader();
-  $scope.file = {};
-  $scope.upload = function() {
-    imageUploader.push($scope.file, function(data){
-      console.log('File uploaded Successfully', $scope.file, data);
-      $scope.uploadUri = data.url;
-      $scope.$digest();
-    });
-  };
-  
-  $scope.openTimePicker = function(){
-    console.log("Open timepicker");
-      var ipObj1 = {
-      callback: function (val) {      //Mandatory
-        if (typeof (val) === 'undefined') {
-          console.log('Time not selected');
-        } else {
-          var selectedTime = new Date(val * 1000);
-          console.log('Selected epoch is : ', val, 'and the time is ', selectedTime.getUTCHours(), 'H :', selectedTime.getUTCMinutes(), 'M');
-        }
-      },
-      inputTime: ((new Date()).getHours() * 60 * 60),   
-      format: 24,         
-      step: 60,           
-      setLabel: 'Add'    
-    };
+ 
 
-    ionicTimePicker.openTimePicker(ipObj1);
-  }
-   //logout 
+  //logout 
   $scope.showLogout = function() {
     console.log("in show logout");
    var confirmPopup = $ionicPopup.confirm({
@@ -215,38 +188,135 @@ angular.module('starter.controllers', [])
 
 
 .controller('ownerHomeCtrl', function($scope, $ionicPopup, $state) {
-  
-  $scope.addSpace = function(){
-    $state.go("owner.addSpace");
-
-  }
+ 
 })
 
-.controller('ownerAddSpaceCtrl', function($scope, $ionicPopup, $state/*, ionicTimePickerProvider*/) {
-  $scope.openTimePicker() = function(){
-    console.log("Open timepicker");
-  }
+.controller('ownerAddSpaceCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker) {
+  //controller is not being added
+  $scope.data = {};
 
-  /*$scope.openTimePicker = function(){
-      console.log("Open timepicker");
-      var ipObj1 = {
+  $scope.addSpace = function(){
+      
+      var parkingSpaceName = $scope.data.spaceName;
+      var price = $scope.data.price;
+      var address = $scope.data.address;
+      var notes = $scope.data.notes;
+      console.log(price);
+      console.log(address);
+      if(parkingSpaceName=== 'undefined' ||  price=== 'undefined'|| address=== 'undefined' ){
+          //invalid login
+          console.log("here");
+          var div = document.getElementById('addSpaceInvalid');
+          div.innerHTML = 'Please insert all required fields';
+          return;
+      }
+      //get image upload
+      //get timeslider thing
+     
+  }
+   //image uploader
+  var imageUploader = new ImageUploader();
+  $scope.file = {};
+  $scope.upload = function() {
+    imageUploader.push($scope.file, function(data){
+      console.log('File uploaded Successfully', $scope.file, data);
+      $scope.uploadUri = data.url;
+      $scope.$digest();
+    });
+  };
+  var timeSlots = 0;
+  $scope.openTimePicker = function(){
+    //date picker
+    //variables we need to send to the back end
+    var startDate;
+    var startTime;
+    var endTime;
+    var startDateObj = {
+      callback: function (val) {  //Mandatory
+        
+        startDate = new Date(val);
+        console.log('Return value from the datepicker popup is : ' + val, new Date(val));
+        ionicTimePicker.openTimePicker(setFirstTime);
+      },
+
+      from: new Date(),
+      inputDate: new Date(),   
+      mondayFirst: true,       
+      setLabel: 'Set Start Date' 
+    };
+    console.log("here");
+    ionicDatePicker.openDatePicker(startDateObj);
+    var endDateObj = {
+      callback: function (val) {  //Mandatory
+        
+        endDate = new Date(val);
+        console.log('Return value from the datepicker popup is : ' + val, new Date(val));
+        ionicTimePicker.openTimePicker(setSecondTime);
+      },
+
+      from: new Date(),
+      inputDate: new Date(),   
+      mondayFirst: true,          
+      setLabel: 'Set End Date' 
+    };
+    console.log("here");
+
+    //time picker
+    
+    console.log("Open timepicker");
+      var setFirstTime = {
       callback: function (val) {      //Mandatory
         if (typeof (val) === 'undefined') {
           console.log('Time not selected');
         } else {
-          var selectedTime = new Date(val * 1000);
-          console.log('Selected epoch is : ', val, 'and the time is ', selectedTime.getUTCHours(), 'H :', selectedTime.getUTCMinutes(), 'M');
+          /*console.log('Selected epoch is : ', val, 'and the time is ',
+           selectedTime.getUTCHours(), 'H :', selectedTime.getUTCMinutes(), 'M');*/
+          startTime = new Date(val * 1000);
+          ionicDatePicker.openDatePicker(endDateObj);
         }
       },
-      inputTime: (((new Date()).getHours() * 60 * 60) + ((new Date()).getMinutes() * 60)),   
+      inputTime: ((new Date()).getHours() * 60 * 60),   
       format: 24,         
       step: 60,           
-      setLabel: 'Add'    
+      setLabel: 'Set Start Time'    
+    };
+    var setSecondTime = {
+      callback: function (val) {      //Mandatory
+        if (typeof (val) === 'undefined') {
+          console.log('Time not selected');
+        } else {
+          timeSlots = timeSlots + 1;
+          endTime = new Date(val * 1000);
+          if(startTime.getUTCMinutes() < 10){
+            var numMinutes = '0' + startTime.getUTCMinutes();
+          }else{
+            var numMinutes = startTime.getUTCMinutes();
+          }
+          if(endTime.getUTCMinutes() < 10){
+            var endNumMinutes = '0' + endTime.getUTCMinutes();
+          }else{
+            var endNumMinutes = endTime.getUTCMinutes();
+          }
+          var addDiv = document.getElementById('addSpaceList');
+          var startDateStr = (startDate.getMonth() + 1) + '/' + startDate.getDate() + '/' +  startDate.getFullYear();
+          var endDateStr = (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear();
+          addDiv.innerHTML += '<ion-item class="item-thumbnail-left"> <h4>Timeslot: '+ timeSlots + '</h4> <p>Start: ' + startDateStr + " "+ startTime.getUTCHours()+':'+ numMinutes+ '</p> <p>End: ' + endDateStr + " "+ endTime.getUTCHours()+':'+ endNumMinutes+ '</p></ion-item>';
+        }
+      },
+      inputTime: ((new Date()).getHours() * 60 * 60),   
+      format: 24,         
+      step: 60,           
+      setLabel: 'Set End Time'    
     };
 
-    ionicTimePicker.openTimePicker(ipObj1);
-  }*/
- 
+    
+  }
+
+
+
+
+
+  //owner add space
 
 })
 

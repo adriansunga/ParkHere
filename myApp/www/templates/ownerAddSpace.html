@@ -1,26 +1,28 @@
 
 <ion-view title="Owner Add Space" id="page9" ng-app="time">
     <ion-nav-buttons side="left" class="has-header">
-        <button class="button button-icon icon ion-android-arrow-back"></button>
+        <!-- icon provides back button already -->
+        <!--<button class="button button-icon icon ion-android-arrow-back"></button>-->
     </ion-nav-buttons>
     <ion-content padding="true" class="has-header">
+    <div id="addSpaceInvalid" style="color: red;"></div>
         <form id="ownerAddSpace-form4" class="list">
             <label class="item item-input" id="ownerAddSpace-input8">
-                <input type="text" placeholder="Parking Space Name">
+                <input type="text" ng-model="data.spaceName" placeholder="Parking Space Name">
             </label>
             <label class="item item-input" id="ownerAddSpace-input12">
                 <span class="input-label">$</span>
-                <input type="text" placeholder="Price/hour">
+                <input type="text" placeholder="Price/hour" ng-model="data.price">
             </label>
             <label class="item item-input" id="ownerAddSpace-input9">
-                <input type="text" placeholder="Address">
+                <input type="text" ng-model="data.address" placeholder="Address">
             </label>
             <label class="item item-input" id="ownerAddSpace-input10">
-                <input type="text" placeholder="Notes (optional)">
+                <input type="text" ng-model="notes" placeholder="Notes (optional)">
             </label>
-            <label class="item item-input" id="ownerAddSpace-input11">
+            <!--<label class="item item-input" id="ownerAddSpace-input11">
                 <input type="text" placeholder="Picture url">
-            </label>
+            </label>-->
         </form>
         <!--<ion-content ng-controller="UploadController">-->
             <input class="bottom-marg-15" type="file" name="file" file="file">
@@ -28,7 +30,10 @@
             <img class="fit" ng-if="uploadUri" ng-src="">
             <a ng-href="" ng-bind="uploadUri"></a>
         <!--</ion-content>-->
+        <ion-list id="addSpaceList">
+                
+        </ion-list>
         <button id="ownerAddSpace-button4" class="button button-positive  button-block icon ion-android-add-circle" ng-click="openTimePicker()">Add Additional Timeslot</button>
-        <button id="ownerAddSpace-button5" style="border-radius:0px 0px 0px 0px;" class="button button-balanced  button-block" >Confirm Space</button>
+        <button id="ownerAddSpace-button5" style="border-radius:0px 0px 0px 0px;" class="button button-balanced  button-block" ng-click="addSpace()">Confirm Space</button>
     </ion-content>
 </ion-view>
