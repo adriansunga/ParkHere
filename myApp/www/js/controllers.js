@@ -83,6 +83,10 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerMenuCtrl', function($scope, $ionicPopup, $state, $ionicLoading, $ionicHistory) {
+  $scope.search = function() {
+    console.log("search clicked");
+    $state.go("parker.search");
+  }
   $scope.payment = function() {
       console.log("payment clicked");
       $state.go("parker.paypal");
@@ -111,6 +115,15 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerSearchCtrl', function($scope, $ionicPopup, $state) {
+       // Create the search box and link it to the UI element.
+  // $scope.initializeSearchText = function() {
+  //   var input = document.getElementById('searchTextField');
+  //   var autocomplete = new google.maps.places.Autocomplete(input);
+  // }
+
+  // google.maps.event.addDomListener(window, 'load', initializeSearchText);
+
+
 })
 
 .controller('paypalCtrl', function($scope, $ionicPopup, $state) {

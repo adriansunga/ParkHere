@@ -1,41 +1,9 @@
 <ion-view title="Parking Search" id="page1">
     <ion-content padding="true" class="has-header">
-        <form id="parkingSearch-form1" class="list">
-            <label class="item item-input">
-                <i class="icon ion-search placeholder-icon"></i>
-                <input type="search" placeholder="">
-            </label>
-        </form>
-        <div id="parkingSearch-container1">
-            <form id="parkingSearch-form2" class="list">
-                <label class="item item-select" id="parkingSearch-select6">
-                    <span class="input-label">Start Date</span>
-                    <select></select>
-                </label>
-            </form>
-        </div>
-        <form id="parkingSearch-form3" class="list">
-            <label class="item item-select" id="parkingSearch-select4">
-                <span class="input-label">Start Time</span>
-                <select>
-                    <option></option>
-                </select>
-            </label>
-        </form>
-        <div id="parkingSearch-container3">
-            <form id="parkingSearch-form5" class="list">
-                <label class="item item-select" id="parkingSearch-select7">
-                    <span class="input-label">End Date</span>
-                    <select></select>
-                </label>
-            </form>
-        </div>
+        <input id="searchTextBox" class="controls" type="text" placeholder="Search" style="width:100%;" ></input>
         <form id="parkingSearch-form6" class="list">
-            <label class="item item-select" id="parkingSearch-select8">
-                <span class="input-label">End Time</span>
-                <select></select>
-            </label>
+            <button id="parkerSelectTimeslot" class="button button-positive  button-block icon ion-android-add-circle" ng-click="openTimePicker()">Select Timeslot</button>
         </form>
-        <button id="parkingSearch-button1" class="button button-balanced  button-block">Find Parking Spaces</button>
+        <button id="parkingSearch-button" class="button button-balanced  button-block">Find Parking Spaces</button>
     </ion-content>
 </ion-view>

@@ -40,6 +40,17 @@
     <script src="lib/s3-image-uploader/dist/image-uploader.bundle.min.js"></script>
     <!-- ionic datepicker -->
     <script src="lib/ionic-datepicker/dist/ionic-datepicker.bundle.min.js"></script>
+    <!--map API -->
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+    <script>
+          function init() {
+              var input = document.getElementById('searchTextBox');
+              var autocomplete = new google.maps.places.Autocomplete(input);
+          }
+
+          google.maps.event.addDomListener(window, 'load', init);
+    </script>
+
   </head>
 
   <body ng-app="starter">
