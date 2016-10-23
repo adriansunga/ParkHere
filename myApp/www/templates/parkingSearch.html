@@ -1,12 +1,9 @@
 <ion-view title="Parking Search" id="page1">
     <ion-content padding="true" class="has-header">
-        <form id="parkingSearch-form1" class="list">
-            <label class="item item-input">
-                <i class="icon ion-search placeholder-icon"></i>
-                <input type="search" placeholder="">
-            </label>
-        <div id="timeDiv"></div>
-        <button id="setTimeButton" class="button button-positive  button-block" ng-click="openTimePicker()">Set Time Slot</button>
-        <button id="parkingSearch-button1" class="button button-balanced  button-block">Find Parking Spaces</button>
+        <input id="searchTextBox" class="controls" type="text" placeholder="Search" style="width:100%;" ></input>
+        <form id="parkingSearch-form6" class="list">
+            <button id="parkerSelectTimeslot" class="button button-positive  button-block icon ion-android-add-circle" ng-click="openTimePicker()">Select Timeslot</button>
+        </form>
+        <button id="parkingSearch-button" class="button button-balanced  button-block">Find Parking Spaces</button>
     </ion-content>
 </ion-view>

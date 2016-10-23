@@ -83,6 +83,10 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerMenuCtrl', function($scope, $ionicPopup, $state, $ionicLoading, $ionicHistory) {
+  $scope.search = function() {
+    console.log("search clicked");
+    $state.go("parker.search");
+  }
   $scope.payment = function() {
       console.log("payment clicked");
       $state.go("parker.paypal");
