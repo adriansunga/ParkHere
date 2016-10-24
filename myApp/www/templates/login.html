@@ -1,27 +1,32 @@
+<ion-view hide-back-button="false" title="Login" hide-nav-bar="false" >
+  <ion-content class="has-header">
+  
+	<form name="form_login" ng-submit="doLogin(userLogin)" novalidate>
+	  	<div class="list">
+		  
+		  <label class="item item-input item-floating-label">
+		    <span class="input-label">Email</span>
+		    <input type="text" ng-model="$parent.userLogin.username" id="user_name" placeholder="Email">
+		  </label>
 
+		  <label class="item item-input item-floating-label">
+		    <span class="input-label">Password</span>
+		    <input type="text" ng-model="$parent.userLogin.password" id="user_pass" placeholder="Password">
+		  </label>
+		  
+		</div>
+		<div class="padding">
+			<button type="submit" class="button button-block button-calm">Login</button>
+		</div>
+	 </form>
 
-<ion-view title="Login" id="page4">
-    <ion-content padding="true" class="has-header">
-    <h3> Login </h3>
-    <div id="invalid" style="color: red;"></div>
-        <form id="login-form1" class="list">
-            <ion-list id="login-list2">
-                <label class="item item-input" id="login-input1">
-                    <span class="input-label" id="username">Email</span>
-                    <input type="text" id="usernameInput" ng-model="data.username" placeholder="">
-                </label>
-                <label class="item item-input" id="password">
-                    <span class="input-label">Password</span>
-                    <input type="password" id="passwordInput" ng-model="data.password" placeholder="">
-                </label>
-            </ion-list>
-            <ion-radio id="login-radio1" name="loginType" value="parker">Parker</ion-radio>
-            <ion-radio id="login-radio3" name="loginType" value = "owner">Owner</ion-radio>
-            <div class="spacer" style="height: 40px;"></div>
-            <button id="login-button1" class="button button-stable  button-block" ng-click="login()">Log in</button>
-            <a href='#/signup'  id="login-button2" ng-click="signUpClicked()"class="button button-positive  button-block button-clear">Or create an account</a>
-        </form>
-    </ion-content>
+	 <div class="padding">
+	 <div class="padding">
+	    <button type="submit" class="button button-block button-calm" ui-sref="signup">Signup</button>
+	 </div>
+	 <div class="padding">
+		<button type="submit" class="button button-block button-calm" ui-sref="reset">Forgot Password</button>
+	 </div>	
+	
+  </ion-content>
 </ion-view>
-
-

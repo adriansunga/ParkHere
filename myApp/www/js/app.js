@@ -12,7 +12,8 @@ var STRIPE_ACCOUNT_ID           = "acct_197dO3BnddH3DZLG";
 var TEST_MODE = true; //false for production mode
 var NOODLIO_PAY_CHECKOUT_KEY    = {test: "pk_test_QGTo45DJY5kKmsX21RB3Lwvn", live: "pk_live_ZjOCjtf1KBlSHSyjKDDmOGGE"};
 
-angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-ratings', 'ionic-datepicker','stripe.checkout',  'starter.controllers',  'starter.services'])
+
+angular.module('starter', ['ionic', 'firebase','ui.router','ionic-timepicker','ionic-ratings', 'ionic-datepicker','stripe.checkout',  'starter.controllers',  'starter.services', 'starter.configs'])
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -26,6 +27,14 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    firebase.initializeApp({
+      apiKey: 'AIzaSyC4Ji5NHAdWVE4086VHIAlgV20OzzB3I9Y',
+      authDomain: 'parkhere-1d592.firebasepp.com',
+      databaseURL: 'https://parkhere-1d592.firebaseio.com',
+      storageBucket: 'parkhere-1d592.appspot.com',
+      messagingSenderId: ''
+    });
   });
 })
 
@@ -154,7 +163,15 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
   $urlRouterProvider.otherwise('/login');
 });
 
+angular.module('starter.configs', [])
 
+.constant("CONFIG", {
+  "FIREBASE_API": 'AIzaSyC4Ji5NHAdWVE4086VHIAlgV20OzzB3I9Y',
+  "FIREBASE_AUTH_DOMAIN": 'parkhere-1d592.firebasepp.com',
+  "FIREBASE_DB_URL": 'https://parkhere-1d592.firebaseio.com',
+  "FIREBASE_STORAGE": 'parkhere-1d592.appspot.com',
+  "MESSAGE_SENDER_ID": ''
+});
 
 angular.module('starter.services', [])
 
