@@ -439,7 +439,55 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('ownerHomeCtrl', function($scope, $ionicPopup, $state) {
+.service('parkingSpace', function() {
+  var parkingSpace = this;
+  parkingSpace = {};
+  parkingSpace.title = '';
+  parkingSpace.price = '';
+  parkingSpace.uniqueID = '';  
+  parkingSpace.parkerName = '';
+  parkingSpace.parkerContactInfo = '';
+  return parkingSpace;
+})
+
+.controller('ownerHomeCtrl', function($scope, $ionicPopup, $state, parkingSpace) {
+  $scope.onItemDelete = function(item) {
+    //need to check if we can delete it
+    var confirmPopup = $ionicPopup.confirm({
+     title: 'Delete ' + item.title,
+     template: 'Are you sure you want to delete ' + item.title +'?'
+   });
+
+   confirmPopup.then(function(res) {
+     if(res) {
+       //delete (need to go to server)
+       $scope.items.splice($scope.items.indexOf(item), 1);
+     } else {
+       console.log('You are not sure delete ' + item.title);
+     }
+   });
+    
+  };
+  $scope.edit = function(item) {
+    
+    parkingSpace.title = item.title;
+    parkingSpace.price = item.price;
+    parkingSpace.uniqueID = item.uniqueID;
+    console.log("in edit function", parkingSpace.title);
+    $state.go('owner.spaceInfo');
+  };
+  //ask for owner items 
+  $scope.items = [
+    { id: 0, title: "Parking Space 1", price: 20, uniqueID: '3924pw4hi'},
+    { id: 1, title: "Test Space 2", price: 30, uniqueID: '1p29u3irhwejln' },
+    { id: 2,title: "Sara is Cool", price: 100, uniqueID: '29u42i3wrehlj' }];
+ 
+})
+
+.controller('ownerSpaceInfoCtrl', function($scope, $ionicPopup, $state, $stateParams, parkingSpace) {
+
+  $scope.parkingSpace = parkingSpace;
+  console.log("in owner space " + parkingSpace.title);
  
 })
 

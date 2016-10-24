@@ -12,7 +12,7 @@ var STRIPE_ACCOUNT_ID           = "acct_197dO3BnddH3DZLG";
 var TEST_MODE = true; //false for production mode
 var NOODLIO_PAY_CHECKOUT_KEY    = {test: "pk_test_QGTo45DJY5kKmsX21RB3Lwvn", live: "pk_live_ZjOCjtf1KBlSHSyjKDDmOGGE"};
 
-angular.module('starter', ['ionic', 'ionic-timepicker','ionic-ratings', 'ionic-datepicker','stripe.checkout',  'starter.controllers',  'starter.services'])
+angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-ratings', 'ionic-datepicker','stripe.checkout',  'starter.controllers',  'starter.services'])
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -129,6 +129,16 @@ angular.module('starter', ['ionic', 'ionic-timepicker','ionic-ratings', 'ionic-d
     }
     
   })
+  .state('owner.spaceInfo', {
+    url: '/spaceInfo',
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/ownerSpaceInfo.html',
+        controller: 'ownerSpaceInfoCtrl'
+      }
+    }
+    
+  })
   .state('owner.profile', {
     url: '/profile',
     views: {
@@ -143,6 +153,8 @@ angular.module('starter', ['ionic', 'ionic-timepicker','ionic-ratings', 'ionic-d
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
 });
+
+
 
 angular.module('starter.services', [])
 
@@ -238,6 +250,8 @@ angular.module('starter.services', [])
 
   return self;
 })
+
+
 
 
 
