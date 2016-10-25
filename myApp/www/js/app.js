@@ -19,7 +19,7 @@ example.run(function($ionicPlatform) {
       StatusBar.styleDefault();
     }
 
-    Parse.initialize("parkHere");
+    Parse.initialize("com.team3.parkhere");
     Parse.serverURL = 'http://138.68.43.212:1337/parse';
 
   });
