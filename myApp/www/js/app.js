@@ -31,6 +31,8 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
 
     Parse.initialize("com.team3.parkhere");
     Parse.serverURL = 'http://138.68.43.212:1337/parse';
+    
+    
 
   });
 })
@@ -46,7 +48,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
       StripeCheckoutProvider.defaults({key: NOODLIO_PAY_CHECKOUT_KEY['live']});
       break
   };
-
+  
   $stateProvider
     .state('login', {
     url: '/login',
@@ -157,8 +159,8 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
     
   })
 
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/login');
+$urlRouterProvider.otherwise('/login');
+  
 });
 
 

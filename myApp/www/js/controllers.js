@@ -40,8 +40,6 @@ angular.module('starter.controllers', [])
  
 })
 //LogIn Controller
-
-
 .controller('LoginCtrl', function($scope, $ionicPopup, $state) {
     $scope.data = {};
      console.log("in login controller");
@@ -83,16 +81,25 @@ angular.module('starter.controllers', [])
     }
 
 })
-
+.service('user', function() {
+  var user = this;
+  user = {};
+  user.username = '';
+  user.email = '';
+  user.password = '';  
+  user.userType = '';
+  return user;
+})
 //SignUp Controller
-.controller('signUpCtrl', function($scope, $ionicPopup, $state) {
+.controller('signUpCtrl', function($scope, $ionicPopup, $state, user) {
   $scope.data = {};
   $scope.signUp = function(){
+
     var username = ""+ $scope.data.username;
     var email = "" +  $scope.data.email;
     var password = ""+ $scope.data.password;
     var userType = document.querySelector('input[name = "signUpType"]:checked');
-    console.log(username);
+    console.log(userType);
     console.log(email);
     console.log(password);
     if(userType == null){
@@ -102,39 +109,57 @@ angular.module('starter.controllers', [])
     }
     userType = userType.value;
     console.log(userType );
-    
-    if(password.length == 0 ||  username.length == 0 || email.length == 0 ){
+    var div = document.getElementById('invalid');
+    if(password == "undefined" ||  username == "undefined" || email == "undefined" ){
         //invalid login
-        var div = document.getElementById('invalid');
         div.innerHTML = 'Please insert all fields';
         return;
     }
+    console.log("here-1");
     var regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
-    if(password.length < 10 ||  !regularExpression.test(password)){
+    if(password.length < 10 ){
           //invalid login
-          var div = document.getElementById('invalid');
           div.innerHTML = 'Your password must contain special letter and be longer than 10 characters, please try again';
           return;
     }
-    // Set up a new Parse user
-    // Set up a new Parse user
-  //   ParseUser user = new ParseUser();
-  //   user.setUsername(username);
-  //   user.setPassword(password);
-  //   // Call the Parse signup method
-  //   user.signUpInBackground(new SignUpCallback() { 
-  //     @Override
-  //     public void done(ParseException e) { 
-  //       // Handle the response
-  //     } 
-
-
-
-   }
-  //check if sign up already used
-  //if it is already used for to owner or user page
+    console.log("0");
+    div.innerHTML = '';
+    console.log("here0");
+    var parseUser = new Parse.User();
+    console.log("here1");
+    parseUser.set("username", username);
+    user.username = username;
+    parseUser.set("email", email);
+    user.email = email;
+    parseUser.set("password", password);
+    user.password = password;
+    //owner or parker
+    parseUser.set("userType", userType);
+    user.userType = userType;
+    //send over to parse
+    console.log("here2");
+    parseUser.signUp(null, {
+      success: function(user) {
+        if(userType == "owner"){
+            $state.go("owner.home");
+          }else{
+            $state.go("parker.search");
+          }
+      },
+      error: function(user, error) {
+        // Show the error message somewhere and let the user try again.
+        alert("Error: " + error.code + " " + error.message);
+        if(error.message == "UserEmailTaken"){
+            div.innerHTML = user.email +' already exists please try another email';
+          }else{
+            div.innerHTML = "Somethined went wrong, please try again";
+          }
+      }
+    });
+  }
 
 })
+
 
 .controller('parkerMenuCtrl', function($scope, $ionicPopup, $state, $ionicLoading, $ionicHistory) {
   $scope.search = function() {
@@ -160,6 +185,7 @@ angular.module('starter.controllers', [])
         $ionicHistory.clearCache();
         $ionicHistory.clearHistory();
         $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
+        var currentUser = Parse.User.current(); 
         $state.go('login');
      } else {
        console.log('You are not sure');
