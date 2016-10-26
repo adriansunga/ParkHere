@@ -1,7 +1,47 @@
 
 angular.module('starter.controllers', [])
 
+
+
+.controller("ExampleController", function($scope) {
+ 
+    $scope.savePerson = function(firstname, lastname) {
+        var PeopleObject = Parse.Object.extend("PeopleObject");
+        var person = new PeopleObject();
+        person.set("firstname", firstname);
+        person.set("lastname", lastname);
+        person.save(null, {});
+    };
+
+    $scope.getPeople = function(params) {
+    var PeopleObject = Parse.Object.extend("PeopleObject");
+    var query = new Parse.Query(PeopleObject);
+    if(params !== undefined) {
+        if(params.lastname !== undefined) {
+            query.equalTo("lastname", params.lastname);
+        }
+        if(params.firstname !== undefined) {
+            query.equalTo("firstname", params.lastname);
+        }
+    }
+    query.find({
+        success: function(results) {
+            alert("Successfully retrieved " + results.length + " people!");
+            for (var i = 0; i < results.length; i++) {
+                var object = results[i];
+                console.log(object.id + ' - ' + object.get("firstname") + " " + object.get("lastname"));
+            }
+        },
+        error: function(error) {
+            alert("Error: " + error.code + " " + error.message);
+        }
+    });
+};
+ 
+})
 //LogIn Controller
+
+
 .controller('LoginCtrl', function($scope, $ionicPopup, $state) {
     $scope.data = {};
      console.log("in login controller");
@@ -76,7 +116,21 @@ angular.module('starter.controllers', [])
           div.innerHTML = 'Your password must contain special letter and be longer than 10 characters, please try again';
           return;
     }
-  }
+    // Set up a new Parse user
+    // Set up a new Parse user
+  //   ParseUser user = new ParseUser();
+  //   user.setUsername(username);
+  //   user.setPassword(password);
+  //   // Call the Parse signup method
+  //   user.signUpInBackground(new SignUpCallback() { 
+  //     @Override
+  //     public void done(ParseException e) { 
+  //       // Handle the response
+  //     } 
+
+
+
+   }
   //check if sign up already used
   //if it is already used for to owner or user page
 

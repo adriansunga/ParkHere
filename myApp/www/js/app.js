@@ -5,6 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 
+
 //noodlio pay ish
 var NOODLIO_PAY_API_URL         = "https://noodlio-pay.p.mashape.com";
 var NOODLIO_PAY_API_KEY         = "hkou9g9rVgmshTeafr21FodTUdsip1Gsko3jsn8G4LLowC6ReO";
@@ -14,6 +15,7 @@ var NOODLIO_PAY_CHECKOUT_KEY    = {test: "pk_test_QGTo45DJY5kKmsX21RB3Lwvn", liv
 
 angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-ratings', 'ionic-datepicker','stripe.checkout',  'starter.controllers',  'starter.services'])
 .run(function($ionicPlatform) {
+
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -26,6 +28,10 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    Parse.initialize("com.team3.parkhere");
+    Parse.serverURL = 'http://138.68.43.212:1337/parse';
+
   });
 })
 
@@ -40,6 +46,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
       StripeCheckoutProvider.defaults({key: NOODLIO_PAY_CHECKOUT_KEY['live']});
       break
   };
+
   $stateProvider
     .state('login', {
     url: '/login',
@@ -249,7 +256,7 @@ angular.module('starter.services', [])
 
 
   return self;
-})
+});
 
 
 
