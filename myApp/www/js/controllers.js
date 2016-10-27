@@ -40,7 +40,7 @@ angular.module('starter.controllers', [])
  
 })
 //LogIn Controller
-.controller('LoginCtrl', function($scope, $ionicPopup, $state) {
+.controller('LoginCtrl', function($scope, $ionicPopup, $state, user) {
     $scope.data = {};
      console.log("in login controller");
     $scope.login = function() {
@@ -63,25 +63,22 @@ angular.module('starter.controllers', [])
           return;
       }
       div.innerHTML = '';
+      user.email = username;
+      user.userType = userType;
+      console.log("user object in login " + user.email);
       Parse.User.logIn(username, password,{
-        success: function(user) {
-          if(user.userType != userType){
-            div.innerHTML = 'You have not signed up with this user type';
+        success: function(user1) {
+            console.log("user object in login " + user.email);
             if(userType == 'parker'){
               $state.go("parker.search");
             }else if(userType == 'owner'){
               $state.go("owner.home")
             }
-          }
-
         },
-        error: function(user, error) {
+        error: function(user1, error) {
           div.innerHTML = 'Login failed, please try again';
         }
-
-      });
-      
-      
+      });  
     }
 
     $scope.signUpClicked = function() {
@@ -329,8 +326,9 @@ angular.module('starter.controllers', [])
 
 
 //getting payment token for owner
-.controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $http) {
+.controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $ionicNavBarDelegate, $http) {
  // add the following headers for authentication
+  $ionicNavBarDelegate.showBackButton(false);
   $http.defaults.headers.common['X-Mashape-Key']  = NOODLIO_PAY_API_KEY;
   $http.defaults.headers.common['Content-Type']   = 'application/x-www-form-urlencoded';
   $http.defaults.headers.common['Accept']         = 'application/json';
@@ -483,8 +481,9 @@ angular.module('starter.controllers', [])
 })
 
 //owner controller
-.controller('ownerMenuCtrl', function($scope, $ionicPopup, $state, $ionicLoading, $ionicHistory) {
-  $scope.addSpace = function(){
+.controller('ownerMenuCtrl', function($scope,$ionicNavBarDelegate, $ionicPopup, $state, $ionicLoading, $ionicHistory) {
+   $ionicNavBarDelegate.showBackButton(false);
+  /*$scope.addSpace = function(){
     $state.go("owner.addSpace");
   }
   $scope.goHome = function(){
@@ -495,7 +494,7 @@ angular.module('starter.controllers', [])
   }
   $scope.payment = function() {
       $state.go("owner.payment");
-    }
+    }*/
     //rating
   $scope.ratingsObject = {
         iconOn : 'ion-ios-star',
@@ -562,7 +561,62 @@ angular.module('starter.controllers', [])
   return parkingSpace;
 })
 
-.controller('ownerHomeCtrl', function($scope, $ionicPopup, $state, parkingSpace) {
+.controller('ownerHomeCtrl', function($scope,$ionicNavBarDelegate, $ionicPopup, $state, parkingSpace, user) {
+   $ionicNavBarDelegate.showBackButton(false);
+   //not working... not sure why
+  //to get current user, use currentUser = Parse.User.current();
+  //to get email currentUser.username (using email as username)
+ // currentUser = Parse.User.current();
+  //var ownerEmail = currentUser.email;
+  var ownerEmail = user.email;
+  $scope.items = [];
+  var usedSpaces= new Set();
+  //need to get all parking spaces
+  //get all parking spaces where email == ownerEmail and endDate >= today
+  var today = new Date();
+  //if(Parse == null){
+    Parse.initialize("com.team3.parkhere");
+    Parse.serverURL = 'http://138.68.43.212:1337/parse';
+  //}
+  var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
+  var pSpaceQuery = new Parse.Query(parkingSpaceParse);
+  //spaces owned by this person 
+  pSpaceQuery.equalTo("ownerEmail", ownerEmail);
+  //pSpaceQuery.greaterThanOrEqualTo("Date", today-1);
+  pSpaceQuery.find({
+  success: function(results) {
+    //results give me the object ids
+    console.log(results);
+    for(var i = 0; i < results.length; i++){
+      var objID = results[i].id;
+      //don't need to relook if already has key
+      console.log("objID " + results[i].id);
+      var query = new Parse.Query(parkingSpaceParse);
+      query.get(objID, {
+        success: function(parkingSpace) {
+          if(usedSpaces.has(parkingSpace.get('name'))){
+            return;
+          }
+          usedSpaces.add(parkingSpace.get('name'));
+          var dict = {
+            "id": i,
+            "name": parkingSpace.get('name'), 
+            "price": parkingSpace.get("price"),
+            "uniqueID": objID
+          }
+          console.log("dict " + dict);
+          $scope.items.push(dict);
+          console.log($scope.items);
+        },
+        error: function(object, error) {
+        }
+      });
+    }
+  }
+  });
+
+
+  //console.log("user from parse user " + currentUser.username);
   $scope.onItemDelete = function(item) {
     //need to check if we can delete it
     var confirmPopup = $ionicPopup.confirm({
@@ -582,17 +636,17 @@ angular.module('starter.controllers', [])
   };
   $scope.edit = function(item) {
     
-    parkingSpace.title = item.title;
+    parkingSpace.title = item.name;
     parkingSpace.price = item.price;
     parkingSpace.uniqueID = item.uniqueID;
     console.log("in edit function", parkingSpace.title);
     $state.go('owner.spaceInfo');
   };
   //ask for owner items 
-  $scope.items = [
+  /*$scope.items = [
     { id: 0, title: "Parking Space 1", price: 20, uniqueID: '3924pw4hi'},
     { id: 1, title: "Test Space 2", price: 30, uniqueID: '1p29u3irhwejln' },
-    { id: 2,title: "Sara is Cool", price: 100, uniqueID: '29u42i3wrehlj' }];
+    { id: 2,title: "Sara is Cool", price: 100, uniqueID: '29u42i3wrehlj' }];*/
  
 })
 
@@ -603,32 +657,38 @@ angular.module('starter.controllers', [])
  
 })
 
-.controller('ownerAddSpaceCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker) {
+.controller('ownerAddSpaceCtrl', function($scope, $ionicNavBarDelegate,$ionicPopup, $state, ionicTimePicker, ionicDatePicker, user) {
   //controller is not being added
+  $ionicNavBarDelegate.showBackButton(false);
   $scope.data = {};
   //array to hold all timeslots, each timeslot will be a dictionary of startTime: , startDate: etc.
   var allTimeSlots = [];
+  var picFile;
+  console.log("user", user.email);
+
+
 
   $scope.addSpace = function(){
+      //create parse subclass
+      var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
       
       var parkingSpaceName = $scope.data.spaceName;
       var price = $scope.data.price;
       var address = $scope.data.address;
       var notes = $scope.data.notes;
       var type = $scope.data.type;
-      var latitude;
-      var longitude;
-      var picFile;
+      var latitude = 0;
+      var longitude = 0;
+      picFile = document.getElementById('fileUpload').files[0];
       console.log("type: " + type);
       console.log(address);
       var div = document.getElementById('addSpaceInvalid');
       if(type === 'undefined' || parkingSpaceName=== 'undefined' ||  price=== 'undefined'|| address=== 'undefined' || picFile === 'undefined'){
           //invalid login
-          console.log("here");
           div.innerHTML = 'Please insert all required fields';
           return;
       }
-      console.log("here");
+      console.log("before geocode");
       var geocoder = new google.maps.Geocoder();
       geocoder.geocode( { 'address': address}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
@@ -636,23 +696,79 @@ angular.module('starter.controllers', [])
             latitude = results[0].geometry.location.lat();
             longitude = results[0].geometry.location.lng();
             console.log("lat " + latitude+ " longitude " + longitude);
+            uploadToParse();
         } else {
             console.log("geo error " +status);
             div.innerHTML = 'Something went wrong, please try again';
+            return;
           }
       }); 
-      //save in date database by hour
-      var parseFile = new Parse.File(name, file);
-      parseFile.save().then(function() {
-      // The file has been saved to Parse.
-      }, function(error) {
-      // The file either could not be read, or could not be saved to Parse.
-      });
-      parkingSpace.set("picture", parseFile);
-      //for each dic in allTimes,
-      //for each time frame in each dict
-      //parse ish
-      var point = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
+      //defined this function because this was calling before the lat and long was set from google
+      function uploadToParse(){
+        //save in date database by hour
+        var parseFile = new Parse.File("image", picFile);
+        parseFile.save().then(function() {
+        // The file has been saved to Parse.
+        }, function(error) {
+            div.innerHTML = 'File upload did not work. Please try again';
+        });
+        for(var i = 0; i < allTimeSlots.length; i++){
+        var timeDict = allTimeSlots[i];
+        console.log(timeDict);
+        //start and end on same day
+        if(timeDict["startDate"].getDate() == timeDict["endDate"].getDate() 
+        && timeDict["startDate"].getMonth() == timeDict["endDate"].getMonth()
+        && timeDict["startDate"].getFullYear() == timeDict["endDate"].getFullYear()){
+            //hours from startTime to end time
+            for(var time = timeDict["startTime"]; time <= timeDict["endTime"]; time++){
+              saveSpace(timeDict["startDate"], time, parseFile);
+            }
+        }else{//not on the same day
+          for(var d = timeDict["startDate"]; d <= timeDict["endDate"]; d.setDate(d.getDate() + 1)){
+            //if start date
+            if(d.getTime() == timeDict["startDate"].getTime()){
+              //only do the ours from start time
+              for(var time = timeDict["startTime"]; time <= 24; time++){
+                  saveSpace(timeDict["startDate"], time, parseFile);
+              }
+            }else if(d.getTime() == timeDict["endDate"].getTime()){ //end date
+               for(var time = 0; time <= timeDict["endTime"]; time++){
+                  saveSpace(timeDict["startDate"], time, parseFile);
+              }
+            }else{//not start date
+              for(var time = 0; time <= 24; time++){
+                  saveSpace(timeDict[startDate], time, parseFile);
+              }
+            }
+        }
+        }
+        
+      }
+      }
+      function saveSpace(date, time, parseFile){
+              console.log("in save: lat " + latitude + " long " +longitude);
+              var spaceToSave = new parkingSpaceParse();
+              spaceToSave.set("ownerEmail", user.email);
+              spaceToSave.set("name", parkingSpaceName);
+              var point = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
+              spaceToSave.set("location", point);
+              spaceToSave.set("picture", parseFile);
+              spaceToSave.set("price", price);
+              spaceToSave.set("type", type);
+              spaceToSave.set("notes", notes);
+              spaceToSave.set("Date", date);
+              spaceToSave.set("Hour", time);
+              spaceToSave.set("parker", "");
+              spaceToSave.set("reserved", false);
+              spaceToSave.save(null, {
+                success: function(spaceToSave) {
+                  div.innerHTML = "Space added!";
+                },
+                error: function(spaceToSave, error) {
+                  div.innerHTML = "Failed to upload space. Please try again";
+                }
+              });
+      }
      
   }
    //image uploader

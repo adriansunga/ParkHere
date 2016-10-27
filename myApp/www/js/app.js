@@ -31,7 +31,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
 
     Parse.initialize("com.team3.parkhere");
     Parse.serverURL = 'http://138.68.43.212:1337/parse';
-    
+    var currentUser = Parse.User.current();
     
 
   });
@@ -92,10 +92,22 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
   })
   .state('owner.home', {
     url: '/home',
+    cache: false,
     views: {
       'side-menu21': {
         templateUrl: 'templates/ownerHome.html',
         controller: 'ownerHomeCtrl'
+      }
+    }
+    
+  })
+  .state('owner.addSpace', {
+    url: '/addSpace',
+    cache: false,
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/ownerAddSpace.html',
+        controller: 'ownerAddSpaceCtrl'
       }
     }
     
@@ -128,18 +140,10 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
     }
     
   })
-  .state('owner.addSpace', {
-    url: '/addSpace',
-    views: {
-      'side-menu21': {
-        templateUrl: 'templates/ownerAddSpace.html',
-        controller: 'ownerAddSpaceCtrl'
-      }
-    }
-    
-  })
+
   .state('owner.spaceInfo', {
     url: '/spaceInfo',
+    cache: false,
     views: {
       'side-menu21': {
         templateUrl: 'templates/ownerSpaceInfo.html',
