@@ -48,15 +48,15 @@ angular.module('starter.controllers', [])
       var username = ""+ $scope.data.username;
       var password = ""+ $scope.data.password;
       var userType = document.querySelector('input[name = "loginType"]:checked');
-      console.log(username );
-      console.log(password );
+      console.log(username);
+      console.log(password);
       var div = document.getElementById('invalid');
       if(userType == null){
           div.innerHTML = 'Please select parker or owner';
           return;
       }
       userType = userType.value;
-      console.log(userType );
+      console.log(userType);
       
       if(password.length == 0 ||  username.length == 0){
           div.innerHTML = 'Please insert all fields';
@@ -108,7 +108,6 @@ angular.module('starter.controllers', [])
     var email = "" +  $scope.data.email;
     var password = ""+ $scope.data.password;
     var userType = document.querySelector('input[name = "signUpType"]:checked');
-    console.log(userType);
     console.log(email);
     console.log(password);
     if(userType == null){
@@ -117,7 +116,7 @@ angular.module('starter.controllers', [])
         return;
     }
     userType = userType.value;
-    console.log(userType );
+    console.log(userType);
     var div = document.getElementById('invalid');
     if(password == "undefined" ||  username == "undefined" || email == "undefined" ){
         //invalid login
@@ -208,18 +207,19 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker) {
+  $scope.startDate;
+  $scope.startTime;
+  $scope.endDate;
+  $scope.endTime;
+
   $scope.openTimePicker = function(){
     //date picker
     //variables we need to send to the back end
-    var startDate;
-    var startTime;
-    var endDate;
-    var endTime;
+    
     var startDateObj = {
       callback: function (val) {  //Mandatory
-        
         startDate = new Date(val);
-        console.log('Return value from the datepicker popup is : ' + val, new Date(val));
+        console.log('first date : ' + val, new Date(val));
         ionicTimePicker.openTimePicker(setFirstTime);
       },
 
@@ -229,35 +229,40 @@ angular.module('starter.controllers', [])
       setLabel: 'Set Start Date' 
     };
 
-    ionicDatePicker.openDatePicker(startDateObj);
+    ionicDatePicker.openDatePicker(startDateObj); 
     
-      var setFirstTime = {
-      callback: function (val) {      //Mandatory
+    var setFirstTime = {
+      callback: function (val) {              //Mandatory
         if (typeof (val) === 'undefined') {
           console.log('Time not selected');
         } else {
           startTime = new Date(val * 1000);
+          console.log("vale" +val);
+          console.log("start time in callback" +startTime.getUTCHours());
+          
           var endDateObj = {
-          callback: function (val) {  //Mandatory
-            
-            endDate = new Date(val);
-            console.log('Return value from the datepicker popup is : ' + val, new Date(val));
-            ionicTimePicker.openTimePicker(setSecondTime);
-          },
+            callback: function (val) {  //Mandatory
+              endDate = new Date(val);
+              console.log('end date: ' + val, new Date(val));
+              ionicTimePicker.openTimePicker(setSecondTime);
+            },
 
-      from: startDate,
-      inputDate: startDate,   
-      mondayFirst: true,          
-      setLabel: 'Set End Date' 
-    };
-          ionicDatePicker.openDatePicker(endDateObj);
+            from: startDate,
+            inputDate: startDate,   
+            mondayFirst: true,          
+            setLabel: 'Set End Date' 
+         };
+
+          ionicDatePicker.openDatePicker(endDateObj); 
         }
       },
+
       inputTime: ((new Date()).getHours() * 60 * 60),   
       format: 24,         
       step: 60,           
-      setLabel: 'Set Start Time'    
+      setLabel: 'Set Start Time' 
     };
+
     var setSecondTime = {
       callback: function (val) {      //Mandatory
         if (typeof (val) === 'undefined') {
@@ -275,6 +280,8 @@ angular.module('starter.controllers', [])
             var endNumMinutes = endTime.getUTCMinutes();
           }
           var addDiv = document.getElementById('timeDiv');
+          console.log("start time" +startTime.getUTCHours());
+          console.log("end time" +endTime.getUTCHours());
           startDate.setHours(startDate.getHours() + startTime.getHours());
           endDate.setHours(endDate.getHours() + endTime.getHours());
           console.log(startDate + " end " + endDate);
@@ -282,12 +289,7 @@ angular.module('starter.controllers', [])
             //popup modal
             var alertPopup = $ionicPopup.alert({
                title: "Your end date and time must be after your start",
-               //template: 'It might taste good'
              });
-
-             /*alertPopup.then(function(res) {
-               console.log('Thank you for not eating my delicious ice cream cone');
-             });*/
             return;
           }
           var startDateStr = (startDate.getMonth() + 1) + '/' + startDate.getDate() + '/' +  startDate.getFullYear();
@@ -295,8 +297,6 @@ angular.module('starter.controllers', [])
           //add to HTML here if you want to display something
           addDiv.innerHTML += '<ion-item class="item-thumbnail-left"> <h4>Timeslot: </h4> <p>Start: ' + startDateStr + " "+ startTime.getUTCHours()+':'+ numMinutes+ '</p> <p>End: ' + endDateStr + " "+ endTime.getUTCHours()+':'+ endNumMinutes+ '</p></ion-item>';
           var button = document.getElementById("setTimeButton");
-          console.log(button);
-          console.log(button.value);
           button.innerHTML = 'Change time slot';
         }
       },
@@ -305,6 +305,25 @@ angular.module('starter.controllers', [])
       step: 60,           
       setLabel: 'Set End Time'    
     };
+  }
+
+  $scope.findParkingSpaces = function(){
+    var address = document.getElementById('searchTextBox').value;
+    var geocoder = new google.maps.Geocoder();
+
+    
+    var div = document.getElementById('invalid')
+      geocoder.geocode( { 'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          console.log(results[0]);
+            latitude = results[0].geometry.location.lat();
+            longitude = results[0].geometry.location.lng();
+            console.log("lat " + latitude+ " longitude " + longitude);
+        } else {
+            console.log("geo error " +status);
+            div.innerHTML = 'Something went wrong, please try again';
+          }
+      });    
   }
 })
 
@@ -737,7 +756,7 @@ angular.module('starter.controllers', [])
           var startDateStr = (startDate.getMonth() + 1) + '/' + startDate.getDate() + '/' +  startDate.getFullYear();
           var endDateStr = (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear();
           addDiv.innerHTML += '<ion-item class="item-thumbnail-left"> <h4>Timeslot: '+ timeSlots + '</h4> <p>Start: ' + startDateStr + " "+ startTime.getUTCHours()+':'+ numMinutes+ '</p> <p>End: ' + endDateStr + " "+ endTime.getUTCHours()+':'+ endNumMinutes+ '</p></ion-item>';
-          var dict = {'startDate':startDate, 'startTime':startTime.getUTCHours(), 'endDate': endDate, 'endTime':endTime.getUTCHours(};
+          var dict = {'startDate':startDate, 'startTime':startTime.getUTCHours(), 'endDate': endDate, 'endTime':endTime.getUTCHours()};
           allTimeSlots.push(dict);
           console.log(allTimeSlots);
         }
