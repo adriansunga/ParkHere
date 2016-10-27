@@ -589,23 +589,51 @@ angular.module('starter.controllers', [])
   $scope.data = {};
   //array to hold all timeslots, each timeslot will be a dictionary of startTime: , startDate: etc.
   var allTimeSlots = [];
+
   $scope.addSpace = function(){
       
       var parkingSpaceName = $scope.data.spaceName;
       var price = $scope.data.price;
       var address = $scope.data.address;
       var notes = $scope.data.notes;
-      console.log(price);
+      var type = $scope.data.type;
+      var latitude;
+      var longitude;
+      var picFile;
+      console.log("type: " + type);
       console.log(address);
-      if(parkingSpaceName=== 'undefined' ||  price=== 'undefined'|| address=== 'undefined' ){
+      var div = document.getElementById('addSpaceInvalid');
+      if(type === 'undefined' || parkingSpaceName=== 'undefined' ||  price=== 'undefined'|| address=== 'undefined' || picFile === 'undefined'){
           //invalid login
           console.log("here");
-          var div = document.getElementById('addSpaceInvalid');
           div.innerHTML = 'Please insert all required fields';
           return;
       }
-      //get image upload
-      //get timeslider thing
+      console.log("here");
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode( { 'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          console.log(results[0]);
+            latitude = results[0].geometry.location.lat();
+            longitude = results[0].geometry.location.lng();
+            console.log("lat " + latitude+ " longitude " + longitude);
+        } else {
+            console.log("geo error " +status);
+            div.innerHTML = 'Something went wrong, please try again';
+          }
+      }); 
+      //save in date database by hour
+      var parseFile = new Parse.File(name, file);
+      parseFile.save().then(function() {
+      // The file has been saved to Parse.
+      }, function(error) {
+      // The file either could not be read, or could not be saved to Parse.
+      });
+      parkingSpace.set("picture", parseFile);
+      //for each dic in allTimes,
+      //for each time frame in each dict
+      //parse ish
+      var point = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
      
   }
    //image uploader
@@ -616,6 +644,7 @@ angular.module('starter.controllers', [])
       console.log('File uploaded Successfully', $scope.file, data);
       $scope.uploadUri = data.url;
       $scope.$digest();
+      picFile = $scope.file;
     });
   };
   var timeSlots = 0;
@@ -704,10 +733,11 @@ angular.module('starter.controllers', [])
             return;
           }
           timeSlots = timeSlots + 1;
+          //should check if times overlap here
           var startDateStr = (startDate.getMonth() + 1) + '/' + startDate.getDate() + '/' +  startDate.getFullYear();
           var endDateStr = (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear();
           addDiv.innerHTML += '<ion-item class="item-thumbnail-left"> <h4>Timeslot: '+ timeSlots + '</h4> <p>Start: ' + startDateStr + " "+ startTime.getUTCHours()+':'+ numMinutes+ '</p> <p>End: ' + endDateStr + " "+ endTime.getUTCHours()+':'+ endNumMinutes+ '</p></ion-item>';
-          var dict = {'startDate':startDate, 'startTime':startTime, 'endDate': endDate, 'endTime':endTime};
+          var dict = {'startDate':startDate, 'startTime':startTime.getUTCHours(), 'endDate': endDate, 'endTime':endTime.getUTCHours(};
           allTimeSlots.push(dict);
           console.log(allTimeSlots);
         }
