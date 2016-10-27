@@ -1,7 +1,7 @@
 
 angular.module('starter.controllers', [])
 
-
+//this is example code yay!
 
 .controller("ExampleController", function($scope) {
  
@@ -50,8 +50,8 @@ angular.module('starter.controllers', [])
       var userType = document.querySelector('input[name = "loginType"]:checked');
       console.log(username );
       console.log(password );
+      var div = document.getElementById('invalid');
       if(userType == null){
-        var div = document.getElementById('invalid');
           div.innerHTML = 'Please select parker or owner';
           return;
       }
@@ -59,19 +59,28 @@ angular.module('starter.controllers', [])
       console.log(userType );
       
       if(password.length == 0 ||  username.length == 0){
-          //invalid login
-          var div = document.getElementById('invalid');
           div.innerHTML = 'Please insert all fields';
           return;
       }
-      //need to get user info to populate whatever page we do next
-      //figure out how to send variables across pages
-      //check if parker or owner
-      if(userType == 'parker'){
-        $state.go("parker.search");
-      }else if(userType == 'owner'){
-        $state.go("owner.home")
-      }
+      div.innerHTML = '';
+      Parse.User.logIn(username, password,{
+        success: function(user) {
+          if(user.userType != userType){
+            div.innerHTML = 'You have not signed up with this user type';
+            if(userType == 'parker'){
+              $state.go("parker.search");
+            }else if(userType == 'owner'){
+              $state.go("owner.home")
+            }
+          }
+
+        },
+        error: function(user, error) {
+          div.innerHTML = 'Login failed, please try again';
+        }
+
+      });
+      
       
     }
 
@@ -116,20 +125,18 @@ angular.module('starter.controllers', [])
         return;
     }
     console.log("here-1");
-    var regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
-    if(password.length < 10 ){
+    //fix this reg ex!!!!
+    if(password.length < 10 || password.search(/\d/) == -1 ){
           //invalid login
-          div.innerHTML = 'Your password must contain special letter and be longer than 10 characters, please try again';
+          div.innerHTML = 'Your password must contain a number and be longer than 10 characters, please try again';
           return;
     }
-    console.log("0");
     div.innerHTML = '';
-    console.log("here0");
     var parseUser = new Parse.User();
-    console.log("here1");
-    parseUser.set("username", username);
+    //we use the email as the username to sign them in
+    parseUser.set("username", email);
     user.username = username;
-    parseUser.set("email", email);
+    parseUser.set("name", username);
     user.email = email;
     parseUser.set("password", password);
     user.password = password;
@@ -148,7 +155,11 @@ angular.module('starter.controllers', [])
       },
       error: function(user, error) {
         // Show the error message somewhere and let the user try again.
-        alert("Error: " + error.code + " " + error.message);
+        console.log(error.message);
+        if(error.message == "invalid session token"){
+          parseUser.logOut();
+          div.innerHTML = "Somethined went wrong, please try again";
+        }
         if(error.message == "UserEmailTaken"){
             div.innerHTML = user.email +' already exists please try another email';
           }else{
@@ -186,6 +197,8 @@ angular.module('starter.controllers', [])
         $ionicHistory.clearHistory();
         $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
         var currentUser = Parse.User.current(); 
+        cuurentUser.logOut();
+        Parse.User.logOut();
         $state.go('login');
      } else {
        console.log('You are not sure');
