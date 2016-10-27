@@ -219,7 +219,6 @@ angular.module('starter.controllers', [])
     var startDateObj = {
       callback: function (val) {  //Mandatory
         startDate = new Date(val);
-        console.log('first date : ' + val, new Date(val));
         ionicTimePicker.openTimePicker(setFirstTime);
       },
 
@@ -237,13 +236,10 @@ angular.module('starter.controllers', [])
           console.log('Time not selected');
         } else {
           startTime = new Date(val * 1000);
-          console.log("vale" +val);
-          console.log("start time in callback" +startTime.getUTCHours());
           
           var endDateObj = {
             callback: function (val) {  //Mandatory
               endDate = new Date(val);
-              console.log('end date: ' + val, new Date(val));
               ionicTimePicker.openTimePicker(setSecondTime);
             },
 
@@ -279,12 +275,8 @@ angular.module('starter.controllers', [])
           }else{
             var endNumMinutes = endTime.getUTCMinutes();
           }
-          var addDiv = document.getElementById('timeDiv');
-          console.log("start time" +startTime.getUTCHours());
-          console.log("end time" +endTime.getUTCHours());
           startDate.setHours(startDate.getHours() + startTime.getHours());
           endDate.setHours(endDate.getHours() + endTime.getHours());
-          console.log(startDate + " end " + endDate);
           if(endDate < startDate){
             //popup modal
             var alertPopup = $ionicPopup.alert({
@@ -292,10 +284,6 @@ angular.module('starter.controllers', [])
              });
             return;
           }
-          var startDateStr = (startDate.getMonth() + 1) + '/' + startDate.getDate() + '/' +  startDate.getFullYear();
-          var endDateStr = (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear();
-          //add to HTML here if you want to display something
-          addDiv.innerHTML += '<ion-item class="item-thumbnail-left"> <h4>Timeslot: </h4> <p>Start: ' + startDateStr + " "+ startTime.getUTCHours()+':'+ numMinutes+ '</p> <p>End: ' + endDateStr + " "+ endTime.getUTCHours()+':'+ endNumMinutes+ '</p></ion-item>';
           var button = document.getElementById("setTimeButton");
           button.innerHTML = 'Change time slot';
         }
@@ -310,21 +298,31 @@ angular.module('starter.controllers', [])
   $scope.findParkingSpaces = function(){
     var address = document.getElementById('searchTextBox').value;
     var geocoder = new google.maps.Geocoder();
+    var latitude;
+    var longitude;
 
+    //log all values here
+    console.log("start date = " + (startDate.getMonth() + 1) + '/' + startDate.getDate() + '/' +  startDate.getFullYear());
+    console.log("start time = " +startTime.getUTCHours());
+    console.log('end date = ' + (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear());
+    console.log("end time = " +endTime.getUTCHours());
+    console.log("address = " + address);
     
     var div = document.getElementById('invalid')
-      geocoder.geocode( { 'address': address}, function(results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-          console.log(results[0]);
-            latitude = results[0].geometry.location.lat();
-            longitude = results[0].geometry.location.lng();
-            console.log("lat " + latitude+ " longitude " + longitude);
-        } else {
-            console.log("geo error " +status);
-            div.innerHTML = 'Something went wrong, please try again';
-          }
-      });    
+
+    geocoder.geocode( { 'address': address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        latitude = results[0].geometry.location.lat();
+        longitude = results[0].geometry.location.lng();
+        console.log("lat = " + latitude);
+        console.log("longitude = " + longitude);
+      } else {
+        console.log("geo error " +status);
+        div.innerHTML = 'Something went wrong, please try again';
+      }
+    });    
   }
+
 })
 
 
