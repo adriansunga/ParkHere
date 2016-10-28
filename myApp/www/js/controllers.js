@@ -350,22 +350,22 @@ angular.module('starter.controllers', [])
 
     // QUERY BELOW ALMOST WORKS. PLZ FIX DONT REIMPLEMENT.
 
-  //   var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
-  //   var PlaceObject = Parse.Object.extend("PlaceObject");
-  //   var query = new Parse.Query(PlaceObject);
-  //   query.near("location", myGeoPoint);
-  //   query.withinMiles(30);
-  //   // successful object list
-  //   var placesObjects;
-  //   console.log("do i get here? right before query.find");
-  //   query.find({
-  //   success: function(placesObjects, count) {
-  //     // TODO: iterate through place objects here 
-  //     alert(count);
-  //   }
-  //   });
-  //   console.log("place objects: " + JSON.stringify(placesObjects));
-  //   // filter these by time
+    var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
+    var PlaceObject = Parse.Object.extend("PlaceObject");
+    var query = new Parse.Query(PlaceObject);
+    query.near("location", myGeoPoint);
+    query.withinMiles(30);
+    // successful object list
+    var placesObjects;
+    console.log("do i get here? right before query.find");
+    query.find({
+    success: function(placesObjects, count) {
+      // TODO: iterate through place objects here 
+      alert(count);
+    }
+    });
+    console.log("place objects: " + JSON.stringify(placesObjects));
+    // filter these by time
     $state.go("parker.parkingSearchResults");
   }
 
