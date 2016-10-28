@@ -6,6 +6,7 @@
         <label class="item item-select" id="ownerAddSpace-select1">
 	        <span class="input-label">Parking Space Type</span>
 	        <select ng-model="data.type">
+                <option>All</option>
 		        <option>Handicap</option>
 		        <option>Compact</option>
 		        <option>Covered</option>
@@ -15,7 +16,10 @@
 
         <form id="parkingSearch-form6" class="list">
             <button id="setTimeButton" class="button button-positive  button-block icon ion-android-add-circle" ng-click="openTimePicker()">Select Timeslot</button>
+            <button id="parkingSearch-button" class="button button-balanced  button-block" ng-click = "findParkingSpaces()">Find Parking Spaces</button>
         </form>
-        <button id="parkingSearch-button" class="button button-balanced  button-block" ng-click = "findParkingSpaces()">Find Parking Spaces</button>
+         <ion-list id="spaceSearchTimeList">
+                
+        </ion-list>
     </ion-content>
 </ion-view>
