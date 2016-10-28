@@ -1,7 +1,20 @@
 <h2>Paypal</h2>
 
 
-<button id="buyNowBtn"> Buy Now !</button>
-<button id="buyInFutureBtn"> Pay in Future !</button>
-<button id="profileSharingBtn"> Profile Sharing !</button>
-<button id="cardScanBtn">Advanced: Use card.io scan only</button>
+
+
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" class ="list">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="22LMRA8V6639L">
+ <label class="item item-input" id="paypal1">
+<span class="input-label" id="username">Price of Space</span><input type="text" name="os0" maxlength="200">
+</label>
+</br>
+<ion-list>
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynowCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</ion-list>
+</form>
+
+
+

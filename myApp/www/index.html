@@ -29,6 +29,9 @@
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
 
+        <!-- parse libray -->
+    <script src="js/parse.min.js"></script>
+
     <!-- your app's js -->
     <script src="js/app.js"></script>
     <script src="js/controllers.js"></script>
@@ -40,7 +43,13 @@
     <script src="lib/s3-image-uploader/dist/image-uploader.bundle.min.js"></script>
     <!-- ionic datepicker -->
     <script src="lib/ionic-datepicker/dist/ionic-datepicker.bundle.min.js"></script>
+
+    <!-- noodlio -->
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script src="lib/angular-stripe-checkout.js"></script>
+
     <!--map API -->
+    <!-- doesn't work for sara?
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
     <script>
       function init() {
@@ -51,12 +60,12 @@
 
       google.maps.event.addDomListener(window, 'load', init);
     </script>
-
+-->
   </head>
 
   <body ng-app="starter">
-    <ion-nav-view></ion-nav-view>
-
+    <ion-nav-view></ion-nav-view> 
+   
 
   </body>
 </html>

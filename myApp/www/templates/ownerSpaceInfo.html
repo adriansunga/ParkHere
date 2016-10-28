@@ -1,17 +1,17 @@
 <ion-view title="Owner Space Info" id="page8">
     <ion-content padding="true" class="has-header">
-        <h1 id="ownerSpaceInfo-heading1" style="color:#000000;">Space Name</h1>
-        <h3 id="ownerSpaceInfo-heading2" style="color:#000000;">$Price/hour</h3>
+        <h1 id="ownerSpaceInfo-heading1" style="color:#000000;">{{parkingSpace.title}}</h1>
+        <h3 id="ownerSpaceInfo-heading2" style="color:#000000;">${{parkingSpace.price}}/hour</h3>
         <h3 id="ownerSpaceInfo-heading3" style="color:#000000;"></h3>
         <div style="margin: 0px; line-height: 250px; background-color: rgb(232, 235, 239); text-align: center;">
             <i class="icon ion-image" style="font-size: 64px; color: rgb(136, 136, 136); vertical-align: middle;"></i>
         </div>
         <div class="spacer" style="width: 300px; height: 24px;"></div>
         <div id="ownerSpaceInfo-markdown3" style="color:#000000;font-size:14px;">
-            <p>Parker Name</p>
+            <p>Parker Name: {{parkingSpace.parkerName}}</p>
         </div>
         <div id="ownerSpaceInfo-markdown4" style="color:#000000;font-size:14px;">
-            <p>Parker Contact Info</p>
+            <p>Parker Contact Info: {{parkingSpace.parkerContactInfo}}</p>
         </div>
         <h5 id="ownerSpaceInfo-heading4" style="color:#000000;">Timeslot reserved</h5>
     </ion-content>

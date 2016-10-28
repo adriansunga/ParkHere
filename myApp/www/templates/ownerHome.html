@@ -5,11 +5,14 @@
     </ion-nav-buttons>
     <ion-content padding="true" class="has-header">
         <div class="item item-body" id="ownerHome-list-item-container1">
-            <ion-list id="ownerHome-list4">
-                <ion-item class="item-thumbnail-left" id="ownerHome-list-item5" ui-sref="ownerSpaceInfo">
-                    <h2>Parking Space Name</h2>
-                    <p>$20/hour</p>
-                    <ion-option-button class="button-positive">Edit</ion-option-button>
+            <ion-list id="ownerHome-list4" >
+                <ion-item class="item-thumbnail-left" ng-repeat="item in items" 
+                  item="item" ng-click="edit(item)" class="item-remove-animate">
+                    <h2>{{item.title}}</h2>
+                    <p>${{item.price}}/hour</p>
+                    <ion-option-button class="button-positive"  ng-click="edit(item)">Edit</ion-option-button>
+                   <ion-option-button class="button-assertive"
+                             ng-click="onItemDelete(item)">Delete</ion-option-button>
                 </ion-item>
             </ion-list>
         </div>
