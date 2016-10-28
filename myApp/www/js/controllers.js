@@ -83,10 +83,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerMenuCtrl', function($scope, $ionicPopup, $state, $ionicLoading, $ionicHistory) {
-  $scope.search = function() {
-    console.log("search clicked");
-    $state.go("parker.search");
-  }
+
   $scope.payment = function() {
       console.log("payment clicked");
       $state.go("parker.paypal");
@@ -115,6 +112,8 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker) {
+  // For Selecting a timeslot
+
   $scope.openTimePicker = function(){
     //date picker
     //variables we need to send to the back end
@@ -213,7 +212,24 @@ angular.module('starter.controllers', [])
       setLabel: 'Set End Time'    
     };
   }
+
+  // once button is pressed
+    // TODO(mackraz): check for valid search address
+    // TODO(mackraz): initially fill with current location?
+    // TODO(mackraz): grab data from dates 
+  $scope.findSpots = function() {
+    var search = document.getElementById("searchTextBox").value;
+    console.log(search);
+    // console.log(startDateStr);
+    // console.log(endDateStr);
+    $state.go("parker.searchResults");
+  }
 })
+
+.controller('searchResultsCtrl', function($scope, $ionicPopup, $state) {
+  console.log("in search results controller!!");
+})
+
 
 .controller('paypalCtrl', function($scope, $ionicPopup, $state) {
 })

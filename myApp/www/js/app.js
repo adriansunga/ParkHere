@@ -47,7 +47,11 @@ angular.module('starter', ['ionic', 'ionic-timepicker','ionic-ratings', 'ionic-d
         controller: 'parkerSearchCtrl'
       }
     },
-    
+  })
+  .state('parker.searchResults', {
+    url: '/parkerSearchResults',
+    templateUrl: 'templates/parkingSearchResults.html',
+    controller: 'searchResultsCtrl'
   })
    .state('parker.paypal', {
     url: '/paypal',
