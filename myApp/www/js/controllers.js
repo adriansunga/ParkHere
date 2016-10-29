@@ -555,9 +555,10 @@ angular.module('starter.controllers', [])
   parkingSpace = {};
   parkingSpace.title = '';
   parkingSpace.price = '';
+  parkingSpace.url = '';
+  parkingSpace.address = '';
+  parkingSpace.notes = '';
   parkingSpace.uniqueID = '';  
-  parkingSpace.parkerName = '';
-  parkingSpace.parkerContactInfo = '';
   return parkingSpace;
 })
 
@@ -599,14 +600,18 @@ angular.module('starter.controllers', [])
             return;
           }
           usedSpaces.add(parkingSpace.get('name'));
+          console.log(parkingSpace.get('picture')._url);
           var dict = {
             "id": i,
             "name": parkingSpace.get('name'), 
             "price": parkingSpace.get("price"),
+            "image": parkingSpace.get('picture')._url,
             "uniqueID": objID
+
           }
           console.log("dict " + dict);
           $scope.items.push(dict);
+          console.log("scope items " + $scope.items);
           console.log($scope.items);
         },
         error: function(object, error) {
@@ -651,10 +656,43 @@ angular.module('starter.controllers', [])
  
 })
 
-.controller('ownerSpaceInfoCtrl', function($scope, $ionicPopup, $state, $stateParams, parkingSpace) {
-
+.controller('ownerSpaceInfoCtrl', function($scope, $ionicPopup, $state, $stateParams, parkingSpace, user, $sce) {
   $scope.parkingSpace = parkingSpace;
-  console.log("in owner space " + parkingSpace.title);
+  /*$scope.trustSrc = function(src) {
+    console.log("in true src " + src);
+    return $sce.trustAsResourceUrl(src);
+  }*/
+  console.log("in owner space id " + parkingSpace.uniqueID);
+  var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
+  var pSpaceQuery = new Parse.Query(parkingSpaceParse);
+  console.log(parkingSpace.uniqueID);
+  pSpaceQuery.get(parkingSpace.uniqueID, {
+        success: function(qSpace) {
+          console.log(qSpace.get("notes"));
+          console.log(qSpace.get("location"));
+          parkingSpace.notes = qSpace.get("notes");
+          parkingSpace.url = qSpace.get('picture')._url
+          var geoPoint = qSpace.get("location");
+          var latlng = {lat: geoPoint.latitude, lng: geoPoint.longitude};
+          var geocoder = new google.maps.Geocoder();
+          geocoder.geocode({'location': latlng}, function(results, status) {
+          if (status === 'OK') {
+            if (results[1]) {
+              //console.log(results[1]);
+              parkingSpace.address = results[1].formatted_address;
+            } else {
+              console.log('No results found');
+            }
+          } else {
+            console.log('Geocoder failed due to: ' + status);
+          }
+        });
+        },
+        error: function(object, error) {
+          console.log("find error: " + error);
+        }
+  });
+
  
 })
 
