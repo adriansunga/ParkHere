@@ -207,11 +207,6 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker) {
-
-  // $scope.goSearchResults = function(){
-  //   $state.go("parker.searchResults");
-  // }
-
   var timeSlots = 0;
 
     var startDate;
@@ -350,21 +345,21 @@ angular.module('starter.controllers', [])
 
     // QUERY BELOW ALMOST WORKS. PLZ FIX DONT REIMPLEMENT.
 
-    var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
-    var PlaceObject = Parse.Object.extend("PlaceObject");
-    var query = new Parse.Query(PlaceObject);
-    query.near("location", myGeoPoint);
-    query.withinMiles(30);
-    // successful object list
-    var placesObjects;
-    console.log("do i get here? right before query.find");
-    query.find({
-    success: function(placesObjects, count) {
-      // TODO: iterate through place objects here 
-      alert(count);
-    }
-    });
-    console.log("place objects: " + JSON.stringify(placesObjects));
+    // var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
+    // var PlaceObject = Parse.Object.extend("PlaceObject");
+    // var query = new Parse.Query(PlaceObject);
+    // query.near("location", myGeoPoint);
+    // query.withinMiles(30);
+    // // successful object list
+    // var placesObjects;
+    // console.log("do i get here? right before query.find");
+    // query.find({
+    // success: function(placesObjects, count) {
+    //   // TODO: iterate through place objects here 
+    //   alert(count);
+    // }
+    // });
+    // console.log("place objects: " + JSON.stringify(placesObjects));
     // filter these by time
     $state.go("parker.parkingSearchResults");
   }
@@ -374,6 +369,13 @@ angular.module('starter.controllers', [])
 .controller('parkingSearchResultsCtrl', function($scope, $ionicPopup, $state) {
   console.log("in parking search results!");  
 
+  //TODO: modify code to use query results rather than preset id values
+  // maybe by making each item a query object
+  $scope.items = [
+    { id: 0},
+    { id: 1},
+    { id: 2}
+    ];
 })
 //getting payment token for owner
 .controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $http) {
