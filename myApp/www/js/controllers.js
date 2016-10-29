@@ -575,6 +575,7 @@ angular.module('starter.controllers', [])
   //get all parking spaces where email == ownerEmail and endDate >= today
   var today = new Date();
   //if(Parse == null){
+    //FOR TESTING
     Parse.initialize("com.team3.parkhere");
     Parse.serverURL = 'http://138.68.43.212:1337/parse';
   //}
