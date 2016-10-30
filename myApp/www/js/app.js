@@ -93,7 +93,15 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
         controller: 'reservationCtrl'
       }
     },
-
+  })
+  .state('parker.spotOwnerInformation', {
+    url: '/spotOwnerInformation',
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/ownersInformation.html',
+        controller: 'spotOwnerInformationCtrl'
+      }
+    },
   })
    .state('parker.paypal', {
     url: '/paypal',
