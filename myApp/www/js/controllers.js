@@ -4,7 +4,7 @@ angular.module('starter.controllers', [])
 //this is example code yay!
 
 .controller("ExampleController", function($scope) {
- 
+
     $scope.savePerson = function(firstname, lastname) {
         var PeopleObject = Parse.Object.extend("PeopleObject");
         var person = new PeopleObject();
@@ -37,7 +37,7 @@ angular.module('starter.controllers', [])
         }
     });
 };
- 
+
 })
 //LogIn Controller
 .controller('LoginCtrl', function($scope, $ionicPopup, $state, user) {
@@ -57,7 +57,7 @@ angular.module('starter.controllers', [])
       }
       userType = userType.value;
       console.log(userType);
-      
+
       if(password.length == 0 ||  username.length == 0){
           div.innerHTML = 'Please insert all fields';
           return;
@@ -67,8 +67,15 @@ angular.module('starter.controllers', [])
       user.userType = userType;
       console.log("user object in login " + user.email);
       Parse.User.logIn(username, password,{
+<<<<<<< HEAD
         success: function(user1) {
             console.log("user object in login " + user.email);
+=======
+        success: function(user) {
+          if(user.get("userType") != userType){
+            div.innerHTML = 'You have not signed up with this user type';
+          } else {
+>>>>>>> 99c30267c7663693815c6867785d25e29f434ee2
             if(userType == 'parker'){
               $state.go("parker.search");
             }else if(userType == 'owner'){
@@ -78,7 +85,14 @@ angular.module('starter.controllers', [])
         error: function(user1, error) {
           div.innerHTML = 'Login failed, please try again';
         }
+<<<<<<< HEAD
       });  
+=======
+
+      });
+
+
+>>>>>>> 99c30267c7663693815c6867785d25e29f434ee2
     }
 
     $scope.signUpClicked = function() {
@@ -92,7 +106,7 @@ angular.module('starter.controllers', [])
   user = {};
   user.username = '';
   user.email = '';
-  user.password = '';  
+  user.password = '';
   user.userType = '';
   return user;
 })
@@ -192,8 +206,6 @@ angular.module('starter.controllers', [])
         $ionicHistory.clearCache();
         $ionicHistory.clearHistory();
         $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
-        var currentUser = Parse.User.current(); 
-        cuurentUser.logOut();
         Parse.User.logOut();
         $state.go('login');
      } else {
@@ -204,11 +216,6 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker) {
-
-  // $scope.goSearchResults = function(){
-  //   $state.go("parker.searchResults");
-  // }
-
   var timeSlots = 0;
 
     var startDate;
@@ -223,23 +230,23 @@ angular.module('starter.controllers', [])
 
     var startDateObj = {
       callback: function (val) {  //Mandatory
-        
+
         startDate = new Date(val);
         console.log('Return value from the datepicker popup is : ' + val, new Date(val));
         ionicTimePicker.openTimePicker(setFirstTime);
       },
 
       from: new Date(),
-      inputDate: new Date(),   
-      mondayFirst: true,       
-      setLabel: 'Set Start Date' 
+      inputDate: new Date(),
+      mondayFirst: true,
+      setLabel: 'Set Start Date'
     };
 
     ionicDatePicker.openDatePicker(startDateObj);
-    
+
 
     //time picker
-    
+
     console.log("Open timepicker");
       var setFirstTime = {
       callback: function (val) {      //Mandatory
@@ -251,24 +258,24 @@ angular.module('starter.controllers', [])
           startTime = new Date(val * 1000);
           var endDateObj = {
           callback: function (val) {  //Mandatory
-            
+
             endDate = new Date(val);
             console.log('Return value from the datepicker popup is : ' + val, new Date(val));
             ionicTimePicker.openTimePicker(setSecondTime);
           },
 
       from: startDate,
-      inputDate: startDate,   
-      mondayFirst: true,          
-      setLabel: 'Set End Date' 
+      inputDate: startDate,
+      mondayFirst: true,
+      setLabel: 'Set End Date'
     };
           ionicDatePicker.openDatePicker(endDateObj);
         }
       },
-      inputTime: ((new Date()).getHours() * 60 * 60),   
-      format: 24,         
-      step: 60,           
-      setLabel: 'Set Start Time'    
+      inputTime: ((new Date()).getHours() * 60 * 60),
+      format: 24,
+      step: 60,
+      setLabel: 'Set Start Time'
     };
     var setSecondTime = {
       callback: function (val) {      //Mandatory
@@ -308,13 +315,13 @@ angular.module('starter.controllers', [])
           console.log(allTimeSlots);
         }
       },
-      inputTime: ((new Date()).getHours() * 60 * 60),   
-      format: 24,         
-      step: 60,           
-      setLabel: 'Set End Time'    
+      inputTime: ((new Date()).getHours() * 60 * 60),
+      format: 24,
+      step: 60,
+      setLabel: 'Set End Time'
     };
 
-    
+
   }
 
 
@@ -330,7 +337,7 @@ angular.module('starter.controllers', [])
     console.log('end date = ' + (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear());
     console.log("end time = " +endTime.getUTCHours());
     console.log("address = " + address);
-    
+
     var div = document.getElementById('invalid')
 
     geocoder.geocode( { 'address': address}, function(results, status) {
@@ -347,21 +354,21 @@ angular.module('starter.controllers', [])
 
     // QUERY BELOW ALMOST WORKS. PLZ FIX DONT REIMPLEMENT.
 
-    var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
-    var PlaceObject = Parse.Object.extend("PlaceObject");
-    var query = new Parse.Query(PlaceObject);
-    query.near("location", myGeoPoint);
-    query.withinMiles(30);
-    // successful object list
-    var placesObjects;
-    console.log("do i get here? right before query.find");
-    query.find({
-    success: function(placesObjects, count) {
-      // TODO: iterate through place objects here 
-      alert(count);
-    }
-    });
-    console.log("place objects: " + JSON.stringify(placesObjects));
+    // var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
+    // var PlaceObject = Parse.Object.extend("PlaceObject");
+    // var query = new Parse.Query(PlaceObject);
+    // query.near("location", myGeoPoint);
+    // query.withinMiles(30);
+    // // successful object list
+    // var placesObjects;
+    // console.log("do i get here? right before query.find");
+    // query.find({
+    // success: function(placesObjects, count) {
+    //   // TODO: iterate through place objects here
+    //   alert(count);
+    // }
+    // });
+    // console.log("place objects: " + JSON.stringify(placesObjects));
     // filter these by time
     $state.go("parker.parkingSearchResults");
   }
@@ -369,7 +376,33 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkingSearchResultsCtrl', function($scope, $ionicPopup, $state) {
-  console.log("in parking search results!");  
+  console.log("in parking search results!");
+
+  // TODO: modify code to use query results rather than preset id values
+  // maybe by making each item a query object
+  // TODO: make sure sorted by distance!!
+  $scope.items = [
+    { id: 0},
+    { id: 1},
+    { id: 2}
+    ];
+
+  $scope.itemClicked = function(item) {
+    console.log("This item was clicked: " + item + "!");
+    $state.go("parker.reservation");
+  }
+})
+
+.controller('reservationCtrl', function($scope, $ionicPopup, $state) {
+  // TODO: pass item info
+  console.log("in reservation page!");
+  $scope.seeOwnerPage = function() {
+      $state.go("parker.spotOwnerInformation");
+  }
+})
+
+.controller('spotOwnerInformationCtrl', function($scope, $ionicPopup, $state) {
+  console.log("in spot control page!");
 
 })
 //getting payment token for owner
@@ -379,30 +412,30 @@ angular.module('starter.controllers', [])
   $http.defaults.headers.common['X-Mashape-Key']  = NOODLIO_PAY_API_KEY;
   $http.defaults.headers.common['Content-Type']   = 'application/x-www-form-urlencoded';
   $http.defaults.headers.common['Accept']         = 'application/json';
-  
+
   $scope.FormData = {
     number: "",
     cvc: "",
     exp_month: "",
     exp_year: "",
-    test: TEST_MODE, 
+    test: TEST_MODE,
   };
-  
+
   $scope.createToken = function() {
-    
+
     // init for the DOM
     $scope.ResponseData = {
       loading: true
     };
-    
+
     // create a token and validate the credit card details
     $http.post(NOODLIO_PAY_API_URL + "/tokens/create", $scope.FormData)
     .success(
       function(response){
-        
+
         // --> success
         console.log(response)
-        
+
         if(response.hasOwnProperty('id')) {
           var token = response.id; $scope.ResponseData['token'] = token;
           proceedCharge(token);
@@ -421,10 +454,10 @@ angular.module('starter.controllers', [])
       }
     );
   };
-  
+
   // charge the customer with the token
   function proceedCharge(token) {
-    
+
     var param = {
       source: token,
       amount: 100,
@@ -433,21 +466,21 @@ angular.module('starter.controllers', [])
       stripe_account: STRIPE_ACCOUNT_ID,
       test: TEST_MODE,
     };
-    
+
     $http.post(NOODLIO_PAY_API_URL + "/charge/token", param)
     .success(
       function(response){
-        
+
         // --> success
         console.log(response);
         $scope.ResponseData['loading'] = false;
-        
+
         if(response.hasOwnProperty('id')) {
           var paymentId = response.id; $scope.ResponseData['paymentId'] = paymentId;
         } else {
           $scope.ResponseData['paymentId'] = 'Error, see console';
         };
-        
+
       }
     )
     .error(
@@ -458,11 +491,11 @@ angular.module('starter.controllers', [])
       }
     );
   };
-  
+
 })
 
 
-//where we set up the payment... should be for parker 
+//where we set up the payment... should be for parker
 .controller('parkerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge) {
     $scope.ProductMeta = {
     title: "Awesome product",
@@ -505,7 +538,7 @@ angular.module('starter.controllers', [])
       // then chare the user through your custom node.js server (server-side)
       StripeCharge.chargeUser(stripeToken, $scope.ProductMeta).then(
         function(StripeInvoiceData){
-          
+
           if(StripeInvoiceData.hasOwnProperty('id')) {
             $scope.status['message'] = "Success! Check your Stripe Account";
           } else {
@@ -559,9 +592,9 @@ angular.module('starter.controllers', [])
   $scope.ratingsCallback = function(rating) {
         console.log('Selected rating is : ', rating);
     };
- 
 
-  //logout 
+
+  //logout
   $scope.showLogout = function() {
     console.log("in show logout");
    var confirmPopup = $ionicPopup.confirm({
@@ -602,7 +635,7 @@ angular.module('starter.controllers', [])
   parkingSpace = {};
   parkingSpace.title = '';
   parkingSpace.price = '';
-  parkingSpace.uniqueID = '';  
+  parkingSpace.uniqueID = '';
   parkingSpace.parkerName = '';
   parkingSpace.parkerContactInfo = '';
   return parkingSpace;
@@ -680,7 +713,7 @@ angular.module('starter.controllers', [])
        console.log('You are not sure delete ' + item.title);
      }
    });
-    
+
   };
   $scope.edit = function(item) {
     
@@ -690,19 +723,14 @@ angular.module('starter.controllers', [])
     console.log("in edit function", parkingSpace.title);
     $state.go('owner.spaceInfo');
   };
-  //ask for owner items 
-  /*$scope.items = [
-    { id: 0, title: "Parking Space 1", price: 20, uniqueID: '3924pw4hi'},
-    { id: 1, title: "Test Space 2", price: 30, uniqueID: '1p29u3irhwejln' },
-    { id: 2,title: "Sara is Cool", price: 100, uniqueID: '29u42i3wrehlj' }];*/
- 
+
 })
 
 .controller('ownerSpaceInfoCtrl', function($scope, $ionicPopup, $state, $stateParams, parkingSpace) {
 
   $scope.parkingSpace = parkingSpace;
   console.log("in owner space " + parkingSpace.title);
- 
+
 })
 
 .controller('ownerAddSpaceCtrl', function($scope, $ionicNavBarDelegate,$ionicPopup, $state, ionicTimePicker, ionicDatePicker, user) {
@@ -717,9 +745,7 @@ angular.module('starter.controllers', [])
 
 
   $scope.addSpace = function(){
-      //create parse subclass
       var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
-      
       var parkingSpaceName = $scope.data.spaceName;
       var price = $scope.data.price;
       var address = $scope.data.address;
@@ -817,7 +843,19 @@ angular.module('starter.controllers', [])
                 }
               });
       }
-     
+      //save in date database by hour
+      var parseFile = new Parse.File(name, file);
+      parseFile.save().then(function() {
+      // The file has been saved to Parse.
+      }, function(error) {
+      // The file either could not be read, or could not be saved to Parse.
+      });
+      parkingSpace.set("picture", parseFile);
+      //for each dic in allTimes,
+      //for each time frame in each dict
+      //parse ish
+      var point = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
+
   }
    //image uploader
   var imageUploader = new ImageUploader();
@@ -840,23 +878,23 @@ angular.module('starter.controllers', [])
     var endTime;
     var startDateObj = {
       callback: function (val) {  //Mandatory
-        
+
         startDate = new Date(val);
         console.log('Return value from the datepicker popup is : ' + val, new Date(val));
         ionicTimePicker.openTimePicker(setFirstTime);
       },
 
       from: new Date(),
-      inputDate: new Date(),   
-      mondayFirst: true,       
-      setLabel: 'Set Start Date' 
+      inputDate: new Date(),
+      mondayFirst: true,
+      setLabel: 'Set Start Date'
     };
 
     ionicDatePicker.openDatePicker(startDateObj);
-    
+
 
     //time picker
-    
+
     console.log("Open timepicker");
       var setFirstTime = {
       callback: function (val) {      //Mandatory
@@ -868,24 +906,24 @@ angular.module('starter.controllers', [])
           startTime = new Date(val * 1000);
           var endDateObj = {
           callback: function (val) {  //Mandatory
-            
+
             endDate = new Date(val);
             console.log('Return value from the datepicker popup is : ' + val, new Date(val));
             ionicTimePicker.openTimePicker(setSecondTime);
           },
 
       from: startDate,
-      inputDate: startDate,   
-      mondayFirst: true,          
-      setLabel: 'Set End Date' 
+      inputDate: startDate,
+      mondayFirst: true,
+      setLabel: 'Set End Date'
     };
           ionicDatePicker.openDatePicker(endDateObj);
         }
       },
-      inputTime: ((new Date()).getHours() * 60 * 60),   
-      format: 24,         
-      step: 60,           
-      setLabel: 'Set Start Time'    
+      inputTime: ((new Date()).getHours() * 60 * 60),
+      format: 24,
+      step: 60,
+      setLabel: 'Set Start Time'
     };
     var setSecondTime = {
       callback: function (val) {      //Mandatory
@@ -925,22 +963,15 @@ angular.module('starter.controllers', [])
           console.log(allTimeSlots);
         }
       },
-      inputTime: ((new Date()).getHours() * 60 * 60),   
-      format: 24,         
-      step: 60,           
-      setLabel: 'Set End Time'    
+      inputTime: ((new Date()).getHours() * 60 * 60),
+      format: 24,
+      step: 60,
+      setLabel: 'Set End Time'
     };
 
-    
+
   }
 
-
-
-
-
-  //owner add space
+//owner add space
 
 })
-
-
-

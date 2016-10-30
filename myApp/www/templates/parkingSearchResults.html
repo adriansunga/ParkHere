@@ -1,13 +1,11 @@
 <ion-view title="Parking Search Results" id="page6">
-    <ion-nav-buttons side="left" class="has-header">
-        <button class="button button-icon icon ion-ios-arrow-back"></button>
-    </ion-nav-buttons>
     <ion-content padding="true" class="has-header">
-        <ion-list id="parkingSearchResults-list4">
-            <ion-item class="item-thumbnail-left" id="parkingSearchResults-list-item11">
-                <h2>Price per hour:</h2>
-                <p>Address:</p>
-            </ion-item>
+        <ion-list id="parkingSearchResultsList">
+        <ion-item class="item-thumbnail-left" id="parkingSearchResults-list-item11" ng-repeat="item in items" ng-click="itemClicked(item)">
+            <img ng-src="{{item.img}}">
+            <h2>Price per hour: {{item.price}}</h2>
+            <p>Distance: {{item.distance}}</p>
+            <p>Address: {{item.address}}</p>
         </ion-list>
     </ion-content>
 </ion-view>

@@ -32,7 +32,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
     Parse.initialize("com.team3.parkhere");
     Parse.serverURL = 'http://138.68.43.212:1337/parse';
     var currentUser = Parse.User.current();
-    
+
 
   });
 })
@@ -48,7 +48,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
       StripeCheckoutProvider.defaults({key: NOODLIO_PAY_CHECKOUT_KEY['live']});
       break
   };
-  
+
   $stateProvider
     .state('login', {
     url: '/login',
@@ -73,7 +73,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
         controller: 'parkerSearchCtrl'
       }
     },
-    
+
   })
   .state('parker.parkingSearchResults', {
     url: '/parkingSearchResults',
@@ -83,7 +83,26 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
         controller: 'parkingSearchResultsCtrl'
       }
     },
-    
+
+  })
+  .state('parker.reservation', {
+    url: '/reservation',
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/reservation.html',
+        controller: 'reservationCtrl'
+      }
+    },
+  })
+  .state('parker.spotOwnerInformation', {
+    url: '/spotOwnerInformation',
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/ownersInformation.html',
+        controller: 'spotOwnerInformationCtrl'
+      }
+    },
+
   })
    .state('parker.paypal', {
     url: '/paypal',
@@ -93,7 +112,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
         controller: 'paypalCtrl'
       }
     },
-    
+
   })
   .state('owner', {
     url: '/owner',
@@ -109,7 +128,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
         controller: 'ownerHomeCtrl'
       }
     }
-    
+
   })
   .state('owner.addSpace', {
     url: '/addSpace',
@@ -134,7 +153,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
       // checkout.js isn't fetched until this is resolved.
       stripe: StripeCheckoutProvider.load
     }
-    
+
   })
    .state('parker.pay', {
     url: '/pay',
@@ -148,7 +167,18 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
       // checkout.js isn't fetched until this is resolved.
       stripe: StripeCheckoutProvider.load
     }
-    
+
+  })
+
+  .state('owner.addSpace', {
+    url: '/addSpace',
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/ownerAddSpace.html',
+        controller: 'ownerAddSpaceCtrl'
+      }
+    }
+
   })
 
   .state('owner.spaceInfo', {
@@ -160,7 +190,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
         controller: 'ownerSpaceInfoCtrl'
       }
     }
-    
+
   })
   .state('owner.profile', {
     url: '/profile',
@@ -170,11 +200,11 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
         //controller: 'ownerAddSpaceCtrl'
       }
     },
-    
+
   })
 
 $urlRouterProvider.otherwise('/login');
-  
+
 });
 
 
@@ -183,7 +213,7 @@ angular.module('starter.services', [])
 
 .factory('StripeCharge', function($q, $http, StripeCheckout) {
   var self = this;
-  
+
   // add the following headers for authentication
   $http.defaults.headers.common['X-Mashape-Key']  = NOODLIO_PAY_API_KEY;
   $http.defaults.headers.common['Content-Type']   = 'application/x-www-form-urlencoded';
@@ -202,7 +232,7 @@ angular.module('starter.services', [])
     var qCharge = $q.defer();
 
     var chargeUrl = NOODLIO_PAY_API_URL + "/charge/token";
-    
+
     var param = {
       source: stripeToken,
       amount: Math.floor(ProductMeta.priceUSD*100), // amount in cents
@@ -211,7 +241,7 @@ angular.module('starter.services', [])
       stripe_account: STRIPE_ACCOUNT_ID,
       test: TEST_MODE,
     };
-    
+
     $http.post(NOODLIO_PAY_API_URL + "/charge/token", param)
     .success(
       function(StripeInvoiceData){
@@ -273,8 +303,3 @@ angular.module('starter.services', [])
 
   return self;
 });
-
-
-
-
-
