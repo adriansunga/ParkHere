@@ -208,7 +208,7 @@ angular.module('starter.controllers', [])
 .service('parkerSearch', function() {
   var parkerSearch = this;
   parkerSearch.parkingSpaceList = [];
-  parkerSearch.address = '';
+  parkerSearch.geoPoint = new Parse.GeoPoint();
   return parkerSearch;
 })
 
@@ -323,7 +323,6 @@ angular.module('starter.controllers', [])
 
   $scope.findParkingSpaces = function(){
     var address = document.getElementById('searchTextBox').value;
-    parkerSearch.address = address;
     var geocoder = new google.maps.Geocoder();
     var latitude;
     var longitude;
@@ -345,6 +344,8 @@ angular.module('starter.controllers', [])
         console.log("longitude = " + longitude);
 
         var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
+        parkerSearch.geoPoint = myGeoPoint;
+        console.log("geoPoint: " + myGeoPoint);
         var parkingSpace = Parse.Object.extend("ParkingSpace");
         var query = new Parse.Query(parkingSpace);
 
@@ -357,7 +358,6 @@ angular.module('starter.controllers', [])
             console.log("Total: "+results.length);
             // console.log("parking space objects: " + JSON.stringify(results));
             parkerSearch.parkingSpaceList = results;
-            console.log("parking space objects: " + JSON.stringify(results));
             $state.go("parker.parkingSearchResults");  
           },
           error: function(error) {
@@ -382,11 +382,27 @@ angular.module('starter.controllers', [])
   // TODO: modify code to use query results rather than preset id values
   // maybe by making each item a query object
   console.log("parking space objects: " + JSON.stringify(parkerSearch.parkingSpaceList[0]));
+  console.log("geoPoint: " + parkerSearch.geoPoint);
 
-  // TODO: make sure sorted by distance!!
-  $scope.items = parkerSearch.parkingSpaceList;
 
-  console.log($scope.items[0].get("picture"));
+  $scope.parkingSpaces = [];
+  var addToList = true;
+
+
+  for (var i = 0; i < parkerSearch.parkingSpaceList.length; i++) {
+    addToList = true;
+    for (var j = 0; j < $scope.parkingSpaces.length; j++) {
+      if((parkerSearch.parkingSpaceList[i].get("ownerEmail") == $scope.parkingSpaces[j].get("ownerEmail")) &&
+        (parkerSearch.parkingSpaceList[i].get("address") == $scope.parkingSpaces[j].get("address"))){
+        addToList = false;
+      }
+    }
+    if(addToList) {
+      var distance = parkerSearch.geoPoint.milesTo(parkerSearch.parkingSpaceList[i].get("location")); 
+      parkerSearch.parkingSpaceList[i].set("distance", distance);
+      $scope.parkingSpaces.push(parkerSearch.parkingSpaceList[i]);
+    }
+  }
 
   $scope.itemClicked = function(item) {
     console.log("This item was clicked: " + item + "!");
