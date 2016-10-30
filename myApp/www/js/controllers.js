@@ -770,7 +770,8 @@ angular.module('starter.controllers', [])
           parkingSpace.url = qSpace.get('picture')._url
           parkingSpace.type = qSpace.get("type");
           console.log("parking space pic in obj" + parkingSpace.url);
-          var geoPoint = qSpace.get("location");
+          parkingSpace.address = qSpace.get("address");
+          /*var geoPoint = qSpace.get("location");
           var latlng = {lat: geoPoint.latitude, lng: geoPoint.longitude};
           var geocoder = new google.maps.Geocoder();
           geocoder.geocode({'location': latlng}, function(results, status) {
@@ -784,7 +785,7 @@ angular.module('starter.controllers', [])
           } else {
             console.log('Geocoder failed due to: ' + status);
           }
-        });
+        });*/
         },
         error: function(object, error) {
           console.log("find error: " + error);
@@ -888,7 +889,8 @@ angular.module('starter.controllers', [])
           console.log(results[0]);
             latitude = results[0].geometry.location.lat();
             longitude = results[0].geometry.location.lng();
-            console.log("lat " + latitude+ " longitude " + longitude);
+            address = results[0].formatted_address;
+            console.log("lat " + latitude+ " longitude " + longitude+ "address " + address);
             uploadToParse();
         } else {
             console.log("geo error " +status);
@@ -904,6 +906,7 @@ angular.module('starter.controllers', [])
         // The file has been saved to Parse.
         }, function(error) {
             div.innerHTML = 'File upload did not work. Please try again';
+            return;
         });
         for(var i = 0; i < allTimeSlots.length; i++){
         var timeDict = allTimeSlots[i];
@@ -951,6 +954,7 @@ angular.module('starter.controllers', [])
               spaceToSave.set("notes", notes);
               spaceToSave.set("Date", date);
               spaceToSave.set("Hour", time);
+              spaceToSave.set("address", address);
               spaceToSave.set("parker", "");
               spaceToSave.set("reserved", false);
               spaceToSave.save(null, {
@@ -962,14 +966,8 @@ angular.module('starter.controllers', [])
                 }
               });
       }
-      //save in date database by hour
-      var parseFile = new Parse.File(name, file);
-      parseFile.save().then(function() {
-      // The file has been saved to Parse.
-      }, function(error) {
-      // The file either could not be read, or could not be saved to Parse.
-      });
-      parkingSpace.set("picture", parseFile);
+ 
+      
       //for each dic in allTimes,
       //for each time frame in each dict
       //parse ish
@@ -979,14 +977,14 @@ angular.module('starter.controllers', [])
    //image uploader
   var imageUploader = new ImageUploader();
   $scope.file = {};
-  $scope.upload = function() {
+  /*$scope.upload = function() {
     imageUploader.push($scope.file, function(data){
       console.log('File uploaded Successfully', $scope.file, data);
       $scope.uploadUri = data.url;
       $scope.$digest();
       picFile = $scope.file;
     });
-  };
+  };*/
   var timeSlots = 0;
   $scope.openTimePicker = function(){
     //date picker
