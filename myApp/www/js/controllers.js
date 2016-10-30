@@ -644,6 +644,7 @@ angular.module('starter.controllers', [])
   //spaces owned by this person 
   pSpaceQuery.equalTo("ownerEmail", ownerEmail);
   pSpaceQuery.greaterThanOrEqualTo("Date", today);
+  pSpaceQuery.ascending("Date");
   pSpaceQuery.find({
   success: function(results) {
     //results give me the object ids
