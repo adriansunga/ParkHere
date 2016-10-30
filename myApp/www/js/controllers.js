@@ -36,7 +36,7 @@ angular.module('starter.controllers', [])
             alert("Error: " + error.code + " " + error.message);
         }
     });
-};
+  };
 
 })
 //LogIn Controller
@@ -206,8 +206,16 @@ angular.module('starter.controllers', [])
  };
 })
 
-.controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker) {
-  var timeSlots = 0;
+.service('parkerSearch', function() {
+  var parkerSearch = this;
+  parkerSearch.parkingSpaceList = [];
+  parkerSearch.address = '';
+  return parkerSearch;
+})
+
+.controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch) {
+   
+    var timeSlots = 0;
 
     var startDate;
     var startTime;
@@ -311,13 +319,12 @@ angular.module('starter.controllers', [])
       step: 60,
       setLabel: 'Set End Time'
     };
-
-
   }
 
 
   $scope.findParkingSpaces = function(){
     var address = document.getElementById('searchTextBox').value;
+    parkerSearch.address = address;
     var geocoder = new google.maps.Geocoder();
     var latitude;
     var longitude;
@@ -325,7 +332,7 @@ angular.module('starter.controllers', [])
     //log all values here
     console.log("start date = " + (startDate.getMonth() + 1) + '/' + startDate.getDate() + '/' +  startDate.getFullYear());
     console.log("start time = " +startTime.getUTCHours());
-    console.log('end date = ' + (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear());
+    console.log("end date = " + (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear());
     console.log("end time = " +endTime.getUTCHours());
     console.log("address = " + address);
 
@@ -337,46 +344,50 @@ angular.module('starter.controllers', [])
         longitude = results[0].geometry.location.lng();
         console.log("lat = " + latitude);
         console.log("longitude = " + longitude);
+
+        var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
+        var parkingSpace = Parse.Object.extend("ParkingSpace");
+        var query = new Parse.Query(parkingSpace);
+
+        query.withinMiles("location", myGeoPoint, 3);
+
+        console.log("do i get here? right before query.find");
+        query.find({
+          success: function(results) {
+            // TODO: iterate through place objects here
+            console.log("Total: "+results.length);
+            // console.log("parking space objects: " + JSON.stringify(results));
+            parkerSearch.parkingSpaceList = results;
+            console.log("parking space objects: " + JSON.stringify(results));
+            $state.go("parker.parkingSearchResults");  
+          },
+          error: function(error) {
+            alert("Error when getting objects!");
+          }
+        });
+
+
       } else {
         console.log("geo error " +status);
         div.innerHTML = 'Something went wrong, please try again';
       }
     });
 
-    // QUERY BELOW ALMOST WORKS. PLZ FIX DONT REIMPLEMENT.
-
-    // var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
-    // var PlaceObject = Parse.Object.extend("PlaceObject");
-    // var query = new Parse.Query(PlaceObject);
-    // query.near("location", myGeoPoint);
-    // query.withinMiles(30);
-    // // successful object list
-    // var placesObjects;
-    // console.log("do i get here? right before query.find");
-    // query.find({
-    // success: function(placesObjects, count) {
-    //   // TODO: iterate through place objects here
-    //   alert(count);
-    // }
-    // });
-    // console.log("place objects: " + JSON.stringify(placesObjects));
-    // filter these by time
-    $state.go("parker.parkingSearchResults");
   }
-
 })
 
-.controller('parkingSearchResultsCtrl', function($scope, $ionicPopup, $state) {
+
+.controller('parkingSearchResultsCtrl', function($scope, $ionicPopup, $state, parkerSearch) {
   console.log("in parking search results!");
 
   // TODO: modify code to use query results rather than preset id values
   // maybe by making each item a query object
+  console.log("parking space objects: " + JSON.stringify(parkerSearch.parkingSpaceList[0]));
+
   // TODO: make sure sorted by distance!!
-  $scope.items = [
-    { id: 0},
-    { id: 1},
-    { id: 2}
-    ];
+  $scope.items = parkerSearch.parkingSpaceList;
+
+  console.log($scope.items[0].get("picture"));
 
   $scope.itemClicked = function(item) {
     console.log("This item was clicked: " + item + "!");
