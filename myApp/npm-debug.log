@@ -1,8 +1,11 @@
 0 info it worked if it ends with ok
-1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'start' ]
+1 verbose cli [ '/usr/local/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'run',
+1 verbose cli   'dashboard' ]
 2 info using npm@2.15.9
 3 info using node@v4.6.0
-4 verbose stack Error: missing script: start
+4 verbose stack Error: missing script: dashboard
 4 verbose stack     at run (/usr/local/lib/node_modules/npm/lib/run-script.js:142:19)
 4 verbose stack     at /usr/local/lib/node_modules/npm/lib/run-script.js:58:5
 4 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:356:5
@@ -12,12 +15,12 @@
 4 verbose stack     at ReadFileContext.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:295:20)
 4 verbose stack     at ReadFileContext.callback (/usr/local/lib/node_modules/npm/node_modules/graceful-fs/graceful-fs.js:78:16)
 4 verbose stack     at FSReqWrap.readFileAfterOpen [as oncomplete] (fs.js:303:13)
-5 verbose cwd /Users/colebrossart/Github/ParkHere/myApp
-6 error Darwin 16.0.0
-7 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "start"
+5 verbose cwd /Users/elizabethworstell/Desktop/Github/ParkHere/myApp
+6 error Darwin 14.3.0
+7 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "run" "dashboard"
 8 error node v4.6.0
 9 error npm  v2.15.9
-10 error missing script: start
+10 error missing script: dashboard
 11 error If you need help, you may report this error at:
 11 error     <https://github.com/npm/npm/issues>
 12 verbose exit [ 1, true ]

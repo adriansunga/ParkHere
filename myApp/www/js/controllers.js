@@ -65,8 +65,9 @@ angular.module('starter.controllers', [])
       div.innerHTML = '';
       Parse.User.logIn(username, password,{
         success: function(user) {
-          if(user.userType != userType){
+          if(user.get("userType") != userType){
             div.innerHTML = 'You have not signed up with this user type';
+          } else {
             if(userType == 'parker'){
               $state.go("parker.search");
             }else if(userType == 'owner'){
@@ -195,8 +196,6 @@ angular.module('starter.controllers', [])
         $ionicHistory.clearCache();
         $ionicHistory.clearHistory();
         $ionicHistory.nextViewOptions({ disableBack: true, historyRoot: true });
-        var currentUser = Parse.User.current();
-        cuurentUser.logOut();
         Parse.User.logOut();
         $state.go('login');
      } else {
@@ -396,8 +395,16 @@ angular.module('starter.controllers', [])
 })
 
 .controller('reservationCtrl', function($scope, $ionicPopup, $state) {
-  // TODO: pass item info 
+  // TODO: pass item info
   console.log("in reservation page!");
+  $scope.seeOwnerPage = function() {
+      $state.go("parker.spotOwnerInformation");
+  }
+})
+
+.controller('spotOwnerInformationCtrl', function($scope, $ionicPopup, $state) {
+  console.log("in spot control page!");
+
 })
 //getting payment token for owner
 .controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $http) {

@@ -31,8 +31,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
 
     Parse.initialize("com.team3.parkhere");
     Parse.serverURL = 'http://138.68.43.212:1337/parse';
-
-
+    var currentUser = Parse.User.current();
 
   });
 })
@@ -84,6 +83,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
       }
     },
 
+<<<<<<< HEAD
   })
   .state('parker.reservation', {
     url: '/reservation',
@@ -93,7 +93,17 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
         controller: 'reservationCtrl'
       }
     },
-
+  })
+  .state('parker.spotOwnerInformation', {
+    url: '/spotOwnerInformation',
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/ownersInformation.html',
+        controller: 'spotOwnerInformationCtrl'
+      }
+    },
+=======
+>>>>>>> origin/master
   })
    .state('parker.paypal', {
     url: '/paypal',
