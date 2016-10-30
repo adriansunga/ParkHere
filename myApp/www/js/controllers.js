@@ -960,6 +960,7 @@ angular.module('starter.controllers', [])
               spaceToSave.save(null, {
                 success: function(spaceToSave) {
                   div.innerHTML = "Space added!";
+                  $state.go('owner.home');
                 },
                 error: function(spaceToSave, error) {
                   div.innerHTML = "Failed to upload space. Please try again";
