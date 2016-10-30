@@ -633,7 +633,7 @@ angular.module('starter.controllers', [])
   //need to get all parking spaces
   //get all parking spaces where email == ownerEmail and endDate >= today
   var today = new Date();
-  var yesterday = today.setDate(today.getDate() - 1);
+  today.setHours(0,0,0,0);
   //if(Parse == null){
     //FOR TESTING
    // Parse.initialize("com.team3.parkhere");
@@ -643,7 +643,7 @@ angular.module('starter.controllers', [])
   var pSpaceQuery = new Parse.Query(parkingSpaceParse);
   //spaces owned by this person 
   pSpaceQuery.equalTo("ownerEmail", ownerEmail);
-  //pSpaceQuery.greaterThan("Date", yesterday);
+  pSpaceQuery.greaterThanOrEqualTo("Date", today);
   pSpaceQuery.find({
   success: function(results) {
     //results give me the object ids
@@ -665,7 +665,8 @@ angular.module('starter.controllers', [])
             "name": parkingSpace.get('name'), 
             "price": parkingSpace.get("price"),
             "image": parkingSpace.get('picture')._url,
-            "uniqueID": parkingSpace.id
+            "uniqueID": parkingSpace.id,
+            "email": user.email
 
           }
           console.log("dict " + dict);
@@ -682,19 +683,66 @@ angular.module('starter.controllers', [])
 
   $scope.onItemDelete = function(item) {
     //need to check if we can delete it
-    var confirmPopup = $ionicPopup.confirm({
-     title: 'Delete ' + item.title,
-     template: 'Are you sure you want to delete ' + item.title +'?'
-   });
+    console.log(item);
+    console.log("^item");
+    console.log(parkingSpace);
+    var query = new Parse.Query(parkingSpaceParse);
+    query.equalTo("name", item.name);
+    query.equalTo("ownerEmail", item.email);
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    query.greaterThanOrEqualTo("Date", today);
+    query.exists("parker");
+    query.find({
+      success: function(results) {
+        if(results.length > 0){
+          var alertPopup = $ionicPopup.alert({
+               title: "You cannot delete as parkers have reserved this space",
+            });
+        }else{
+          confirmDelete()
+        }
+      }
+    });
+    function confirmDelete(){
+      var confirmPopup = $ionicPopup.confirm({
+         title: 'Delete ' + item.name,
+         template: 'Are you sure you want to delete ' + item.name +'?'
+       });
 
-   confirmPopup.then(function(res) {
-     if(res) {
-       //delete (need to go to server)
-       $scope.items.splice($scope.items.indexOf(item), 1);
-     } else {
-       console.log('You are not sure delete ' + item.title);
-     }
-   });
+       confirmPopup.then(function(res) {
+         if(res) {
+            console.log(item.name + " " + item.email);
+            var allTimesQuery = new Parse.Query(parkingSpaceParse);
+            allTimesQuery.equalTo("name", item.name);
+            allTimesQuery.equalTo("ownerEmail", item.email);
+            var today = new Date();
+            today.setHours(0,0,0,0);
+            allTimesQuery.greaterThanOrEqualTo("Date", today);
+            allTimesQuery.find({
+              success: function(results) {
+                console.log("found some spaces");
+                console.log(results);
+                 $scope.items.splice($scope.items.indexOf(item), 1);
+                  for(var i = 0; i < results.length; i ++){
+                    results[i].destroy({
+                      success: function(myObject) {
+                      },
+                      error: function(myObject, error) {console.log("delete error: " + error);}
+                    });
+                  }
+                },
+              error: function(object, error) {
+                console.log("find error: " + error);
+              }
+            });
+                 
+         } else {
+           console.log('You are not sure delete ' + item.name);
+         }
+       });
+    }
+    
 
   };
   $scope.edit = function(item) {
