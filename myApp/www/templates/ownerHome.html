@@ -1,17 +1,18 @@
 
 <ion-view title="Owner Home" id="page7">
     <ion-nav-buttons side="right" class="has-header">
-        <button class="button button-icon icon ion-android-add" ng-click="addSpace()"></button>
+        <button class="button button-icon icon ion-android-add" ui-sref="owner.addSpace"></button>
     </ion-nav-buttons>
     <ion-content padding="true" class="has-header">
         <div class="item item-body" id="ownerHome-list-item-container1">
             <ion-list id="ownerHome-list4" >
-                <ion-item class="item-thumbnail-left" ng-repeat="item in items" 
-                  item="item" ng-click="edit(item)" class="item-remove-animate">
-                    <img ng-src="{{ item.image }}">
-                    <h2>{{item.name}}</h2>
-                    <p>${{item.price}}/hour</p>
-                    <ion-option-button class="button-positive"  ng-click="edit(item)">Edit</ion-option-button>
+                <ion-item  class="item-thumbnail-left" ng-repeat="item in items" 
+                  item="item" ng-click="edit(item)"  class="item-remove-animate">
+                        <img ng-src="{{ item.image }}">
+                        <h2>{{item.name}}</h2>
+                        <p>${{item.price}}/hour</p>
+                        <div id="divhidden" style="display: none;">{{item.uniqueID}}</div>
+                    <ion-option-button class="button-positive" ng-click="edit(item)">View</ion-option-button>
                    <ion-option-button class="button-assertive"
                              ng-click="onItemDelete(item)">Delete</ion-option-button>
                 </ion-item>

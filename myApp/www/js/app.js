@@ -7,6 +7,7 @@
 
 
 //noodlio pay ish
+
 var NOODLIO_PAY_API_URL         = "https://noodlio-pay.p.mashape.com";
 var NOODLIO_PAY_API_KEY         = "hkou9g9rVgmshTeafr21FodTUdsip1Gsko3jsn8G4LLowC6ReO";
 var STRIPE_ACCOUNT_ID           = "acct_197dO3BnddH3DZLG";
@@ -112,6 +113,16 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
     }
     
   })
+    .state('owner.spaceInfo', {
+    url: '/spaceInfo',
+    cache: false,
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/ownerSpaceInfo.html',
+        controller: 'ownerSpaceInfoCtrl'
+      }
+    }
+  })
   .state('owner.payment', {
     url: '/payment',
     views: {
@@ -141,17 +152,6 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
     
   })
 
-  .state('owner.spaceInfo', {
-    url: '/spaceInfo',
-    cache: false,
-    views: {
-      'side-menu21': {
-        templateUrl: 'templates/ownerSpaceInfo.html',
-        controller: 'ownerSpaceInfoCtrl'
-      }
-    }
-    
-  })
   .state('owner.profile', {
     url: '/profile',
     views: {

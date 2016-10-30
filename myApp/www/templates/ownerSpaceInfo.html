@@ -1,20 +1,28 @@
 <ion-view title="Owner Space Info" id="page8">
+<ion-nav-buttons side="left" class="has-header">
+    <button class="button button-icon icon ion-android-arrow-back" ui-sref="owner.home"></button>
+</ion-nav-buttons> 
     <ion-content padding="true" class="has-header">
         <h1 id="ownerSpaceInfo-heading1" style="color:#000000;">{{parkingSpace.title}}</h1>
         <h3 id="ownerSpaceInfo-heading2" style="color:#000000;">${{parkingSpace.price}}/hour</h3>
         <h3 id="ownerSpaceInfo-heading3" style="color:#000000;"></h3>
-        <div style="margin: 0px; line-height: 250px; background-color: rgb(232, 235, 239); text-align: center;">
-            <i class="icon ion-image" style="font-size: 64px; color: rgb(136, 136, 136); vertical-align: middle;" > <img ng-src="{{ parkingSpace.url }}"></i> <!-- //{{ trustSrc(parkingSpace.url) }}-->
+        <div style="margin: 0px; line-height: 250px; text-align: center;">
+            <i class="icon " style="font-size: 64px; vertical-align: middle;" > <img style="width: 200px;" ng-src="{{ parkingSpace.url }}"></i> <!-- //{{ trustSrc(parkingSpace.url) }}-->
         </div>
-        <div class="spacer" style="width: 300px; height: 24px;"></div>
-        <div id="ownerSpaceInfo-markdown3" style="color:#000000;font-size:14px;">
             <h5>Address: </h5>
             <p> {{parkingSpace.address}}</p>
+        </div>
+        </div>
+            <h5>Type: </h5>
+            <p> {{parkingSpace.type}}</p>
         </div>
         <div id="ownerSpaceInfo-markdown4" style="color:#000000;font-size:14px;">
             <h5>Notes: </h5>
             <p> {{parkingSpace.notes}}</p>
         </div>
-        <button id="parkingSearch-button" class="button button-balanced  button-block" ng-click = "findTimeSlots()">See Time Slots</button>
+        </br>
+        <button id="parkingSearch-button" class="button button-balanced  button-block" ng-click = "getTimeSpaces()">See Time Slots</button>
+         <div id="timeSlots" style="color:#000000;font-size:14px;">
+        </div>
     </ion-content>
 </ion-view>
