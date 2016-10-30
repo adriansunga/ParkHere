@@ -67,33 +67,23 @@ angular.module('starter.controllers', [])
       user.userType = userType;
       console.log("user object in login " + user.email);
       Parse.User.logIn(username, password,{
-<<<<<<< HEAD
-        success: function(user1) {
-            console.log("user object in login " + user.email);
-=======
         success: function(user) {
           if(user.get("userType") != userType){
             div.innerHTML = 'You have not signed up with this user type';
           } else {
->>>>>>> 99c30267c7663693815c6867785d25e29f434ee2
             if(userType == 'parker'){
               $state.go("parker.search");
             }else if(userType == 'owner'){
               $state.go("owner.home")
             }
+          }
         },
         error: function(user1, error) {
           div.innerHTML = 'Login failed, please try again';
         }
-<<<<<<< HEAD
       });  
-=======
 
-      });
-
-
->>>>>>> 99c30267c7663693815c6867785d25e29f434ee2
-    }
+  }
 
     $scope.signUpClicked = function() {
       console.log("sign up clicked");
@@ -563,18 +553,6 @@ angular.module('starter.controllers', [])
 //owner controller
 .controller('ownerMenuCtrl', function($scope,$ionicNavBarDelegate, $ionicPopup, $state, $ionicLoading, $ionicHistory) {
    $ionicNavBarDelegate.showBackButton(false);
-  /*$scope.addSpace = function(){
-    $state.go("owner.addSpace");
-  }
-  $scope.goHome = function(){
-    $state.go("owner.home");
-  }
-  $scope.goProfile = function(){
-    $state.go("owner.profile");
-  }
-  $scope.payment = function() {
-      $state.go("owner.payment");
-    }*/
     //rating
   $scope.ratingsObject = {
         iconOn : 'ion-ios-star',
@@ -635,58 +613,64 @@ angular.module('starter.controllers', [])
   parkingSpace = {};
   parkingSpace.title = '';
   parkingSpace.price = '';
-  parkingSpace.uniqueID = '';
   parkingSpace.parkerName = '';
   parkingSpace.parkerContactInfo = '';
+  parkingSpace.url = '';
+  parkingSpace.address = '';
+  parkingSpace.notes = '';
+  parkingSpace.uniqueID = '';
+  parkingSpace.ownerEmail = ''; 
+  parkingSpace.type = ''; 
   return parkingSpace;
 })
 
 .controller('ownerHomeCtrl', function($scope,$ionicNavBarDelegate, $ionicPopup, $state, parkingSpace, user) {
    $ionicNavBarDelegate.showBackButton(false);
-   //not working... not sure why
-  //to get current user, use currentUser = Parse.User.current();
-  //to get email currentUser.username (using email as username)
- // currentUser = Parse.User.current();
-  //var ownerEmail = currentUser.email;
+
   var ownerEmail = user.email;
   $scope.items = [];
   var usedSpaces= new Set();
   //need to get all parking spaces
   //get all parking spaces where email == ownerEmail and endDate >= today
   var today = new Date();
+  var yesterday = today.setDate(today.getDate() - 1);
   //if(Parse == null){
     //FOR TESTING
-    Parse.initialize("com.team3.parkhere");
-    Parse.serverURL = 'http://138.68.43.212:1337/parse';
+   // Parse.initialize("com.team3.parkhere");
+    //Parse.serverURL = 'http://138.68.43.212:1337/parse';
   //}
   var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
   var pSpaceQuery = new Parse.Query(parkingSpaceParse);
   //spaces owned by this person 
   pSpaceQuery.equalTo("ownerEmail", ownerEmail);
-  //pSpaceQuery.greaterThanOrEqualTo("Date", today-1);
+  //pSpaceQuery.greaterThan("Date", yesterday);
   pSpaceQuery.find({
   success: function(results) {
     //results give me the object ids
-    console.log(results);
+    console.log("owner home " + results);
     for(var i = 0; i < results.length; i++){
       var objID = results[i].id;
       //don't need to relook if already has key
-      console.log("objID " + results[i].id);
       var query = new Parse.Query(parkingSpaceParse);
       query.get(objID, {
         success: function(parkingSpace) {
           if(usedSpaces.has(parkingSpace.get('name'))){
             return;
           }
+          console.log(parkingSpace);
           usedSpaces.add(parkingSpace.get('name'));
+          console.log("in get obj " + parkingSpace.id);
           var dict = {
             "id": i,
             "name": parkingSpace.get('name'), 
             "price": parkingSpace.get("price"),
-            "uniqueID": objID
+            "image": parkingSpace.get('picture')._url,
+            "uniqueID": parkingSpace.id
+
           }
           console.log("dict " + dict);
-          $scope.items.push(dict);
+          $scope.$apply(function(){$scope.items.push(dict);});
+          console.log("scope items " + $scope.items);
           console.log($scope.items);
         },
         error: function(object, error) {
@@ -696,8 +680,6 @@ angular.module('starter.controllers', [])
   }
   });
 
-
-  //console.log("user from parse user " + currentUser.username);
   $scope.onItemDelete = function(item) {
     //need to check if we can delete it
     var confirmPopup = $ionicPopup.confirm({
@@ -716,20 +698,109 @@ angular.module('starter.controllers', [])
 
   };
   $scope.edit = function(item) {
-    
+    console.log("edit item returned",item);
     parkingSpace.title = item.name;
     parkingSpace.price = item.price;
     parkingSpace.uniqueID = item.uniqueID;
+    parkingSpace.ownerEmail = ownerEmail;
     console.log("in edit function", parkingSpace.title);
-    $state.go('owner.spaceInfo');
+    $state.go("owner.spaceInfo");
   };
 
 })
 
-.controller('ownerSpaceInfoCtrl', function($scope, $ionicPopup, $state, $stateParams, parkingSpace) {
-
+.controller('ownerSpaceInfoCtrl', function($scope, $ionicPopup, $state, $stateParams, parkingSpace, user, $sce) {
   $scope.parkingSpace = parkingSpace;
-  console.log("in owner space " + parkingSpace.title);
+  console.log("in owner space id " + parkingSpace.uniqueID);
+  var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
+  var pSpaceQuery = new Parse.Query(parkingSpaceParse);
+  console.log(parkingSpace.uniqueID);
+  pSpaceQuery.get(parkingSpace.uniqueID, {
+        success: function(qSpace) {
+          console.log(qSpace);
+          parkingSpace.notes = qSpace.get("notes");
+          parkingSpace.url = qSpace.get('picture')._url
+          parkingSpace.type = qSpace.get("type");
+          console.log("parking space pic in obj" + parkingSpace.url);
+          var geoPoint = qSpace.get("location");
+          var latlng = {lat: geoPoint.latitude, lng: geoPoint.longitude};
+          var geocoder = new google.maps.Geocoder();
+          geocoder.geocode({'location': latlng}, function(results, status) {
+          if (status === 'OK') {
+            if (results[1]) {
+              //console.log(results[1]);
+              parkingSpace.address = results[1].formatted_address;
+            } else {
+              console.log('No results found');
+            }
+          } else {
+            console.log('Geocoder failed due to: ' + status);
+          }
+        });
+        },
+        error: function(object, error) {
+          console.log("find error: " + error);
+        }
+  });
+
+  $scope.getTimeSpaces = function(){
+      var allTimesQuery = new Parse.Query(parkingSpaceParse);
+      allTimesQuery.equalTo("name", parkingSpace.title);
+      allTimesQuery.equalTo("ownerEmail", parkingSpace.ownerEmail);
+      var today = new Date();
+      today.setHours(0,0,0,0);
+      allTimesQuery.greaterThanOrEqualTo("Date", today);
+      //need a map: Date: string array[0-24]
+      //in array, if parker has reserved hour, put in parker name, if there is an hour but no one reserved, 0
+      var dateToList = {};
+      var sortedDates = [];
+      allTimesQuery.find({
+        success: function(results) {
+          // Do something with the returned Parse.Object values
+          console.log(results.length);
+          for (var i = 0; i < results.length; i++) {
+            var currDate = results[i].get("Date");
+            console.log(currDate);
+            if(!dateToList[currDate]){
+              dateToList[currDate] = [];
+              for(var j = 0; j <=24; j++){
+                dateToList[currDate][j] = null;
+              }
+            }
+            var hour = results[i].get("Hour");
+            var parker = results[i].get("parker");
+            if(parker == null || parker == "" || parker === "undefined"){
+              parker = '0';
+            }
+            dateToList[currDate][hour] = parker;
+          }
+           console.log(dateToList);
+          for(var key in dateToList) {
+              sortedDates.push(key);
+          }
+          console.log(sortedDates);
+          sortedDates.sort();
+          var htmlString = "";
+          for(var i = 0; i < sortedDates.length; i++){
+            htmlString += "<h5> Hours for "+ sortedDates[i].toString().split(":")[0].slice(0, -3)+":</h5>"
+            var dateList = dateToList[sortedDates[i]];
+            for(var j = 0; j < dateList.length; j++){
+              if(dateList[j] == '0'){
+                 htmlString += "<p>"+ j+":00: not reserved</p>";
+              }else if(dateList[j] != null){
+                htmlString += "<p>"+ j+":00: " + dateList[j] +"</p>";
+              }
+            }
+          }
+          console.log(htmlString);
+          document.getElementById("timeSlots").innerHTML = htmlString;
+        },
+        error: function(error) {
+          console.log("Error: " + error.code + " " + error.message);
+        }
+      });
+
+  }
 
 })
 
@@ -880,6 +951,7 @@ angular.module('starter.controllers', [])
       callback: function (val) {  //Mandatory
 
         startDate = new Date(val);
+        startDate.setHours(0,0,0,0);
         console.log('Return value from the datepicker popup is : ' + val, new Date(val));
         ionicTimePicker.openTimePicker(setFirstTime);
       },
@@ -908,6 +980,7 @@ angular.module('starter.controllers', [])
           callback: function (val) {  //Mandatory
 
             endDate = new Date(val);
+            endDate.setHours(0,0,0,0);
             console.log('Return value from the datepicker popup is : ' + val, new Date(val));
             ionicTimePicker.openTimePicker(setSecondTime);
           },
