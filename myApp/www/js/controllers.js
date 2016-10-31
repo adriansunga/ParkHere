@@ -209,20 +209,26 @@ angular.module('starter.controllers', [])
   var parkerSearch = this;
   parkerSearch.parkingSpaceList = [];
   parkerSearch.geoPoint = new Parse.GeoPoint();
+  parkerSearch.startDate = new Date();
+  parkerSearch.startTime = new Date();
+  parkerSearch.endDate = new Date();
+  parkerSearch.endTime = new Date();
+  parkerSearch.parkingSpaceType = '';
   return parkerSearch;
 })
 
 .controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch) {
    
-    var timeSlots = 0;
+  var timeSlots = 0;
 
-    var startDate;
-    var startTime;
-    var endDate;
-    var endTime;
+  var startDate;
+  var startTime;
+  var endDate;
+  var endTime;
+  $scope.data2 = {};
   $scope.openTimePicker = function(){
-    //date picker
-    //variables we need to send to the back end
+  //date picker
+  //variables we need to send to the back end
 
     var allTimeSlots = [];
 
@@ -230,6 +236,7 @@ angular.module('starter.controllers', [])
       callback: function (val) {  //Mandatory
 
         startDate = new Date(val);
+        parkerSearch.startDate = startDate;
         console.log('Return value from the datepicker popup is : ' + val, new Date(val));
         ionicTimePicker.openTimePicker(setFirstTime);
       },
@@ -254,10 +261,12 @@ angular.module('starter.controllers', [])
           /*console.log('Selected epoch is : ', val, 'and the time is ',
            selectedTime.getUTCHours(), 'H :', selectedTime.getUTCMinutes(), 'M');*/
           startTime = new Date(val * 1000);
+          parkerSearch.startTime = startTime;
           var endDateObj = {
           callback: function (val) {  //Mandatory
 
             endDate = new Date(val);
+            parkerSearch.endDate = endDate;
             console.log('Return value from the datepicker popup is : ' + val, new Date(val));
             ionicTimePicker.openTimePicker(setSecondTime);
           },
@@ -281,6 +290,7 @@ angular.module('starter.controllers', [])
           console.log('Time not selected');
         } else {
           endTime = new Date(val * 1000);
+          parkerSearch.endTime = endTime;
           if(startTime.getUTCMinutes() < 10){
             var numMinutes = '0' + startTime.getUTCMinutes();
           }else{
@@ -323,6 +333,8 @@ angular.module('starter.controllers', [])
 
   $scope.findParkingSpaces = function(){
     var address = document.getElementById('searchTextBox').value;
+    var parkingSpaceType = $scope.data2.searchType;
+    parkerSearch.parkingSpaceType = parkingSpaceType;
     var geocoder = new google.maps.Geocoder();
     var latitude;
     var longitude;
@@ -333,6 +345,7 @@ angular.module('starter.controllers', [])
     console.log("end date = " + (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear());
     console.log("end time = " +endTime.getUTCHours());
     console.log("address = " + address);
+    console.log("parking space type = " + parkingSpaceType);
 
     var div = document.getElementById('invalid')
 
@@ -383,24 +396,46 @@ angular.module('starter.controllers', [])
   // maybe by making each item a query object
   console.log("parking space objects: " + JSON.stringify(parkerSearch.parkingSpaceList[0]));
   console.log("geoPoint: " + parkerSearch.geoPoint);
+  console.log("parkerSearch.parkingSpaceType = " + parkerSearch.parkingSpaceType);
+
+  console.log("start date = " + (parkerSearch.startDate.getMonth() + 1) + '/' + parkerSearch.startDate.getDate() + '/' +  parkerSearch.startDate.getFullYear());
+  console.log("start time = " +parkerSearch.startTime.getUTCHours());
+  console.log("end date = " + (parkerSearch.endDate.getMonth() + 1) + '/' + parkerSearch.endDate.getDate() + '/' +  parkerSearch.endDate.getFullYear());
+  console.log("end time = " + parkerSearch.endTime.getUTCHours());
+
+  var viableSpaces = [];
+
+
+  for (var i = 0; i < parkerSearch.parkingSpaceList.length; i++) {
+
+    if(i == 1) {
+      var date = parkerSearch.parkingSpaceList[i].get("Date");
+      console.log("1 - date = " + (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear());
+      console.log("1 - hour = " + parkerSearch.parkingSpaceList[i].get("Hour"));
+    }
+
+    if(parkerSearch.parkingSpaceList[i].get("type") == parkerSearch.parkingSpaceType) {
+        viableSpaces.push(parkerSearch.parkingSpaceList[i]);
+      }
+  }
 
 
   $scope.parkingSpaces = [];
   var addToList = true;
 
 
-  for (var i = 0; i < parkerSearch.parkingSpaceList.length; i++) {
+  for (var i = 0; i < viableSpaces.length; i++) {
     addToList = true;
     for (var j = 0; j < $scope.parkingSpaces.length; j++) {
-      if((parkerSearch.parkingSpaceList[i].get("ownerEmail") == $scope.parkingSpaces[j].get("ownerEmail")) &&
-        (parkerSearch.parkingSpaceList[i].get("address") == $scope.parkingSpaces[j].get("address"))){
+      if((viableSpaces[i].get("ownerEmail") == $scope.parkingSpaces[j].get("ownerEmail")) &&
+        (viableSpaces[i].get("address") == $scope.parkingSpaces[j].get("address"))) {
         addToList = false;
       }
     }
     if(addToList) {
-      var distance = parkerSearch.geoPoint.milesTo(parkerSearch.parkingSpaceList[i].get("location")); 
-      parkerSearch.parkingSpaceList[i].set("distance", distance);
-      $scope.parkingSpaces.push(parkerSearch.parkingSpaceList[i]);
+      var distance = parkerSearch.geoPoint.milesTo(viableSpaces[i].get("location")); 
+      viableSpaces[i].set("distance", distance);
+      $scope.parkingSpaces.push(viableSpaces[i]);
     }
   }
 
