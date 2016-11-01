@@ -1169,3 +1169,49 @@ angular.module('starter.controllers', [])
 //owner add space
 
 })
+
+
+//map controller
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
+  var options = {timeout: 10000, enableHighAccuracy: true};
+ 
+  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+ 
+    var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+ 
+    var mapOptions = {
+      center: latLng,
+      zoom: 15,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+ 
+    $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+    google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+    var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+    var marker = new google.maps.Marker({
+        map: $scope.map,
+        animation: google.maps.Animation.DROP,
+        icon: image,
+        position: latLng
+    });      
+   
+    var infoWindow = new google.maps.InfoWindow({
+        content: "Current Location"
+    });
+   
+    google.maps.event.addListener(marker, 'click', function () {
+        infoWindow.open($scope.map, marker);
+    });
+   
+  });
+ 
+  }, function(error){
+    console.log("Could not get location");
+  });
+
+
+
+
+
+
+})
