@@ -91,6 +91,15 @@ angular.module('starter.controllers', [])
     }
 
 })
+.service('user', function() {
+  var user = this;
+  user = {};
+  user.username = '';
+  user.email = '';
+  user.password = '';
+  user.userType = '';
+  return user;
+})
 
 //SignUp Controller
 .controller('signUpCtrl', function($scope, $ionicPopup, $state, user) {
