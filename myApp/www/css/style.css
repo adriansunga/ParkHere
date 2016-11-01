@@ -6,3 +6,12 @@
   .ionic_ratings .read_only {
     pointer-events:none !important;
   }
+
+  .scroll {
+    height: 100%;
+}
+ 
+#map {
+    width: 100%;
+    height: 100%;
+}
