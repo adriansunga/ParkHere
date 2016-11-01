@@ -444,7 +444,6 @@ angular.module('starter.controllers', [])
     }
   }
 
-
   console.log("viable spaces filled, size : " + viableSpaces.length);
   parkerSearchResults.viableSpaces = viableSpaces;
 
