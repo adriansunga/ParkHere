@@ -7,13 +7,14 @@
 
 
 //noodlio pay ish
+
 var NOODLIO_PAY_API_URL         = "https://noodlio-pay.p.mashape.com";
 var NOODLIO_PAY_API_KEY         = "hkou9g9rVgmshTeafr21FodTUdsip1Gsko3jsn8G4LLowC6ReO";
 var STRIPE_ACCOUNT_ID           = "acct_197dO3BnddH3DZLG";
 var TEST_MODE = true; //false for production mode
 var NOODLIO_PAY_CHECKOUT_KEY    = {test: "pk_test_QGTo45DJY5kKmsX21RB3Lwvn", live: "pk_live_ZjOCjtf1KBlSHSyjKDDmOGGE"};
 
-angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-ratings', 'ionic-datepicker','stripe.checkout',  'starter.controllers',  'starter.services'])
+angular.module('starter', ['ionic', 'ui.router','ion-google-autocomplete','ionic-timepicker','ionic-ratings', 'ionic-datepicker','stripe.checkout',  'starter.controllers',  'starter.services'])
 .run(function($ionicPlatform) {
 
   $ionicPlatform.ready(function() {
@@ -32,6 +33,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
     Parse.initialize("com.team3.parkhere");
     Parse.serverURL = 'http://138.68.43.212:1337/parse';
     var currentUser = Parse.User.current();
+
 
   });
 })
@@ -119,6 +121,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
   })
   .state('owner.home', {
     url: '/home',
+    cache: false,
     views: {
       'side-menu21': {
         templateUrl: 'templates/ownerHome.html',
@@ -126,6 +129,27 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
       }
     }
 
+  })
+  .state('owner.addSpace', {
+    url: '/addSpace',
+    cache: false,
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/ownerAddSpace.html',
+        controller: 'ownerAddSpaceCtrl'
+      }
+    }
+
+  })
+    .state('owner.spaceInfo', {
+    url: '/spaceInfo',
+    cache: false,
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/ownerSpaceInfo.html',
+        controller: 'ownerSpaceInfoCtrl'
+      }
+    }
   })
   .state('owner.payment', {
     url: '/payment',
@@ -155,32 +179,13 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
     }
 
   })
-  .state('owner.addSpace', {
-    url: '/addSpace',
-    views: {
-      'side-menu21': {
-        templateUrl: 'templates/ownerAddSpace.html',
-        controller: 'ownerAddSpaceCtrl'
-      }
-    }
-
-  })
-  .state('owner.spaceInfo', {
-    url: '/spaceInfo',
-    views: {
-      'side-menu21': {
-        templateUrl: 'templates/ownerSpaceInfo.html',
-        controller: 'ownerSpaceInfoCtrl'
-      }
-    }
-
-  })
   .state('owner.profile', {
     url: '/profile',
+    cache: false,
     views: {
       'side-menu21': {
-        templateUrl: 'templates/ownerProfile.html'
-        //controller: 'ownerAddSpaceCtrl'
+        templateUrl: 'templates/ownerProfile.html',
+        controller: 'ownerPageProfileCtrl'
       }
     },
 
