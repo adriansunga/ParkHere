@@ -1419,13 +1419,15 @@ angular.module('starter.controllers', [])
 
 
 //map controller
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, parkerSearch) {
   var options = {timeout: 10000, enableHighAccuracy: true};
  
   $cordovaGeolocation.getCurrentPosition(options).then(function(position){
  
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
- 
+    console.log(latLng);
+    var longitude = position.coords.longitude;
+    var latitude = position.coords.latitude;
     var mapOptions = {
       center: latLng,
       zoom: 15,
@@ -1440,7 +1442,42 @@ angular.module('starter.controllers', [])
         animation: google.maps.Animation.DROP,
         icon: image,
         position: latLng
-    });      
+    });
+    //get all the parking spaces within three miles of current location
+    var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
+    console.log(myGeoPoint);
+    var parkingSpace = Parse.Object.extend("ParkingSpace");
+    var query = new Parse.Query(parkingSpace);
+    query.withinMiles("location", myGeoPoint, 3);
+    console.log("do i get here? right before query.find");
+    query.find({
+        success: function(results) {
+          console.log("Total: "+results.length);
+          var usedNames = new Set();
+            // console.log("parking space objects: " + JSON.stringify(results));
+            for(var i = 0; i < results.length; i ++){
+              if(usedNames.has(results[i].get("name"))){
+                continue;
+              }
+              usedNames.add(results[i].get("name"));
+              var newLat = results[i].get("location")._latitude;
+              console.log(results[i].get("location")._latitude);
+              var newLng = results[i].get("location")._longitude;
+              var newLatLng = new google.maps.LatLng(newLat, newLng);
+              console.log(newLatLng);
+              console.log(results[i]);
+              var newMarker = new google.maps.Marker({
+                  map: $scope.map,
+                  animation: google.maps.Animation.DROP,
+                  position: newLatLng
+              });
+          
+            }
+          },
+          error: function(error) {
+            alert("Error when getting objects!");
+          }
+        });   
    
     var infoWindow = new google.maps.InfoWindow({
         content: "Current Location"
