@@ -1,6 +1,6 @@
 
 <ion-view title="Owner Add Space" id="page9" ng-app="time">
-    <ion-nav-buttons side="left" class="has-header">
+    <ion-nav-buttons side="right" class="has-header">
         <!-- icon provides back button already -->
         <!--<button class="button button-icon icon ion-android-arrow-back"></button>-->
     </ion-nav-buttons>
@@ -15,7 +15,8 @@
                 <input type="text" placeholder="Price/hour" ng-model="data.price">
             </label>
             <label class="item item-input" id="ownerAddSpace-input9">
-                <input type="text" ng-model="data.address" placeholder="Address or Long and Lat">
+                <!--<input type="text" ng-model="data.address" placeholder="Address or Long and Lat">-->
+                 <input type="text" placeholder="Change address" google-autocomplete-suggestion location="data.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data.location.formatted_address" readonly required>
             </label>
              <label class="item item-select" id="ownerAddSpace-select1">
                 <span class="input-label">Parking Space Type</span>
@@ -34,8 +35,8 @@
             </label>-->
         </form>
         <!--<ion-content ng-controller="UploadController">-->
-            <input class="bottom-marg-15" type="file" name="file" file="file">
-            <button class="button button-small button-full button-positive" ng-disabled="file.size&amp;&amp;false || uploadProgress&gt;0" ng-click="upload()" ng-cloak="">Upload</button>
+            <input class="bottom-marg-15" id ="fileUpload" type="file" name="file" file="file">
+            <!--<button class="button button-small button-full button-positive" ng-disabled="file.size&amp;&amp;false || uploadProgress&gt;0" ng-click="upload()" ng-cloak="">Upload</button>-->
             <img class="fit" ng-if="uploadUri" ng-src="">
             <a ng-href="" ng-bind="uploadUri"></a>
         <!--</ion-content>-->

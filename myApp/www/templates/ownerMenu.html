@@ -3,7 +3,7 @@
         <ion-nav-bar class="bar-stable">
             <ion-nav-back-button></ion-nav-back-button>
             <ion-nav-buttons side="left">
-                <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+                <button id ="menuButton" class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
             </ion-nav-buttons>
         </ion-nav-bar>
         <ion-nav-view name="side-menu21"></ion-nav-view>
@@ -14,10 +14,10 @@
         </ion-header-bar>
         <ion-content padding="false" class="side-menu-left has-header ">
             <ion-list id="ownerMenu-list1">
-                <ion-item id="ownerMenu-list-item1" ng-click="goHome()" menu-close="">Home</ion-item>
-                <ion-item id="ownerMenu-list-item2"  ng-click="addSpace()" menu-close="">Add Space</ion-item>
-                <ion-item id="ownerMenu-list-item3"  ng-click="goProfile()" menu-close="">Profile</ion-item>
-                <ion-item id="ownerMenu-list-item4"  ng-click="payment()" menu-close="">Payment</ion-item>
+                <ion-item id="ownerMenu-list-item1" ui-sref="owner.home" menu-close="">Home</ion-item>
+                <ion-item id="ownerMenu-list-item2"  ui-sref="owner.addSpace"  menu-close="">Add Space</ion-item>
+                <ion-item id="ownerMenu-list-item3"  ui-sref="owner.profile"  menu-close="">Profile</ion-item>
+                <ion-item id="ownerMenu-list-item4"  ui-sref="owner.payment"  menu-close="">Payment</ion-item>
                 <ion-item id="ownerMenu-list-item5"  ng-click="showLogout()" menu-close="">Logout</ion-item>
             </ion-list>
         </ion-content>

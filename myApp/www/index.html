@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.json">
 
     <!--map API -->
-    
+
 
     <!-- un-comment this code to enable service worker
     <script>
@@ -54,8 +54,9 @@
     <script src="lib/angular-stripe-checkout.js"></script>
 
     <!--map API -->
+    <script src="lib/ion-google-autocomplete/dist/ion-google-autocomplete.js"></script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXHck_ccrrXmSFEylNHmuSpikQNoYPneI">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXHck_ccrrXmSFEylNHmuSpikQNoYPneI&libraries=places">
     </script>
 
 <!--
@@ -72,8 +73,8 @@
   </head>
 
   <body ng-app="starter">
-    <ion-nav-view></ion-nav-view> 
-   
+    <ion-nav-view></ion-nav-view>
+
 
   </body>
 </html>

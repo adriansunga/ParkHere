@@ -1,8 +1,21 @@
 angular.module('starter.services', [])
 
+.service('user', function() {
+  var user = this;
+  user = {};
+  user.username = '';
+  user.email = '';
+  user.password = '';
+  user.userType = '';
+  user.phoneNumber = '';
+  user.rating = '';
+  user.uniqueID = '';
+  return user;
+})
+
 .factory('StripeCharge', function($q, $http, StripeCheckout) {
   var self = this;
-  
+
   // add the following headers for authentication
   $http.defaults.headers.common['X-Mashape-Key']  = NOODLIO_PAY_API_KEY;
   $http.defaults.headers.common['Content-Type']   = 'application/x-www-form-urlencoded';
@@ -21,7 +34,7 @@ angular.module('starter.services', [])
     var qCharge = $q.defer();
 
     var chargeUrl = NOODLIO_PAY_API_URL + "/charge/token";
-    
+
     var param = {
       source: stripeToken,
       amount: Math.floor(ProductMeta.priceUSD*100), // amount in cents
@@ -30,7 +43,7 @@ angular.module('starter.services', [])
       stripe_account: STRIPE_ACCOUNT_ID,
       test: TEST_MODE,
     };
-    
+
     $http.post(NOODLIO_PAY_API_URL + "/charge/token", param)
     .success(
       function(StripeInvoiceData){
