@@ -68,7 +68,9 @@ angular.module('starter.controllers', [])
       console.log("user object in login " + user.email);
       Parse.User.logIn(username, password,{
         success: function(user1) {
+          user.username = user1.get("name");
           user.phoneNumber = "" + user1.get("phoneNumber");
+          user.uniqueID = user1.id;
           user.rating = user1.get("averageRating");
           if(user1.get("userType") != userType){
             div.innerHTML = 'You have not signed up with this user type';
@@ -102,6 +104,7 @@ angular.module('starter.controllers', [])
   user.userType = '';
   user.phoneNumber = '';
   user.rating = '';
+  user.uniqueID = '';
   return user;
 })
 
@@ -151,7 +154,8 @@ angular.module('starter.controllers', [])
     //send over to parse
     console.log("here2");
     parseUser.signUp(null, {
-      success: function(user) {
+      success: function(user1) {
+        user.uniqueID = user1.id;
         if(userType == "owner"){
             $state.go("owner.home");
           }else{
@@ -390,7 +394,19 @@ angular.module('starter.controllers', [])
 
 
 .controller('ownerPageProfileCtrl', function($scope, $ionicPopup, $state, user) {
-  $scope.user = user;
+  console.log(user);
+  if(user.phoneNumber == null || user.phoneNumber === 'undefined'){
+    console.log("bad phone number")
+    user.phoneNumber = "";
+  }
+  
+  $scope.user = {};
+  $scope.user.name = user.username;
+  $scope.user.email = user.email;
+  $scope.user.phoneNumber = user.phoneNumber;
+  console.log("here");
+  
+  console.log($scope.user);
   $scope.ownerData = {};
   if(user.averageRating == null){
     user.averageRating = 0;
@@ -413,20 +429,23 @@ angular.module('starter.controllers', [])
     };
 
     $scope.updateOwner = function(){
-      if($scope.ownerData.name != null){
-        user.name = $scope.ownerData.name;
+      if($scope.ownerData.username != null){
+        user.username = $scope.ownerData.name;
       }if($scope.ownerData.phoneNumber != null){
         user.phoneNumber = $scope.ownerData.phoneNumber
       }
       var parseUser = new Parse.User();
-      parseUser.set("username", user.email);
+      parseUser.id = user.uniqueID;
+      parseUser.set("name", user.username);
+      parseUser.set("phoneNumber", user.phoneNumber);
       parseUser.save(null, {
-      success: function(gameScore) {
-        // Now let's update it with some new data. In this case, only cheatMode and score
-        // will get sent to the cloud. playerName hasn't changed.
-        parseUser.set("name", user.name);
-        parseUser.set("phoneNumber", user.phoneNumber);
-        parseUser.save();
+      success: function(user) {
+        console.log("in update owner success");
+      
+        document.getElementById('invalid').innerHTML = "Profile updated";
+      },
+      error: function(user, error){
+        document.getElementById('invalid').innerHTML = "Something went wrong please try again";
       }
     });
       

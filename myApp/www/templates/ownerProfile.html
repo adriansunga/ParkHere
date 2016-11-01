@@ -1,12 +1,13 @@
 <ion-view title="Owner Profile" id="page10">
     <ion-content padding="true" class="has-header">
         <form id="ownerProfile-form6" class="list">
+        <div id="invalid" style="color: red;"></div>
             <label class="item item-input" id="ownerProfile-input15">
                 <span class="input-label">Name</span>
                 <input type="text" ng-model="ownerData.name" placeholder="{{user.name}}"> 
             </label>
             <label class="item" id="ownerProfile-input14">
-                <span class="">Email  {{ownerData.email}}</span>
+                <span class="">Email:  {{user.email}}</span>
                 <!--<input type="text" ng-model="ownerData.email" placeholder="{{user.email}}"> -->
             </label>
             <label class="item item-input" id="ownerProfile-input16">

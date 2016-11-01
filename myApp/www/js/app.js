@@ -182,6 +182,7 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
   })
   .state('owner.profile', {
     url: '/profile',
+    cache: false,
     views: {
       'side-menu21': {
         templateUrl: 'templates/ownerProfile.html',

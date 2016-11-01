@@ -7,6 +7,9 @@ angular.module('starter.services', [])
   user.email = '';
   user.password = '';
   user.userType = '';
+  user.phoneNumber = '';
+  user.rating = '';
+  user.uniqueID = '';
   return user;
 })
 
