@@ -218,7 +218,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch) {
-   
+
   var timeSlots = 0;
 
   var startDate;
@@ -367,11 +367,10 @@ angular.module('starter.controllers', [])
         console.log("do i get here? right before query.find");
         query.find({
           success: function(results) {
-            // TODO: iterate through place objects here
             console.log("Total: "+results.length);
             // console.log("parking space objects: " + JSON.stringify(results));
             parkerSearch.parkingSpaceList = results;
-            $state.go("parker.parkingSearchResults");  
+            $state.go("parker.parkingSearchResults");
           },
           error: function(error) {
             alert("Error when getting objects!");
@@ -414,23 +413,36 @@ angular.module('starter.controllers', [])
 
 
   for (var i = 0; i < parkerSearch.parkingSpaceList.length; i++) {
-    var date = parkerSearch.parkingSpaceList[i].get("Date");
-    
-    //check if parking space type matches
-    //check if parking space is in time range
-    if((parkerSearch.parkingSpaceList[i].get("type") == parkerSearch.parkingSpaceType) && 
-      ((date.getMonth() + 1) >= (parkerSearch.startDate.getMonth() + 1)) &&
-      (date.getDate() >= parkerSearch.startDate.getDate()) &&
-      (date.getFullYear() >= parkerSearch.startDate.getFullYear()) &&
-      ((date.getMonth() + 1) <= (parkerSearch.endDate.getMonth() + 1)) &&
-      (date.getDate() <= parkerSearch.endDate.getDate()) &&
-      (date.getFullYear() <= parkerSearch.endDate.getFullYear()) &&
-      (parkerSearch.parkingSpaceList[i].get("Hour") >= parkerSearch.startTime.getUTCHours()) &&
-      (parkerSearch.parkingSpaceList[i].get("Hour") <= parkerSearch.endTime.getUTCHours()))
-    { 
-      viableSpaces.push(parkerSearch.parkingSpaceList[i]);
-    }
-  }
+    var date = parkerSearch.parkingSpaceList[i].get("Date");
+    
+    //check if parking space type matches
+    //check if parking space is in time range
+    if((parkerSearch.parkingSpaceList[i].get("type") == parkerSearch.parkingSpaceType) &&
+      ((date.getMonth() + 1) >= (parkerSearch.startDate.getMonth() + 1)) &&
+      (date.getDate() >= parkerSearch.startDate.getDate()) &&
+      (date.getFullYear() >= parkerSearch.startDate.getFullYear()) &&
+      ((date.getMonth() + 1) <= (parkerSearch.endDate.getMonth() + 1)) &&
+      (date.getDate() <= parkerSearch.endDate.getDate()) &&
+      (date.getFullYear() <= parkerSearch.endDate.getFullYear()))
+    {
+
+      if(((date.getMonth() + 1) == (parkerSearch.startDate.getMonth() + 1)) &&
+      (date.getDate() == parkerSearch.startDate.getDate()) &&
+      (date.getFullYear() == parkerSearch.startDate.getFullYear()) &&
+      (parkerSearch.parkingSpaceList[i].get("Hour") < parkerSearch.startTime.getUTCHours()) )
+      {
+        continue;
+      }
+      if(((date.getMonth() + 1) == (parkerSearch.endDate.getMonth() + 1)) &&
+      (date.getDate() == parkerSearch.endDate.getDate()) &&
+      (date.getFullYear() == parkerSearch.endDate.getFullYear()) &&
+      (parkerSearch.parkingSpaceList[i].get("Hour") > parkerSearch.endTime.getUTCHours()) )
+      {
+        continue;
+      }
+      viableSpaces.push(parkerSearch.parkingSpaceList[i]);
+    }
+  }
 
 
   console.log("viable spaces filled, size : " + viableSpaces.length);
@@ -449,11 +461,17 @@ angular.module('starter.controllers', [])
       }
     }
     if(addToList) {
-      var distance = parkerSearch.geoPoint.milesTo(viableSpaces[i].get("location")); 
+      var distance = parkerSearch.geoPoint.milesTo(viableSpaces[i].get("location"));
       viableSpaces[i].set("distance", distance);
       $scope.parkingSpaces.push(viableSpaces[i]);
     }
+
+    console.log("Num parking spaces: " + $scope.parkingSpaces.length);
   }
+
+  // if (parkingSpaces.length == 0) {
+  //   // TODO: say something like "No parking spots from query"
+  // }
 
   $scope.itemClicked = function(parkingSpace) {
     console.log("This item was clicked: " + parkingSpace + "!");
@@ -492,8 +510,29 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('spotOwnerInformationCtrl', function($scope, $ionicPopup, $state) {
+.controller('spotOwnerInformationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults) {
   console.log("in spot control page!");
+
+  var email = parkerSearchResults.selectedSpace.get("ownerEmail");
+  console.log("owner email = " + email);
+  var users = Parse.Object.extend("User");
+  var query = new Parse.Query(users);
+  query.equalTo("username", email);
+  query.find({
+    success: function(results) {
+      console.log("results: (should just be one) " + results);
+      $scope.owner = results[0];
+    }
+  })
+  //scope.data.ownersEmail = email;
+  // var div = document.getElementById('ownersName');
+  // div.innerHTML = '<p style="color:#000000;"><strong>Owner\'s name</strong>: ' + results[0].get("name") + '</p>';
+  // div = document.getElementById('ownersEmail');
+  // div.innerHTML = '<p style="color:#000000;"><strong>Owner\'s email</strong>: ' + email + '</p>';
+  // div = document.getElementById('ownersPhoneNumber');
+  // div.innerHTML = '<p style="color:#000000;"><strong>Phone number</strong>: ' + results[0].get("phoneNumber") + '</p>';
+  // div = document.getElementById('ownersRating');
+  // div.innerHTML = '<p style="color:#000000;"><strong>Owner\'s rating</strong>: ' + results[0].get("averageRating") + '</p>';
 
 })
 //getting payment token for owner

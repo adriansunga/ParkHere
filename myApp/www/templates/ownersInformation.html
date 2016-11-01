@@ -2,19 +2,19 @@
   <ion-content padding="true" class="has-header">
     <div id="ownersName">
       <p style="color:#000000;">
-        <strong>Owner's name</strong>: John Doe</p>
+        <strong>Owner's name</strong>: {{owner.get("name")}}</p>
     </div>
     <div id="ownersEmail">
       <p style="color:#000000;">
-        <strong>Email</strong>: jmoney@aol.net</p>
+        <strong>Email</strong>: {{owner.get("username")}}</p>
     </div>
     <div id="ownersPhoneNumber">
       <p style="color:#000000;">
-        <strong>Phone number</strong>: (xxx)xxx-xxxx </p>
+        <strong>Phone number</strong>: {{owner.get("phoneNumber")}} </p>
     </div>
     <div id="ownersRating">
       <p style="color:#000000;">
-        <strong>Owner's rating</strong>: 4.5/5</p>
+        <strong>Owner's rating</strong>: {{owner.get("averageRating")}}</p>
     </div>
   </ion-content>
 </ion-view>
