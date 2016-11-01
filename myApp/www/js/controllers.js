@@ -215,6 +215,13 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker) {
+   $scope.countryCode = 'US';
+   var address = "";
+  $scope.onAddressSelection = function (location) {
+    address = location.formatted_address; 
+    console.log(address);
+  };
+
   var timeSlots = 0;
 
     var startDate;
@@ -325,7 +332,7 @@ angular.module('starter.controllers', [])
 
 
   $scope.findParkingSpaces = function(){
-    var address = document.getElementById('searchTextBox').value;
+    //var address = document.getElementById('searchTextBox').value;
     var geocoder = new google.maps.Geocoder();
     var latitude;
     var longitude;
@@ -921,7 +928,6 @@ angular.module('starter.controllers', [])
   console.log("user", user.email);
 
   var address = "";
-  $scope.data = {};
 
   $scope.countryCode = 'US';
   $scope.onAddressSelection = function (location) {
