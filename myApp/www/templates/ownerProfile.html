@@ -3,20 +3,21 @@
         <form id="ownerProfile-form6" class="list">
             <label class="item item-input" id="ownerProfile-input15">
                 <span class="input-label">Name</span>
-                <input type="text" placeholder="Name">
+                <input type="text" ng-model="ownerData.name" placeholder="{{user.name}}"> 
             </label>
-            <label class="item item-input" id="ownerProfile-input14">
-                <span class="input-label">Email</span>
-                <input type="text" placeholder="email@gmail.com">
+            <label class="item" id="ownerProfile-input14">
+                <span class="">Email  {{ownerData.email}}</span>
+                <!--<input type="text" ng-model="ownerData.email" placeholder="{{user.email}}"> -->
             </label>
             <label class="item item-input" id="ownerProfile-input16">
                 <span class="input-label">Phone Number</span>
-                <input type="text" placeholder="Phone Number">
+                <input type="text" ng-model="ownerData.phoneNumber" placeholder="{{user.phoneNumber}}">
             </label>
         </form>
         <div class="text-center">
             <h4 style="text-align: center;">Average rating:</h4>
              <ionic-ratings ratingsobj='ratingsObject' index =0></ionic-ratings>
+             <button id="login-button1" class="button button-positive button-block" ng-click="updateOwner()">Update Owner</button>
         </div>
         
        

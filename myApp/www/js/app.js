@@ -184,8 +184,8 @@ angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-rating
     url: '/profile',
     views: {
       'side-menu21': {
-        templateUrl: 'templates/ownerProfile.html'
-        //controller: 'ownerAddSpaceCtrl'
+        templateUrl: 'templates/ownerProfile.html',
+        controller: 'ownerPageProfileCtrl'
       }
     },
 

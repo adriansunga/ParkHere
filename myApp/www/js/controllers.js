@@ -67,8 +67,10 @@ angular.module('starter.controllers', [])
       user.userType = userType;
       console.log("user object in login " + user.email);
       Parse.User.logIn(username, password,{
-        success: function(user) {
-          if(user.get("userType") != userType){
+        success: function(user1) {
+          user.phoneNumber = "" + user1.get("phoneNumber");
+          user.rating = user1.get("averageRating");
+          if(user1.get("userType") != userType){
             div.innerHTML = 'You have not signed up with this user type';
           } else {
             if(userType == 'parker'){
@@ -98,6 +100,8 @@ angular.module('starter.controllers', [])
   user.email = '';
   user.password = '';
   user.userType = '';
+  user.phoneNumber = '';
+  user.rating = '';
   return user;
 })
 //SignUp Controller
@@ -383,6 +387,52 @@ angular.module('starter.controllers', [])
   }
 })
 
+
+.controller('ownerPageProfileCtrl', function($scope, $ionicPopup, $state, user) {
+  $scope.user = user;
+  $scope.ownerData = {};
+  if(user.averageRating == null){
+    user.averageRating = 0;
+  }
+  $scope.ratingsObject = {
+        iconOn : 'ion-ios-star',
+        iconOff : 'ion-ios-star-outline',
+        iconOnColor: 'rgb(251, 212, 1)',
+        iconOffColor:  'rgb(224, 224, 224)',
+        rating: user.averageRating,
+        minRating:0,
+        readOnly: true,
+        callback: function(rating) {
+          $scope.ratingsCallback(rating);
+        }
+      };
+
+  $scope.ratingsCallback = function(rating) {
+        console.log('Selected rating is : ', rating);
+    };
+
+    $scope.updateOwner = function(){
+      if($scope.ownerData.name != null){
+        user.name = $scope.ownerData.name;
+      }if($scope.ownerData.phoneNumber != null){
+        user.phoneNumber = $scope.ownerData.phoneNumber
+      }
+      var parseUser = new Parse.User();
+      parseUser.set("username", user.email);
+      parseUser.save(null, {
+      success: function(gameScore) {
+        // Now let's update it with some new data. In this case, only cheatMode and score
+        // will get sent to the cloud. playerName hasn't changed.
+        parseUser.set("name", user.name);
+        parseUser.set("phoneNumber", user.phoneNumber);
+        parseUser.save();
+      }
+    });
+      
+    };
+  
+})
+
 .controller('reservationCtrl', function($scope, $ionicPopup, $state) {
   // TODO: pass item info
   console.log("in reservation page!");
@@ -554,22 +604,7 @@ angular.module('starter.controllers', [])
 .controller('ownerMenuCtrl', function($scope,$ionicNavBarDelegate, $ionicPopup, $state, $ionicLoading, $ionicHistory) {
    $ionicNavBarDelegate.showBackButton(false);
     //rating
-  $scope.ratingsObject = {
-        iconOn : 'ion-ios-star',
-        iconOff : 'ion-ios-star-outline',
-        iconOnColor: 'rgb(251, 212, 1)',
-        iconOffColor:  'rgb(224, 224, 224)',
-        rating:  5,
-        minRating:1,
-        readOnly: true,
-        callback: function(rating) {
-          $scope.ratingsCallback(rating);
-        }
-      };
-
-  $scope.ratingsCallback = function(rating) {
-        console.log('Selected rating is : ', rating);
-    };
+ 
 
 
   //logout
@@ -909,32 +944,47 @@ angular.module('starter.controllers', [])
             div.innerHTML = 'File upload did not work. Please try again';
             return;
         });
+        //make function comparing full years
+        function sameDate (date1, date2){
+          if(timeDict["startDate"].getDate() == timeDict["endDate"].getDate() 
+          && timeDict["startDate"].getMonth() == timeDict["endDate"].getMonth()
+          && timeDict["startDate"].getFullYear() == timeDict["endDate"].getFullYear()){
+              return true;
+          }
+          return false;
+        }
         for(var i = 0; i < allTimeSlots.length; i++){
         var timeDict = allTimeSlots[i];
         console.log(timeDict);
         //start and end on same day
-        if(timeDict["startDate"].getDate() == timeDict["endDate"].getDate() 
-        && timeDict["startDate"].getMonth() == timeDict["endDate"].getMonth()
-        && timeDict["startDate"].getFullYear() == timeDict["endDate"].getFullYear()){
+        if(sameDate(timeDict["startDate"], timeDict["endDate"])){
             //hours from startTime to end time
             for(var time = timeDict["startTime"]; time <= timeDict["endTime"]; time++){
+              console.log("saving date");
+              console.log(timeDict["startDate"]);
               saveSpace(timeDict["startDate"], time, parseFile);
             }
         }else{//not on the same day
           for(var d = timeDict["startDate"]; d <= timeDict["endDate"]; d.setDate(d.getDate() + 1)){
             //if start date
-            if(d.getTime() == timeDict["startDate"].getTime()){
+            if(sameDate(d, timeDict["startDate"])){
               //only do the ours from start time
               for(var time = timeDict["startTime"]; time <= 24; time++){
+                console.log("saving date");
+              console.log(timeDict["startDate"]);
                   saveSpace(timeDict["startDate"], time, parseFile);
               }
-            }else if(d.getTime() == timeDict["endDate"].getTime()){ //end date
+            }else if(sameDate(d, timeDict["endDate"])){ //end date
                for(var time = 0; time <= timeDict["endTime"]; time++){
-                  saveSpace(timeDict["startDate"], time, parseFile);
+                  console.log("saving date");
+              console.log(timeDict["endDate"]);
+                  saveSpace(timeDict["endDate"], time, parseFile);
               }
             }else{//not start date
               for(var time = 0; time <= 24; time++){
-                  saveSpace(timeDict[startDate], time, parseFile);
+                  console.log("saving date");
+              console.log(d);
+                  saveSpace(d, time, parseFile);
               }
             }
         }
@@ -942,9 +992,12 @@ angular.module('starter.controllers', [])
         
       }
       }
-      function saveSpace(date, time, parseFile){
-              console.log("in save: lat " + latitude + " long " +longitude);
+      function saveSpace(dateToSave, time, parseFile){
+              console.log("in saveSpace");
+              console.log(dateToSave);
               var spaceToSave = new parkingSpaceParse();
+              spaceToSave.set("Date", new Date(dateToSave));
+              console.log(dateToSave);
               spaceToSave.set("ownerEmail", user.email);
               spaceToSave.set("name", parkingSpaceName);
               var point = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
@@ -953,7 +1006,6 @@ angular.module('starter.controllers', [])
               spaceToSave.set("price", price);
               spaceToSave.set("type", type);
               spaceToSave.set("notes", notes);
-              spaceToSave.set("Date", date);
               spaceToSave.set("Hour", time);
               spaceToSave.set("address", address);
               spaceToSave.set("parker", "");
