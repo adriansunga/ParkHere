@@ -1115,7 +1115,7 @@ angular.module('starter.controllers', [])
             }
             var hour = results[i].get("Hour");
             var parker = results[i].get("parker");
-            if(parker == null || parker == "" || parker === "undefined"){
+            if(results[i].get("reserved") == false || parker == null || parker == "" || parker === "undefined"){
               parker = '0';
             }
             dateToList[currDate][hour] = parker;
