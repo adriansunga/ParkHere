@@ -437,7 +437,8 @@ angular.module('starter.controllers', [])
     
     //check if parking space type matches
     //check if parking space is in time range
-    if((parkerSearch.parkingSpaceList[i].get("type") == parkerSearch.parkingSpaceType) &&
+    if(((parkerSearch.parkingSpaceList[i].get("type") == parkerSearch.parkingSpaceType) ||
+        (parkerSearch.parkingSpaceType == "All")) &&
       ((date.getMonth() + 1) >= (parkerSearch.startDate.getMonth() + 1)) &&
       (date.getDate() >= parkerSearch.startDate.getDate()) &&
       (date.getFullYear() >= parkerSearch.startDate.getFullYear()) &&
@@ -484,13 +485,8 @@ angular.module('starter.controllers', [])
       viableSpaces[i].set("distance", distance);
       $scope.parkingSpaces.push(viableSpaces[i]);
     }
-
-    console.log("Num parking spaces: " + $scope.parkingSpaces.length);
   }
 
-  // if (parkingSpaces.length == 0) {
-  //   // TODO: say something like "No parking spots from query"
-  // }
 
   $scope.itemClicked = function(parkingSpace) {
     console.log("This item was clicked: " + parkingSpace + "!");
@@ -559,7 +555,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('reservationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults) {
+.controller('reservationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults, user) {
 
   $scope.selectedSpace = parkerSearchResults.selectedSpace;
 
@@ -575,6 +571,19 @@ angular.module('starter.controllers', [])
       }
   }
 
+  availableTimes.sort(function(a, b){
+    var aDate = a.get("Date");
+    var bDate = b.get("Date");
+    if(((aDate.getMonth() + 1) == (bDate.getMonth() + 1)) &&
+      (aDate.getDate() == bDate.getDate()) &&
+      (aDate.getFullYear() == bDate.getFullYear()) ) 
+    {
+      console.log("hi");
+      return a.get("Hour") - b.get("Hour");
+    }
+    return aDate - bDate;
+});
+
   $scope.availableTimes = availableTimes;
 
   console.log("in reservation page!");
@@ -583,26 +592,58 @@ angular.module('starter.controllers', [])
   }
 
   $scope.reservationButtonClick = function() {
+
+    var checkedTimes = [];
+    var setReservation = true;
+
     for (var i = 0; i < $scope.availableTimes.length; i++) {
       if ($scope.availableTimes[i].checked == true) {
-        console.log($scope.availableTimes[i]);
-
-        $scope.availableTimes[i].set('reserved', true);
-        $scope.availableTimes[i].set('parker', "input parker name");
-
-        // Save
-        $scope.availableTimes[i].save(null, {
-          success: function(point) {
-            // Saved successfully.
-            console.log('success');
-          },
-          error: function(point, error) {
-            // The save failed.
-            // error is a Parse.Error with an error code and description.
-          }
-        });
+        if($scope.availableTimes[i].get("reserved") == true) {
+          setReservation = false;
+        }
+          checkedTimes.push(i);
+        
       }
     }
+
+    if(checkedTimes.length == 0) {
+      var alertPopup = $ionicPopup.alert({
+        title: "Please select the times you would like to reserve below",
+      });
+    }
+
+
+    console.log(user.username);
+    if(setReservation) {
+      var error = false;
+      for (var i = 0; i < checkedTimes.length; i++) {
+        $scope.availableTimes[checkedTimes[i]].set('reserved', true);
+        $scope.availableTimes[checkedTimes[i]].set('parker', user.username);
+
+        // Save
+        $scope.availableTimes[checkedTimes[i]].save(null, {
+          success: function(point) {
+          },
+          error: function(point, error) {
+            alert(error);
+            error = true;
+          }
+        });
+        
+      }
+      if(!error && checkedTimes.length != 0) {
+        var alertPopup = $ionicPopup.alert({
+          title: "Your spaces have been reserved!",
+        });
+      }
+
+      
+    } else if (checkedTimes.length != 0) {
+      var alertPopup = $ionicPopup.alert({
+        title: "You cannot reserve a parking space that is already reserved ",
+      });
+    }
+
   }
 
 })
