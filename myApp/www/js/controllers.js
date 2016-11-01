@@ -485,6 +485,11 @@ angular.module('starter.controllers', [])
   $scope.seeOwnerPage = function() {
       $state.go("parker.spotOwnerInformation");
   }
+
+  $scope.reservationButtonClick = function() {
+    console.log("hello");
+  }
+
 })
 
 .controller('spotOwnerInformationCtrl', function($scope, $ionicPopup, $state) {

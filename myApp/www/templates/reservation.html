@@ -11,6 +11,6 @@
           <p>Hour: {{parkingSpace.get("Hour")}}</p>
           <p>Reserved: {{parkingSpace.get("reserved")}}</p> 
     </ion-checkbox>
-    <button id="reserveButton" class="button button-positive  button-block">Reserve Space</button>
+    <button id="reserveButton" ng-clicked = "reservationButtonClick()" class="button button-positive  button-block">Reserve Space</button>
   </ion-content>
 </ion-view>
