@@ -39,6 +39,8 @@ angular.module('starter.controllers', [])
   };
 
 })
+
+
 //LogIn Controller
 .controller('LoginCtrl', function($scope, $ionicPopup, $state) {
     $scope.data = {};
@@ -91,15 +93,7 @@ angular.module('starter.controllers', [])
     }
 
 })
-.service('user', function() {
-  var user = this;
-  user = {};
-  user.username = '';
-  user.email = '';
-  user.password = '';
-  user.userType = '';
-  return user;
-})
+
 //SignUp Controller
 .controller('signUpCtrl', function($scope, $ionicPopup, $state, user) {
   $scope.data = {};
@@ -420,25 +414,27 @@ angular.module('starter.controllers', [])
     //check if parking space is in time range
     if((parkerSearch.parkingSpaceList[i].get("type") == parkerSearch.parkingSpaceType) && 
       ((date.getMonth() + 1) >= (parkerSearch.startDate.getMonth() + 1)) &&
-      (date.getDate() > parkerSearch.startDate.getDate()) &&
+      (date.getDate() >= parkerSearch.startDate.getDate()) &&
       (date.getFullYear() >= parkerSearch.startDate.getFullYear()) &&
       ((date.getMonth() + 1) <= (parkerSearch.endDate.getMonth() + 1)) &&
-      (date.getDate() < parkerSearch.endDate.getDate()) &&
+      (date.getDate() <= parkerSearch.endDate.getDate()) &&
       (date.getFullYear() <= parkerSearch.endDate.getFullYear())) 
     { 
-      viableSpaces.push(parkerSearch.parkingSpaceList[i]);
-    }
 
-    else if((parkerSearch.parkingSpaceList[i].get("type") == parkerSearch.parkingSpaceType) && 
-      ((date.getMonth() + 1) == (parkerSearch.startDate.getMonth() + 1)) &&
+      if(((date.getMonth() + 1) == (parkerSearch.startDate.getMonth() + 1)) &&
       (date.getDate() == parkerSearch.startDate.getDate()) &&
       (date.getFullYear() == parkerSearch.startDate.getFullYear()) &&
-      ((date.getMonth() + 1) == (parkerSearch.endDate.getMonth() + 1)) &&
+      (parkerSearch.parkingSpaceList[i].get("Hour") < parkerSearch.startTime.getUTCHours()) )
+      {
+        continue;
+      } 
+      if(((date.getMonth() + 1) == (parkerSearch.endDate.getMonth() + 1)) &&
       (date.getDate() == parkerSearch.endDate.getDate()) &&
-      (date.getFullYear() == parkerSearch.endDate.getFullYear()) 
-      (parkerSearch.parkingSpaceList[i].get("Hour") >= parkerSearch.startTime.getUTCHours()) &&
-      (parkerSearch.parkingSpaceList[i].get("Hour") <= parkerSearch.endTime.getUTCHours()))
-    {
+      (date.getFullYear() == parkerSearch.endDate.getFullYear()) &&
+      (parkerSearch.parkingSpaceList[i].get("Hour") > parkerSearch.endTime.getUTCHours()) )
+      {
+        continue;
+      } 
       viableSpaces.push(parkerSearch.parkingSpaceList[i]);
     }
   }
@@ -474,7 +470,6 @@ angular.module('starter.controllers', [])
 })
 
 .controller('reservationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults) {
-  // TODO: pass item info
 
   $scope.selectedSpace = parkerSearchResults.selectedSpace;
 
@@ -498,7 +493,26 @@ angular.module('starter.controllers', [])
   }
 
   $scope.reservationButtonClick = function() {
-    console.log("hello");
+    for (var i = 0; i < $scope.availableTimes.length; i++) {
+      if ($scope.availableTimes[i].checked == true) {
+        console.log($scope.availableTimes[i]);
+
+        $scope.availableTimes[i].set('reserved', true);
+        $scope.availableTimes[i].set('parker', "input parker name");
+
+        // Save
+        $scope.availableTimes[i].save(null, {
+          success: function(point) {
+            // Saved successfully.
+            console.log('success');
+          },
+          error: function(point, error) {
+            // The save failed.
+            // error is a Parse.Error with an error code and description.
+          }
+        });
+      }
+    }
   }
 
 })
