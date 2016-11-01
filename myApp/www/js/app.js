@@ -14,7 +14,7 @@ var STRIPE_ACCOUNT_ID           = "acct_197dO3BnddH3DZLG";
 var TEST_MODE = true; //false for production mode
 var NOODLIO_PAY_CHECKOUT_KEY    = {test: "pk_test_QGTo45DJY5kKmsX21RB3Lwvn", live: "pk_live_ZjOCjtf1KBlSHSyjKDDmOGGE"};
 
-angular.module('starter', ['ionic', 'ui.router','ion-google-autocomplete','ionic-timepicker','ionic-ratings', 'ionic-datepicker','stripe.checkout',  'starter.controllers',  'starter.services'])
+angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete','ngCordova', 'ionic-timepicker','ionic-ratings', 'ionic-datepicker','stripe.checkout',  'starter.controllers',  'starter.services'])
 .run(function($ionicPlatform) {
 
   $ionicPlatform.ready(function() {
@@ -51,6 +51,7 @@ angular.module('starter', ['ionic', 'ui.router','ion-google-autocomplete','ionic
   };
 
   $stateProvider
+  
     .state('login', {
     url: '/login',
     templateUrl: 'templates/login.html',
@@ -65,6 +66,16 @@ angular.module('starter', ['ionic', 'ui.router','ion-google-autocomplete','ionic
     url: '/parker',
     templateUrl: 'templates/parkerMenu.html',
     controller: 'parkerMenuCtrl'
+  })
+  .state('parker.map', {
+    url: '/parkerMap',
+    cache: false,
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/map.html',
+        controller: 'MapCtrl'
+      }
+    }
   })
   .state('parker.search', {
     url: '/parkerSearch',
