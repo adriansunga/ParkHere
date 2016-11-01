@@ -1,14 +1,16 @@
 <ion-view title="Reservation" id="page7">
   <ion-content padding="true" class="has-header">
-    <h3 id="pricePerHour" style="color:#000000;">$___ per hour</h3>
-    <div style="margin: 0px; line-height: 250px; background-color: rgb(232, 235, 239); text-align: center;">
-      <i class="icon ion-image" style="font-size: 64px; color: rgb(136, 136, 136); vertical-align: middle;"></i>
+    <h3 id="pricePerHour" style="color:#000000;"> Price per hour: ${{selectedSpace.get("price")}}</h3>
+    <div style="margin: 0px; line-height: 200px; text-align: center;">
+      <i class="icon " style="font-size: 64px; vertical-align: middle;"> <img style = "width: 200px;" ng-src = "{{selectedSpace.get('picture')._url}}"></i>
     </div>
-    <h4 id="address" style="color:#000000;">(Address)</h4>
-    <div id="notes">
-      <p style="color:#000000;">(Optional) Notes:</p>
-    </div>
-    <button id="ownerPageButton" class="button button-stable button-small button-block" ng-click="seeOwnerPage()">(owner name)'s Owner Profile</button>
+    <h4 id="address" style="color:#000000;">Address: {{selectedSpace.get("address")}}</h4>
+    <button id="ownerPageButton" class="button button-stable button-small button-block" ng-click="seeOwnerPage()">{{selectedSpace.get("ownerEmail")}}'s Owner Profile</button>
+    <ion-checkbox ng-repeat="parkingSpace in availableTimes" ng-model="parkingSpace.checked" ng-checked="parkingSpace.checked">
+          <h2>Date: {{parkingSpace.get("PrettyDate")}}</h2>
+          <p>Hour: {{parkingSpace.get("Hour")}}</p>
+          <p>Reserved: {{parkingSpace.get("reserved")}}</p> 
+    </ion-checkbox>
     <button id="reserveButton" class="button button-positive  button-block">Reserve Space</button>
   </ion-content>
 </ion-view>
