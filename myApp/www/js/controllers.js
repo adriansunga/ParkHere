@@ -420,14 +420,25 @@ angular.module('starter.controllers', [])
     //check if parking space is in time range
     if((parkerSearch.parkingSpaceList[i].get("type") == parkerSearch.parkingSpaceType) && 
       ((date.getMonth() + 1) >= (parkerSearch.startDate.getMonth() + 1)) &&
-      (date.getDate() >= parkerSearch.startDate.getDate()) &&
+      (date.getDate() > parkerSearch.startDate.getDate()) &&
       (date.getFullYear() >= parkerSearch.startDate.getFullYear()) &&
       ((date.getMonth() + 1) <= (parkerSearch.endDate.getMonth() + 1)) &&
-      (date.getDate() <= parkerSearch.endDate.getDate()) &&
-      (date.getFullYear() <= parkerSearch.endDate.getFullYear()) &&
+      (date.getDate() < parkerSearch.endDate.getDate()) &&
+      (date.getFullYear() <= parkerSearch.endDate.getFullYear())) 
+    { 
+      viableSpaces.push(parkerSearch.parkingSpaceList[i]);
+    }
+
+    else if((parkerSearch.parkingSpaceList[i].get("type") == parkerSearch.parkingSpaceType) && 
+      ((date.getMonth() + 1) == (parkerSearch.startDate.getMonth() + 1)) &&
+      (date.getDate() == parkerSearch.startDate.getDate()) &&
+      (date.getFullYear() == parkerSearch.startDate.getFullYear()) &&
+      ((date.getMonth() + 1) == (parkerSearch.endDate.getMonth() + 1)) &&
+      (date.getDate() == parkerSearch.endDate.getDate()) &&
+      (date.getFullYear() == parkerSearch.endDate.getFullYear()) 
       (parkerSearch.parkingSpaceList[i].get("Hour") >= parkerSearch.startTime.getUTCHours()) &&
       (parkerSearch.parkingSpaceList[i].get("Hour") <= parkerSearch.endTime.getUTCHours()))
-    { 
+    {
       viableSpaces.push(parkerSearch.parkingSpaceList[i]);
     }
   }
