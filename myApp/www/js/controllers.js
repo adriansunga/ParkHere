@@ -83,7 +83,7 @@ angular.module('starter.controllers', [])
         error: function(user1, error) {
           div.innerHTML = 'Login failed, please try again';
         }
-      });  
+      });
 
   }
 
@@ -104,6 +104,7 @@ angular.module('starter.controllers', [])
   user.rating = '';
   return user;
 })
+
 //SignUp Controller
 .controller('signUpCtrl', function($scope, $ionicPopup, $state, user) {
   $scope.data = {};
@@ -654,8 +655,8 @@ angular.module('starter.controllers', [])
   parkingSpace.address = '';
   parkingSpace.notes = '';
   parkingSpace.uniqueID = '';
-  parkingSpace.ownerEmail = ''; 
-  parkingSpace.type = ''; 
+  parkingSpace.ownerEmail = '';
+  parkingSpace.type = '';
   return parkingSpace;
 })
 
@@ -676,7 +677,7 @@ angular.module('starter.controllers', [])
   //}
   var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
   var pSpaceQuery = new Parse.Query(parkingSpaceParse);
-  //spaces owned by this person 
+  //spaces owned by this person
   pSpaceQuery.equalTo("ownerEmail", ownerEmail);
   pSpaceQuery.greaterThanOrEqualTo("Date", today);
   pSpaceQuery.ascending("Date");
@@ -698,7 +699,7 @@ angular.module('starter.controllers', [])
           console.log("in get obj " + parkingSpace.id);
           var dict = {
             "id": i,
-            "name": parkingSpace.get('name'), 
+            "name": parkingSpace.get('name'),
             "price": parkingSpace.get("price"),
             "image": parkingSpace.get('picture')._url,
             "uniqueID": parkingSpace.id,
@@ -772,13 +773,13 @@ angular.module('starter.controllers', [])
                 console.log("find error: " + error);
               }
             });
-                 
+
          } else {
            console.log('You are not sure delete ' + item.name);
          }
        });
     }
-    
+
 
   };
   $scope.edit = function(item) {
@@ -933,7 +934,7 @@ angular.module('starter.controllers', [])
             div.innerHTML = 'Something went wrong, please try again';
             return;
           }
-      }); 
+      });
       //defined this function because this was calling before the lat and long was set from google
       function uploadToParse(){
         //save in date database by hour
@@ -957,6 +958,7 @@ angular.module('starter.controllers', [])
         var timeDict = allTimeSlots[i];
         console.log(timeDict);
         //start and end on same day
+
         if(sameDate(timeDict["startDate"], timeDict["endDate"])){
             //hours from startTime to end time
             for(var time = timeDict["startTime"]; time <= timeDict["endTime"]; time++){
@@ -989,7 +991,7 @@ angular.module('starter.controllers', [])
             }
         }
         }
-        
+
       }
       }
       function saveSpace(dateToSave, time, parseFile){
@@ -1020,8 +1022,8 @@ angular.module('starter.controllers', [])
                 }
               });
       }
- 
-      
+
+
       //for each dic in allTimes,
       //for each time frame in each dict
       //parse ish
