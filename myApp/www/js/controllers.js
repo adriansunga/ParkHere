@@ -36,7 +36,7 @@ angular.module('starter.controllers', [])
             alert("Error: " + error.code + " " + error.message);
         }
     });
-};
+  };
 
 })
 //LogIn Controller
@@ -205,16 +205,30 @@ angular.module('starter.controllers', [])
  };
 })
 
-.controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker) {
+.service('parkerSearch', function() {
+  var parkerSearch = this;
+  parkerSearch.parkingSpaceList = [];
+  parkerSearch.geoPoint = new Parse.GeoPoint();
+  parkerSearch.startDate = new Date();
+  parkerSearch.startTime = new Date();
+  parkerSearch.endDate = new Date();
+  parkerSearch.endTime = new Date();
+  parkerSearch.parkingSpaceType = '';
+  return parkerSearch;
+})
+
+.controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch) {
+   
   var timeSlots = 0;
 
-    var startDate;
-    var startTime;
-    var endDate;
-    var endTime;
+  var startDate;
+  var startTime;
+  var endDate;
+  var endTime;
+  $scope.data2 = {};
   $scope.openTimePicker = function(){
-    //date picker
-    //variables we need to send to the back end
+  //date picker
+  //variables we need to send to the back end
 
     var allTimeSlots = [];
 
@@ -222,6 +236,7 @@ angular.module('starter.controllers', [])
       callback: function (val) {  //Mandatory
 
         startDate = new Date(val);
+        parkerSearch.startDate = startDate;
         console.log('Return value from the datepicker popup is : ' + val, new Date(val));
         ionicTimePicker.openTimePicker(setFirstTime);
       },
@@ -246,10 +261,12 @@ angular.module('starter.controllers', [])
           /*console.log('Selected epoch is : ', val, 'and the time is ',
            selectedTime.getUTCHours(), 'H :', selectedTime.getUTCMinutes(), 'M');*/
           startTime = new Date(val * 1000);
+          parkerSearch.startTime = startTime;
           var endDateObj = {
           callback: function (val) {  //Mandatory
 
             endDate = new Date(val);
+            parkerSearch.endDate = endDate;
             console.log('Return value from the datepicker popup is : ' + val, new Date(val));
             ionicTimePicker.openTimePicker(setSecondTime);
           },
@@ -273,6 +290,7 @@ angular.module('starter.controllers', [])
           console.log('Time not selected');
         } else {
           endTime = new Date(val * 1000);
+          parkerSearch.endTime = endTime;
           if(startTime.getUTCMinutes() < 10){
             var numMinutes = '0' + startTime.getUTCMinutes();
           }else{
@@ -310,13 +328,13 @@ angular.module('starter.controllers', [])
       step: 60,
       setLabel: 'Set End Time'
     };
-
-
   }
 
 
   $scope.findParkingSpaces = function(){
     var address = document.getElementById('searchTextBox').value;
+    var parkingSpaceType = $scope.data2.searchType;
+    parkerSearch.parkingSpaceType = parkingSpaceType;
     var geocoder = new google.maps.Geocoder();
     var latitude;
     var longitude;
@@ -324,9 +342,10 @@ angular.module('starter.controllers', [])
     //log all values here
     console.log("start date = " + (startDate.getMonth() + 1) + '/' + startDate.getDate() + '/' +  startDate.getFullYear());
     console.log("start time = " +startTime.getUTCHours());
-    console.log('end date = ' + (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear());
+    console.log("end date = " + (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear());
     console.log("end time = " +endTime.getUTCHours());
     console.log("address = " + address);
+    console.log("parking space type = " + parkingSpaceType);
 
     var div = document.getElementById('invalid')
 
@@ -336,59 +355,141 @@ angular.module('starter.controllers', [])
         longitude = results[0].geometry.location.lng();
         console.log("lat = " + latitude);
         console.log("longitude = " + longitude);
+
+        var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
+        parkerSearch.geoPoint = myGeoPoint;
+        console.log("geoPoint: " + myGeoPoint);
+        var parkingSpace = Parse.Object.extend("ParkingSpace");
+        var query = new Parse.Query(parkingSpace);
+
+        query.withinMiles("location", myGeoPoint, 3);
+
+        console.log("do i get here? right before query.find");
+        query.find({
+          success: function(results) {
+            // TODO: iterate through place objects here
+            console.log("Total: "+results.length);
+            // console.log("parking space objects: " + JSON.stringify(results));
+            parkerSearch.parkingSpaceList = results;
+            $state.go("parker.parkingSearchResults");  
+          },
+          error: function(error) {
+            alert("Error when getting objects!");
+          }
+        });
+
+
       } else {
         console.log("geo error " +status);
         div.innerHTML = 'Something went wrong, please try again';
       }
     });
 
-    // QUERY BELOW ALMOST WORKS. PLZ FIX DONT REIMPLEMENT.
-
-    // var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
-    // var PlaceObject = Parse.Object.extend("PlaceObject");
-    // var query = new Parse.Query(PlaceObject);
-    // query.near("location", myGeoPoint);
-    // query.withinMiles(30);
-    // // successful object list
-    // var placesObjects;
-    // console.log("do i get here? right before query.find");
-    // query.find({
-    // success: function(placesObjects, count) {
-    //   // TODO: iterate through place objects here
-    //   alert(count);
-    // }
-    // });
-    // console.log("place objects: " + JSON.stringify(placesObjects));
-    // filter these by time
-    $state.go("parker.parkingSearchResults");
   }
-
 })
 
-.controller('parkingSearchResultsCtrl', function($scope, $ionicPopup, $state) {
+
+.service('parkerSearchResults', function() {
+  var parkerSearchResults = this;
+  parkerSearchResults.viableSpaces = [];
+  parkerSearchResults.selectedSpace = new Parse.Object.extend("ParkingSpace");
+  return parkerSearchResults;
+})
+
+.controller('parkingSearchResultsCtrl', function($scope, $ionicPopup, $state, parkerSearch, parkerSearchResults) {
   console.log("in parking search results!");
 
   // TODO: modify code to use query results rather than preset id values
   // maybe by making each item a query object
-  // TODO: make sure sorted by distance!!
-  $scope.items = [
-    { id: 0},
-    { id: 1},
-    { id: 2}
-    ];
+  console.log("parking space objects: " + JSON.stringify(parkerSearch.parkingSpaceList[0]));
+  console.log("geoPoint: " + parkerSearch.geoPoint);
+  console.log("parkerSearch.parkingSpaceType = " + parkerSearch.parkingSpaceType);
 
-  $scope.itemClicked = function(item) {
-    console.log("This item was clicked: " + item + "!");
+  console.log("start date = " + (parkerSearch.startDate.getMonth() + 1) + '/' + parkerSearch.startDate.getDate() + '/' +  parkerSearch.startDate.getFullYear());
+  console.log("start time = " +parkerSearch.startTime.getUTCHours());
+  console.log("end date = " + (parkerSearch.endDate.getMonth() + 1) + '/' + parkerSearch.endDate.getDate() + '/' +  parkerSearch.endDate.getFullYear());
+  console.log("end time = " + parkerSearch.endTime.getUTCHours());
+
+  var viableSpaces = [];
+
+
+  for (var i = 0; i < parkerSearch.parkingSpaceList.length; i++) {
+    var date = parkerSearch.parkingSpaceList[i].get("Date");
+    
+    //check if parking space type matches
+    //check if parking space is in time range
+    if((parkerSearch.parkingSpaceList[i].get("type") == parkerSearch.parkingSpaceType) && 
+      ((date.getMonth() + 1) >= (parkerSearch.startDate.getMonth() + 1)) &&
+      (date.getDate() >= parkerSearch.startDate.getDate()) &&
+      (date.getFullYear() >= parkerSearch.startDate.getFullYear()) &&
+      ((date.getMonth() + 1) <= (parkerSearch.endDate.getMonth() + 1)) &&
+      (date.getDate() <= parkerSearch.endDate.getDate()) &&
+      (date.getFullYear() <= parkerSearch.endDate.getFullYear()) &&
+      (parkerSearch.parkingSpaceList[i].get("Hour") >= parkerSearch.startTime.getUTCHours()) &&
+      (parkerSearch.parkingSpaceList[i].get("Hour") <= parkerSearch.endTime.getUTCHours()))
+    { 
+      viableSpaces.push(parkerSearch.parkingSpaceList[i]);
+    }
+  }
+
+
+  console.log("viable spaces filled, size : " + viableSpaces.length);
+  parkerSearchResults.viableSpaces = viableSpaces;
+
+  $scope.parkingSpaces = [];
+  var addToList = true;
+
+
+  for (var i = 0; i < viableSpaces.length; i++) {
+    addToList = true;
+    for (var j = 0; j < $scope.parkingSpaces.length; j++) {
+      if((viableSpaces[i].get("ownerEmail") == $scope.parkingSpaces[j].get("ownerEmail")) &&
+        (viableSpaces[i].get("address") == $scope.parkingSpaces[j].get("address"))) {
+        addToList = false;
+      }
+    }
+    if(addToList) {
+      var distance = parkerSearch.geoPoint.milesTo(viableSpaces[i].get("location")); 
+      viableSpaces[i].set("distance", distance);
+      $scope.parkingSpaces.push(viableSpaces[i]);
+    }
+  }
+
+  $scope.itemClicked = function(parkingSpace) {
+    console.log("This item was clicked: " + parkingSpace + "!");
+    parkerSearchResults.selectedSpace = parkingSpace;
     $state.go("parker.reservation");
   }
 })
 
-.controller('reservationCtrl', function($scope, $ionicPopup, $state) {
+.controller('reservationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults) {
   // TODO: pass item info
+
+  $scope.selectedSpace = parkerSearchResults.selectedSpace;
+
+  availableTimes = [];
+
+  for (var i = 0; i < parkerSearchResults.viableSpaces.length; i++) {
+    if((parkerSearchResults.viableSpaces[i].get("ownerEmail") == parkerSearchResults.selectedSpace.get("ownerEmail")) &&
+        (parkerSearchResults.viableSpaces[i].get("address") == parkerSearchResults.selectedSpace.get("address"))) {
+        var date = parkerSearchResults.viableSpaces[i].get("Date")
+        var prettyDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
+        parkerSearchResults.viableSpaces[i].set("PrettyDate", prettyDate);
+        availableTimes.push(parkerSearchResults.viableSpaces[i]);
+      }
+  }
+
+  $scope.availableTimes = availableTimes;
+
   console.log("in reservation page!");
   $scope.seeOwnerPage = function() {
       $state.go("parker.spotOwnerInformation");
   }
+
+  $scope.reservationButtonClick = function() {
+    console.log("hello");
+  }
+
 })
 
 .controller('spotOwnerInformationCtrl', function($scope, $ionicPopup, $state) {
