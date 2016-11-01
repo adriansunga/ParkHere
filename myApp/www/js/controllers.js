@@ -682,6 +682,8 @@ angular.module('starter.controllers', [])
 .controller('ownerHomeCtrl', function($scope,$ionicNavBarDelegate, $ionicPopup, $state, parkingSpace, user) {
    $ionicNavBarDelegate.showBackButton(false);
 
+
+  
   var ownerEmail = user.email;
   $scope.items = [];
   var usedSpaces= new Set();
@@ -918,13 +920,20 @@ angular.module('starter.controllers', [])
   var picFile;
   console.log("user", user.email);
 
+  var address = "";
+  $scope.data = {};
 
+  $scope.countryCode = 'US';
+  $scope.onAddressSelection = function (location) {
+    address = location.formatted_address; 
+    console.log(address);
+  };
 
   $scope.addSpace = function(){
       var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
       var parkingSpaceName = $scope.data.spaceName;
       var price = $scope.data.price;
-      var address = $scope.data.address;
+      address = $scope.data.address;
       var notes = $scope.data.notes;
       var type = $scope.data.type;
       var latitude = 0;

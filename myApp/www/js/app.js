@@ -14,7 +14,7 @@ var STRIPE_ACCOUNT_ID           = "acct_197dO3BnddH3DZLG";
 var TEST_MODE = true; //false for production mode
 var NOODLIO_PAY_CHECKOUT_KEY    = {test: "pk_test_QGTo45DJY5kKmsX21RB3Lwvn", live: "pk_live_ZjOCjtf1KBlSHSyjKDDmOGGE"};
 
-angular.module('starter', ['ionic', 'ui.router','ionic-timepicker','ionic-ratings', 'ionic-datepicker','stripe.checkout',  'starter.controllers',  'starter.services'])
+angular.module('starter', ['ionic', 'ui.router','ion-google-autocomplete','ionic-timepicker','ionic-ratings', 'ionic-datepicker','stripe.checkout',  'starter.controllers',  'starter.services'])
 .run(function($ionicPlatform) {
 
   $ionicPlatform.ready(function() {
