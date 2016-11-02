@@ -1,44 +1,5 @@
 angular.module('starter.controllers', [])
 
-//this is example code yay!
-
-.controller("ExampleController", function($scope) {
-
-    $scope.savePerson = function(firstname, lastname) {
-        var PeopleObject = Parse.Object.extend("PeopleObject");
-        var person = new PeopleObject();
-        person.set("firstname", firstname);
-        person.set("lastname", lastname);
-        person.save(null, {});
-    };
-
-    $scope.getPeople = function(params) {
-        var PeopleObject = Parse.Object.extend("PeopleObject");
-        var query = new Parse.Query(PeopleObject);
-        if (params !== undefined) {
-            if (params.lastname !== undefined) {
-                query.equalTo("lastname", params.lastname);
-            }
-            if (params.firstname !== undefined) {
-                query.equalTo("firstname", params.lastname);
-            }
-        }
-        query.find({
-            success: function(results) {
-                alert("Successfully retrieved " + results.length + " people!");
-                for (var i = 0; i < results.length; i++) {
-                    var object = results[i];
-                    console.log(object.id + ' - ' + object.get("firstname") + " " + object.get("lastname"));
-                }
-            },
-            error: function(error) {
-                alert("Error: " + error.code + " " + error.message);
-            }
-        });
-    };
-
-})
-
 
 //LogIn Controller
 .controller('LoginCtrl', function($scope, $ionicPopup, $state, user) {
@@ -242,13 +203,41 @@ angular.module('starter.controllers', [])
     return parkerSearch;
 })
 
-.controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch, user) {
-
-    $scope.countryCode = 'US';
+.controller('parkerSearchCtrl', function($scope, $cordovaGeolocation, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch, user) {
+    var currLat = null;
+    var currLong = null;
+    $scope.search = "Change address"
     var address = "";
+    var options = {
+        timeout: 100000,
+        enableHighAccuracy: false
+    };
+    $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
+        currLat = position.coords.latitude;
+        currLong = position.coords.longitude;
+        var confirmPopup = $ionicPopup.confirm({
+            title: 'Current Location',
+            template: 'Can ParkHere use your current location?'
+        });
+        confirmPopup.then(function(res) {
+            if (res) {
+                address = currLat + " " + currLong;
+                $scope.search = address;
+                document.getElementById('searchTextBox').value = address;
+            }else{
+                
+            }
+            });
+        console.log(currLat);
+    }, function(error) {
+        console.log("Could not get location");
+    });
+    
+    
+    $scope.countryCode = 'US';
+
     $scope.onAddressSelection = function(location) {
         address = location.formatted_address;
-        console.log(address);
     };
 
     var timeSlots = 0;
@@ -257,7 +246,7 @@ angular.module('starter.controllers', [])
     var startTime;
     var endDate;
     var endTime;
-    $scope.data2 = {};
+    
     $scope.openTimePicker = function() {
         //date picker
         //variables we need to send to the back end
@@ -366,7 +355,7 @@ angular.module('starter.controllers', [])
             setLabel: 'Set End Time'
         };
     }
-
+    $scope.data2 = {};
     $scope.findParkingSpaces = function() {
         var address = document.getElementById('searchTextBox').value;
         var parkingSpaceType = $scope.data2.searchType;
@@ -374,7 +363,11 @@ angular.module('starter.controllers', [])
         var geocoder = new google.maps.Geocoder();
         var latitude;
         var longitude;
-
+        if(parkingSpaceType == null || startDate == null || startTime == null || endDate == null
+            || address == null || endTime == null){
+            document.getElementById("invalid").innerHTML = "Please insert all fields";
+            return;
+        }
         //log all values here
         console.log("start date = " + (startDate.getMonth() + 1) + '/' + startDate.getDate() + '/' + startDate.getFullYear());
         console.log("start time = " + startTime.getUTCHours());
@@ -472,7 +465,9 @@ angular.module('starter.controllers', [])
 
     console.log("viable spaces filled, size : " + viableSpaces.length);
     parkerSearchResults.viableSpaces = viableSpaces;
-
+    if(viableSpaces.length == 0){
+        document.getElementById("noResults").innerHTML = "No results matched your search";
+    }
     $scope.parkingSpaces = [];
     var addToList = true;
 

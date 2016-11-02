@@ -1,5 +1,6 @@
 <ion-view title="Parking Search Results" id="page6">
     <ion-content padding="true" class="has-header">
+    <div id="noResults" style="color: red;"></div>
         <ion-list id="parkingSearchResultsList">
         <ion-item class="item-thumbnail-left" id="parkingSearchResults-list-item11" ng-repeat="parkingSpace in parkingSpaces" ng-click="itemClicked(parkingSpace)">
             <img ng-src= "{{parkingSpace.get('picture')._url}}"/>

@@ -2,7 +2,7 @@
     <ion-content padding="true" class="has-header">
     	<div id="invalid" style="color: red;"></div>
         <!--<input id="searchTextBox" class="controls" type="text" placeholder="Search" style="width:100%;" ></input>-->
-         <input type="text" id="searchTextBox" class="controls" placeholder="Change address" google-autocomplete-suggestion location="data.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data.location.formatted_address" style="width:100%;" readonly required>
+         <input type="text" id="searchTextBox" class="controls" placeholder="{{search}}" google-autocomplete-suggestion location="data2.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data2.location.formatted_address" style="width:100%;" readonly required>
 
         <label class="item item-select" id="ownerAddSpace-select1">
 	        <span class="input-label">Parking Space Type</span>
