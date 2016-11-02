@@ -200,6 +200,10 @@ angular.module('starter.controllers', [])
     console.log("search clicked");
     $state.go("parker.search");
   }
+  $scope.upcomingSpaces = function() {
+    console.log("in upcoming spaces");
+    $state.go("parker.upcomingSpaces");
+  }
   $scope.showLogout = function() {
     console.log("in show logout");
    var confirmPopup = $ionicPopup.confirm({
@@ -236,7 +240,7 @@ angular.module('starter.controllers', [])
   return parkerSearch;
 })
 
-.controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch) {
+.controller('parkerSearchCtrl', function($scope, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch, user) {
 
    $scope.countryCode = 'US';
    var address = "";
@@ -356,7 +360,6 @@ angular.module('starter.controllers', [])
     };
   }
 
-
   $scope.findParkingSpaces = function(){
     var address = document.getElementById('searchTextBox').value;
     var parkingSpaceType = $scope.data2.searchType;
@@ -402,8 +405,6 @@ angular.module('starter.controllers', [])
             alert("Error when getting objects!");
           }
         });
-
-
       } else {
         console.log("geo error " +status);
         div.innerHTML = 'Something went wrong, please try again';
@@ -625,7 +626,7 @@ angular.module('starter.controllers', [])
     }
 
 
-    console.log(user.username);
+    console.log(user.email);
     if(setReservation) {
       var error = false;
       for (var i = 0; i < checkedTimes.length; i++) {
@@ -665,6 +666,55 @@ angular.module('starter.controllers', [])
 
 })
 
+.controller('upcomingSpacesCtrl', function($scope, $ionicPopup, $state, user) {
+  console.log("inside upcoming with user: " + user.email + " password: " + user.password);
+  $scope.listCanSwipe = true;
+  var parkingSpace = Parse.Object.extend("ParkingSpace");
+  var query = new Parse.Query(parkingSpace);
+  query.equalTo("parker", user.email);
+  console.log("username: " +user.email );
+  query.find({
+    success: function(results) {
+      $scope.spaces = results;
+    }
+  });
+
+  $scope.delete = function(address, date) {
+    console.log("This item was deleted: " + address + " and "+ date + "!");
+    //TODO: check for ability to delete (aka >2 days away)
+    var confirmPopup = $ionicPopup.confirm({
+       title: 'Unreserve',
+       template: 'Are you sure you want to remove this parking space?'
+     });
+     confirmPopup.then(function(res) {
+       if(res) {
+         var pSpace = Parse.Object.extend(Parse.Object.extend("ParkingSpace"));
+         var psQuery = new Parse.Query(pSpace);
+         query.equalTo("Date", date);
+         query.equalTo("address", address);
+         query.find({
+           success: function(results) {
+             console.log("size of results: " + results.length);
+             console.log("parker value before: " + results[0].get("parker"));
+             results[0].set("parker", "");
+            results[0].save();
+             console.log("parker value after: " + results[0].get("parker"));
+           }
+         });
+
+        //Parse.User.current().fetch();
+         var alertPopup = $ionicPopup.alert({
+           title: 'Your account will be refunded.',
+         });
+         alertPopup.then(function() {
+          // history.go(0);
+          $state.go("parker.upcomingSpaces");
+         });
+       }
+     });
+  }
+
+})
 
 .controller('spotOwnerInformationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults) {
   console.log("in spot control page!");
@@ -680,16 +730,6 @@ angular.module('starter.controllers', [])
       $scope.owner = results[0];
     }
   })
-  //scope.data.ownersEmail = email;
-  // var div = document.getElementById('ownersName');
-  // div.innerHTML = '<p style="color:#000000;"><strong>Owner\'s name</strong>: ' + results[0].get("name") + '</p>';
-  // div = document.getElementById('ownersEmail');
-  // div.innerHTML = '<p style="color:#000000;"><strong>Owner\'s email</strong>: ' + email + '</p>';
-  // div = document.getElementById('ownersPhoneNumber');
-  // div.innerHTML = '<p style="color:#000000;"><strong>Phone number</strong>: ' + results[0].get("phoneNumber") + '</p>';
-  // div = document.getElementById('ownersRating');
-  // div.innerHTML = '<p style="color:#000000;"><strong>Owner\'s rating</strong>: ' + results[0].get("averageRating") + '</p>';
-
 })
 
 //getting payment token for owner
@@ -922,7 +962,7 @@ angular.module('starter.controllers', [])
   today.setHours(0,0,0,0);
   //if(Parse == null){
     //FOR TESTING
-   // Parse.initialize("com.team3.parkhere");
+    Parse.initialize("com.team3.parkhere");
     //Parse.serverURL = 'http://138.68.43.212:1337/parse';
   //}
   var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
@@ -1444,9 +1484,6 @@ angular.module('starter.controllers', [])
   $cordovaGeolocation.getCurrentPosition(options).then(function(position){
 
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    console.log(latLng);
-    var longitude = position.coords.longitude;
-    var latitude = position.coords.latitude;
     var mapOptions = {
       center: latLng,
       zoom: 15,

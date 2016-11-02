@@ -1,0 +1,15 @@
+<ion-view title="Upcoming Spaces" id="page9">
+  <ion-content padding="true" class="has-header">
+    <ion-list id="upcomingSpacesList" can-swipe="listCanSwipe">
+      <ion-item class="item-thumbnail-left" id="upcomingSpacesText" ng-repeat="space in spaces">
+          <img ng-src= "{{space.get('picture')._url}}"/>
+          <h2>Time: {{space.get("Hour")}}:00 {{space.get("PrettyDate")}}</h2>
+          <p>Address: {{space.get("address")}}</p>
+          <p>Price: ${{space.get("price")}}/hour</p>
+          <ion-option-button class="button-info" ng-click="delete(space.get('address'), space.get('Date'))">
+            Delete
+          </ion-option-button>
+      </ion-list>
+    </ion-list>
+  </ion-content>
+</ion-view>
