@@ -564,6 +564,7 @@ angular.module('starter.controllers', [])
 .service('reservationInfo', function() {
     var reservationInfo = this;
     reservationInfo.price = '';
+    reservationInfo.spotName = '';
     return reservationInfo;
 })
 
@@ -643,6 +644,7 @@ angular.module('starter.controllers', [])
             if (!error && checkedTimes.length != 0) {
                 var price = parkerSearchResults.selectedSpace.get("price");
                 reservationInfo.price = price * checkedTimes.length;
+                reservationInfo.spotName = parkerSearchResults.selectedSpace.get("name");
                 console.log('price is ' + reservationInfo.price);
                 $state.go("parker.pay");
                 /*var alertPopup = $ionicPopup.alert({
@@ -824,7 +826,7 @@ angular.module('starter.controllers', [])
     var total = reservationInfo.price;
 
     $scope.ProductMeta = {
-        title: "Awesome product",
+        title: reservationInfo.spotName,
         description: "Yes it really is",
         priceUSD: total,
     };

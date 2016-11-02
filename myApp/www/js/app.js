@@ -237,7 +237,7 @@ angular.module('starter.services', [])
         var qCharge = $q.defer();
 
         var chargeUrl = NOODLIO_PAY_API_URL + "/charge/token";
-
+        
         var param = {
             source: stripeToken,
             amount: Math.floor(ProductMeta.priceUSD * 100), // amount in cents
