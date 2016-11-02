@@ -45,6 +45,17 @@ angular.module('starter.controllers', [])
 .controller('LoginCtrl', function($scope, $ionicPopup, $state, user) {
     $scope.data = {};
      console.log("in login controller");
+
+      var currUser = Parse.User.current();
+      if(currUser != null) {
+        var userType = currUser.get("userType");
+        if(userType == 'parker') {
+          $state.go('parker.search');
+        } else {
+          $state.go('owner.home');
+        }
+      }
+
     $scope.login = function() {
 
       var username = ""+ $scope.data.username;
