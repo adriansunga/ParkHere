@@ -104,7 +104,7 @@ angular.module('starter', ['ionic', 'ui.router','ion-google-autocomplete','ionic
       }
     },
   })
-   .state('parker.paypal', {
+  .state('parker.paypal', {
     url: '/paypal',
     views: {
       'side-menu21': {
@@ -112,7 +112,15 @@ angular.module('starter', ['ionic', 'ui.router','ion-google-autocomplete','ionic
         controller: 'paypalCtrl'
       }
     },
-
+  })
+  .state('parker.upcomingSpaces', {
+    url: '/upcomingSpaces',
+    views: {
+      'side-menu21': {
+        templateUrl: 'templates/upcomingSpaces.html',
+        controller: 'upcomingSpacesCtrl'
+      }
+    },
   })
   .state('owner', {
     url: '/owner',
