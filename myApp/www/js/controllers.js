@@ -45,6 +45,17 @@ angular.module('starter.controllers', [])
 .controller('LoginCtrl', function($scope, $ionicPopup, $state, user) {
     $scope.data = {};
      console.log("in login controller");
+
+      var currUser = Parse.User.current();
+      if(currUser != null) {
+        var userType = currUser.get("userType");
+        if(userType == 'parker') {
+          $state.go('parker.search');
+        } else {
+          $state.go('owner.home');
+        }
+      }
+
     $scope.login = function() {
 
       var username = ""+ $scope.data.username;
@@ -188,10 +199,6 @@ angular.module('starter.controllers', [])
   $scope.search = function() {
     console.log("search clicked");
     $state.go("parker.search");
-  }
-  $scope.payment = function() {
-      console.log("payment clicked");
-      $state.go("parker.paypal");
   }
   $scope.upcomingSpaces = function() {
     console.log("in upcoming spaces");
@@ -407,7 +414,6 @@ angular.module('starter.controllers', [])
   }
 })
 
-
 .service('parkerSearchResults', function() {
   var parkerSearchResults = this;
   parkerSearchResults.viableSpaces = [];
@@ -556,7 +562,13 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('reservationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults, user) {
+.service('reservationInfo', function(){
+  var reservationInfo = this;
+  reservationInfo.price = '';
+  return reservationInfo;
+})
+
+.controller('reservationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults, user, reservationInfo) {
 
   $scope.selectedSpace = parkerSearchResults.selectedSpace;
 
@@ -618,6 +630,7 @@ angular.module('starter.controllers', [])
     if(setReservation) {
       var error = false;
       for (var i = 0; i < checkedTimes.length; i++) {
+        console.log('setting reserved');
         $scope.availableTimes[checkedTimes[i]].set('reserved', true);
         $scope.availableTimes[checkedTimes[i]].set('parker', user.username);
 
@@ -633,9 +646,13 @@ angular.module('starter.controllers', [])
 
       }
       if(!error && checkedTimes.length != 0) {
-        var alertPopup = $ionicPopup.alert({
+        var price = parkerSearchResults.selectedSpace.get("price");
+        reservationInfo.price = price * checkedTimes.length;
+        console.log('price is ' + reservationInfo.price);
+        $state.go("parker.pay");
+        /*var alertPopup = $ionicPopup.alert({
           title: "Your spaces have been reserved!",
-        });
+        });*/
       }
 
 
@@ -683,8 +700,6 @@ angular.module('starter.controllers', [])
          });
        }
      });
-  //  parkerSearchResults.selectedSpace = parkingSpace;
-  //  $state.go("parker.reservation");
   }
 
 })
@@ -796,11 +811,13 @@ angular.module('starter.controllers', [])
 
 
 //where we set up the payment... should be for parker
-.controller('parkerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge) {
+.controller('parkerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, reservationInfo) {
+    var total = reservationInfo.price;
+
     $scope.ProductMeta = {
     title: "Awesome product",
     description: "Yes it really is",
-    priceUSD: 1,
+    priceUSD: total,
   };
 
   $scope.status = {
@@ -1145,7 +1162,7 @@ angular.module('starter.controllers', [])
             }
             var hour = results[i].get("Hour");
             var parker = results[i].get("parker");
-            if(parker == null || parker == "" || parker === "undefined"){
+            if(results[i].get("reserved") == false || parker == null || parker == "" || parker === "undefined"){
               parker = '0';
             }
             dateToList[currDate][hour] = parker;
@@ -1449,13 +1466,12 @@ angular.module('starter.controllers', [])
 
 
 //map controller
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, parkerSearch) {
   var options = {timeout: 10000, enableHighAccuracy: true};
 
   $cordovaGeolocation.getCurrentPosition(options).then(function(position){
 
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-
     var mapOptions = {
       center: latLng,
       zoom: 15,
@@ -1471,6 +1487,41 @@ angular.module('starter.controllers', [])
         icon: image,
         position: latLng
     });
+    //get all the parking spaces within three miles of current location
+    var myGeoPoint = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
+    console.log(myGeoPoint);
+    var parkingSpace = Parse.Object.extend("ParkingSpace");
+    var query = new Parse.Query(parkingSpace);
+    query.withinMiles("location", myGeoPoint, 3);
+    console.log("do i get here? right before query.find");
+    query.find({
+        success: function(results) {
+          console.log("Total: "+results.length);
+          var usedNames = new Set();
+            // console.log("parking space objects: " + JSON.stringify(results));
+            for(var i = 0; i < results.length; i ++){
+              if(usedNames.has(results[i].get("name"))){
+                continue;
+              }
+              usedNames.add(results[i].get("name"));
+              var newLat = results[i].get("location")._latitude;
+              console.log(results[i].get("location")._latitude);
+              var newLng = results[i].get("location")._longitude;
+              var newLatLng = new google.maps.LatLng(newLat, newLng);
+              console.log(newLatLng);
+              console.log(results[i]);
+              var newMarker = new google.maps.Marker({
+                  map: $scope.map,
+                  animation: google.maps.Animation.DROP,
+                  position: newLatLng
+              });
+
+            }
+          },
+          error: function(error) {
+            alert("Error when getting objects!");
+          }
+        });
 
     var infoWindow = new google.maps.InfoWindow({
         content: "Current Location"
