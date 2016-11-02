@@ -30,7 +30,7 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete','ngCo
       StatusBar.styleDefault();
     }
 
-    Parse.initialize("com.team3.parkhere");
+    Parse.initialize("com.team3.parkhere", "medvidobitches");
     Parse.serverURL = 'http://138.68.43.212:1337/parse';
     var currentUser = Parse.User.current();
 

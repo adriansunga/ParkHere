@@ -6,7 +6,7 @@
           <h2>Time: {{space.get("Hour")}}:00 {{space.get("PrettyDate")}}</h2>
           <p>Address: {{space.get("address")}}</p>
           <p>Price: ${{space.get("price")}}/hour</p>
-          <ion-option-button class="button-info" ng-click="delete(space.get('address'), space.get('Date'))">
+          <ion-option-button class="button-info" ng-click="delete(space)">
             Delete
           </ion-option-button>
       </ion-list>
