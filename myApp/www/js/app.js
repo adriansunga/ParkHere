@@ -51,7 +51,7 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete','ngCo
   };
 
   $stateProvider
-  
+
     .state('login', {
     url: '/login',
     templateUrl: 'templates/login.html',
@@ -114,16 +114,6 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete','ngCo
         controller: 'spotOwnerInformationCtrl'
       }
     },
-  })
-   .state('parker.paypal', {
-    url: '/paypal',
-    views: {
-      'side-menu21': {
-        templateUrl: 'templates/paypal.html',
-        controller: 'paypalCtrl'
-      }
-    },
-
   })
   .state('owner', {
     url: '/owner',

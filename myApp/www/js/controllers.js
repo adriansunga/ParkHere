@@ -189,10 +189,6 @@ angular.module('starter.controllers', [])
     console.log("search clicked");
     $state.go("parker.search");
   }
-  $scope.payment = function() {
-      console.log("payment clicked");
-      $state.go("parker.paypal");
-    }
   $scope.showLogout = function() {
     console.log("in show logout");
    var confirmPopup = $ionicPopup.confirm({
@@ -406,7 +402,6 @@ angular.module('starter.controllers', [])
   }
 })
 
-
 .service('parkerSearchResults', function() {
   var parkerSearchResults = this;
   parkerSearchResults.viableSpaces = [];
@@ -555,7 +550,13 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('reservationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults, user) {
+.service('reservationInfo', function(){
+  var reservationInfo = this;
+  reservationInfo.price = '';
+  return reservationInfo;
+})
+
+.controller('reservationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults, user, reservationInfo) {
 
   $scope.selectedSpace = parkerSearchResults.selectedSpace;
 
@@ -576,7 +577,7 @@ angular.module('starter.controllers', [])
     var bDate = b.get("Date");
     if(((aDate.getMonth() + 1) == (bDate.getMonth() + 1)) &&
       (aDate.getDate() == bDate.getDate()) &&
-      (aDate.getFullYear() == bDate.getFullYear()) ) 
+      (aDate.getFullYear() == bDate.getFullYear()) )
     {
       console.log("hi");
       return a.get("Hour") - b.get("Hour");
@@ -602,7 +603,7 @@ angular.module('starter.controllers', [])
           setReservation = false;
         }
           checkedTimes.push(i);
-        
+
       }
     }
 
@@ -617,6 +618,7 @@ angular.module('starter.controllers', [])
     if(setReservation) {
       var error = false;
       for (var i = 0; i < checkedTimes.length; i++) {
+        console.log('setting reserved');
         $scope.availableTimes[checkedTimes[i]].set('reserved', true);
         $scope.availableTimes[checkedTimes[i]].set('parker', user.username);
 
@@ -629,15 +631,19 @@ angular.module('starter.controllers', [])
             error = true;
           }
         });
-        
+
       }
       if(!error && checkedTimes.length != 0) {
-        var alertPopup = $ionicPopup.alert({
+        var price = parkerSearchResults.selectedSpace.get("price");
+        reservationInfo.price = price * checkedTimes.length;
+        console.log('price is ' + reservationInfo.price);
+        $state.go("parker.pay");
+        /*var alertPopup = $ionicPopup.alert({
           title: "Your spaces have been reserved!",
-        });
+        });*/
       }
 
-      
+
     } else if (checkedTimes.length != 0) {
       var alertPopup = $ionicPopup.alert({
         title: "You cannot reserve a parking space that is already reserved ",
@@ -766,11 +772,13 @@ angular.module('starter.controllers', [])
 
 
 //where we set up the payment... should be for parker
-.controller('parkerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge) {
+.controller('parkerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, reservationInfo) {
+    var total = reservationInfo.price;
+
     $scope.ProductMeta = {
     title: "Awesome product",
     description: "Yes it really is",
-    priceUSD: 1,
+    priceUSD: total,
   };
 
   $scope.status = {
@@ -991,7 +999,7 @@ angular.module('starter.controllers', [])
               success: function(results) {
                 console.log("found some spaces");
                 console.log(results);
-                 
+
                   for(var i = 0; i < results.length; i ++){
                     results[i].destroy({
                       success: function(myObject) {
@@ -1421,9 +1429,9 @@ angular.module('starter.controllers', [])
 //map controller
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, parkerSearch) {
   var options = {timeout: 10000, enableHighAccuracy: true};
- 
+
   $cordovaGeolocation.getCurrentPosition(options).then(function(position){
- 
+
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
     console.log(latLng);
     var longitude = position.coords.longitude;
@@ -1433,7 +1441,7 @@ angular.module('starter.controllers', [])
       zoom: 15,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
- 
+
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
     google.maps.event.addListenerOnce($scope.map, 'idle', function(){
     var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
@@ -1471,24 +1479,24 @@ angular.module('starter.controllers', [])
                   animation: google.maps.Animation.DROP,
                   position: newLatLng
               });
-          
+
             }
           },
           error: function(error) {
             alert("Error when getting objects!");
           }
-        });   
-   
+        });
+
     var infoWindow = new google.maps.InfoWindow({
         content: "Current Location"
     });
-   
+
     google.maps.event.addListener(marker, 'click', function () {
         infoWindow.open($scope.map, marker);
     });
-   
+
   });
- 
+
   }, function(error){
     console.log("Could not get location");
   });
