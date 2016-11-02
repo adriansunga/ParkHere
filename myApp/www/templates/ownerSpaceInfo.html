@@ -4,7 +4,13 @@
 </ion-nav-buttons> 
     <ion-content padding="true" class="has-header">
         <h1 id="ownerSpaceInfo-heading1" style="color:#000000;">{{parkingSpace.title}}</h1>
-        <h3 id="ownerSpaceInfo-heading2" style="color:#000000;">${{parkingSpace.price}}/hour</h3>
+        <!--<h3 id="ownerSpaceInfo-heading2" style="color:#000000;">${{parkingSpace.price}}/hour</h3>-->
+        <div id="invalid" style="color: red;"></div>
+        <label class="item item-input" id="ownerAddSpace-input12">
+                <span class="input-label">Price/hour</span>
+                <input type="text" placeholder="${{parkingSpace.price}}/hour" ng-model="space.price">
+        </label>
+        <button id="login-button1" class="button button-positive button-block" ng-click="updatePrice()">Update Price</button>
         <h3 id="ownerSpaceInfo-heading3" style="color:#000000;"></h3>
         <div style="margin: 0px; line-height: 250px; text-align: center;">
             <i class="icon " style="font-size: 64px; vertical-align: middle;" > <img style="width: 200px;" ng-src="{{ parkingSpace.url }}"></i> <!-- //{{ trustSrc(parkingSpace.url) }}-->

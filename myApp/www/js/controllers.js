@@ -704,6 +704,7 @@ angular.module('starter.controllers', [])
     }
   })
 })
+
 //getting payment token for owner
 .controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $ionicNavBarDelegate, $http) {
  // add the following headers for authentication
@@ -989,7 +990,7 @@ angular.module('starter.controllers', [])
     var today = new Date();
     today.setHours(0,0,0,0);
     query.greaterThanOrEqualTo("Date", today);
-    query.exists("parker");
+    query.equalTo("reserved", true);
     query.find({
       success: function(results) {
         if(results.length > 0){
@@ -1020,7 +1021,7 @@ angular.module('starter.controllers', [])
               success: function(results) {
                 console.log("found some spaces");
                 console.log(results);
-                 $scope.items.splice($scope.items.indexOf(item), 1);
+
                   for(var i = 0; i < results.length; i ++){
                     results[i].destroy({
                       success: function(myObject) {
@@ -1033,6 +1034,7 @@ angular.module('starter.controllers', [])
                 console.log("find error: " + error);
               }
             });
+            $scope.items.splice($scope.items.indexOf(item), 1);
 
          } else {
            console.log('You are not sure delete ' + item.name);
@@ -1056,6 +1058,7 @@ angular.module('starter.controllers', [])
 
 .controller('ownerSpaceInfoCtrl', function($scope, $ionicPopup, $state, $stateParams, parkingSpace, user, $sce) {
   $scope.parkingSpace = parkingSpace;
+  $scope.space = {};
   console.log("in owner space id " + parkingSpace.uniqueID);
   var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
   var pSpaceQuery = new Parse.Query(parkingSpaceParse);
@@ -1088,6 +1091,33 @@ angular.module('starter.controllers', [])
           console.log("find error: " + error);
         }
   });
+  $scope.updatePrice = function(){
+    console.log("in update price");
+    var allTimesQuery = new Parse.Query(parkingSpaceParse);
+    allTimesQuery.equalTo("name", parkingSpace.title);
+    allTimesQuery.equalTo("ownerEmail", parkingSpace.ownerEmail);
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    allTimesQuery.greaterThanOrEqualTo("Date", today);
+    allTimesQuery.equalTo("reserved", false);
+    allTimesQuery.find({
+        success: function(results) {
+
+          for (var i = 0; i < results.length; i++) {
+            console.log(results[i]);
+            results[i].set("price", $scope.space.price);
+            results[i].save();
+          }
+          parkingSpace.price = $scope.space.price;
+          $scope.parkingSpace = parkingSpace;
+          document.getElementById("invalid").innerHTML = "Price updated for unreserved spaces";
+        },
+        error: function(error) {
+          document.getElementById("invalid").innerHTML = "Something went wrong, please try again";
+        }
+      });
+
+  }
 
   $scope.getTimeSpaces = function(){
       var allTimesQuery = new Parse.Query(parkingSpaceParse);
@@ -1171,12 +1201,12 @@ angular.module('starter.controllers', [])
       var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
       var parkingSpaceName = $scope.data.spaceName;
       var price = $scope.data.price;
-      address = $scope.data.address;
       var notes = $scope.data.notes;
       var type = $scope.data.type;
       var latitude = 0;
       var longitude = 0;
       picFile = document.getElementById('fileUpload').files[0];
+      console.log(picFile);
       console.log("type: " + type);
       console.log(address);
       var div = document.getElementById('addSpaceInvalid');
@@ -1185,7 +1215,7 @@ angular.module('starter.controllers', [])
           div.innerHTML = 'Please insert all required fields';
           return;
       }
-      console.log("before geocode");
+      console.log(address);
       var geocoder = new google.maps.Geocoder();
       geocoder.geocode( { 'address': address}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
@@ -1372,7 +1402,7 @@ angular.module('starter.controllers', [])
           console.log('Time not selected');
         } else {
           endTime = new Date(val * 1000);
-          if(startTime.getUTCMinutes() < 10){
+          /*if(startTime.getUTCMinutes() < 10){
             var numMinutes = '0' + startTime.getUTCMinutes();
           }else{
             var numMinutes = startTime.getUTCMinutes();
@@ -1381,12 +1411,12 @@ angular.module('starter.controllers', [])
             var endNumMinutes = '0' + endTime.getUTCMinutes();
           }else{
             var endNumMinutes = endTime.getUTCMinutes();
-          }
+          }*/
           var addDiv = document.getElementById('addSpaceList');
-          startDate.setHours(startDate.getHours() + startTime.getHours());
-          endDate.setHours(endDate.getHours() + endTime.getHours());
+          /*startDate.setHours(startDate.getHours() + startTime.getHours());
+          endDate.setHours(endDate.getHours() + endTime.getHours());*/
           console.log(startDate + " end " + endDate);
-          if(endDate <= startDate){
+          if(endDate.getTime() == startDate.getTime() && endTime.getUTCHours() <= startTime.getUTCHours()){
             //popup modal
             var alertPopup = $ionicPopup.alert({
                title: "Your end date and time must be after your start",
@@ -1398,7 +1428,7 @@ angular.module('starter.controllers', [])
           //should check if times overlap here
           var startDateStr = (startDate.getMonth() + 1) + '/' + startDate.getDate() + '/' +  startDate.getFullYear();
           var endDateStr = (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' +  endDate.getFullYear();
-          addDiv.innerHTML += '<ion-item class="item-thumbnail-left"> <h4>Timeslot: '+ timeSlots + '</h4> <p>Start: ' + startDateStr + " "+ startTime.getUTCHours()+':'+ numMinutes+ '</p> <p>End: ' + endDateStr + " "+ endTime.getUTCHours()+':'+ endNumMinutes+ '</p></ion-item>';
+          addDiv.innerHTML += '<ion-item class="item-thumbnail-left"> <h4>Timeslot: '+ timeSlots + '</h4> <p>Start: ' + startDateStr + " "+ startTime.getUTCHours()+':00 </p> <p>End: ' + endDateStr + " "+ endTime.getUTCHours()+':00 </p></ion-item>';
           var dict = {'startDate':startDate, 'startTime':startTime.getUTCHours(), 'endDate': endDate, 'endTime':endTime.getUTCHours()};
           allTimeSlots.push(dict);
           console.log(allTimeSlots);
@@ -1414,5 +1444,51 @@ angular.module('starter.controllers', [])
   }
 
 //owner add space
+
+})
+
+
+//map controller
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
+  var options = {timeout: 10000, enableHighAccuracy: true};
+
+  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+
+    var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+    var mapOptions = {
+      center: latLng,
+      zoom: 15,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+
+    $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+    google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+    var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+    var marker = new google.maps.Marker({
+        map: $scope.map,
+        animation: google.maps.Animation.DROP,
+        icon: image,
+        position: latLng
+    });
+
+    var infoWindow = new google.maps.InfoWindow({
+        content: "Current Location"
+    });
+
+    google.maps.event.addListener(marker, 'click', function () {
+        infoWindow.open($scope.map, marker);
+    });
+
+  });
+
+  }, function(error){
+    console.log("Could not get location");
+  });
+
+
+
+
+
 
 })
