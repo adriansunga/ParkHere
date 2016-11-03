@@ -3,6 +3,8 @@ angular.module('starter.controllers', [])
 
 //LogIn Controller
 .controller('LoginCtrl', function($scope, $ionicPopup, $state, user) {
+  Parse.initialize("com.team3.parkhere", "medvidobitches");
+
     $scope.data = {};
     console.log("in login controller");
 
@@ -645,17 +647,13 @@ angular.module('starter.controllers', [])
                 /*var alertPopup = $ionicPopup.alert({
                   title: "Your spaces have been reserved!",
                 });*/
-            }
-
-
-        } else if (checkedTimes.length != 0) {
+            } else if (checkedTimes.length != 0) {
             var alertPopup = $ionicPopup.alert({
                 title: "You cannot reserve a parking space that is already reserved ",
             });
         }
-
     }
-
+}
 })
 
 .controller('upcomingSpacesCtrl', function($scope, $ionicPopup, $state, user) {
@@ -665,47 +663,44 @@ angular.module('starter.controllers', [])
     var query = new Parse.Query(parkingSpace);
     query.equalTo("parker", user.email);
     console.log("username: " + user.email);
+    query.ascending("Date");
     query.find({
         success: function(results) {
             $scope.spaces = results;
         }
-    });
+  });
+  $scope.delete = function(space) {
+    console.log("This item was deleted: " + space.get("address") +  "!");
+    var today = new Date();
+    var difference = space.get("Date") - today;
+    console.log("now date: " + today);
+    console.log("subtracted date: " + space.get("Date"));
+    var days = Math.abs(space.get("Date").valueOf() - today.valueOf()) / 36e5/24;
+    console.log("date difference: " + days );
 
-    $scope.delete = function(address, date) {
-        console.log("This item was deleted: " + address + " and " + date + "!");
-        //TODO: check for ability to delete (aka >2 days away)
-        var confirmPopup = $ionicPopup.confirm({
-            title: 'Unreserve',
-            template: 'Are you sure you want to remove this parking space?'
-        });
-        confirmPopup.then(function(res) {
-            if (res) {
-                var pSpace = Parse.Object.extend(Parse.Object.extend("ParkingSpace"));
-                var psQuery = new Parse.Query(pSpace);
-                query.equalTo("Date", date);
-                query.equalTo("address", address);
-                query.find({
-                    success: function(results) {
-                        console.log("size of results: " + results.length);
-                        console.log("parker value before: " + results[0].get("parker"));
-                        results[0].set("parker", "");
-                        results[0].save();
-                        console.log("parker value after: " + results[0].get("parker"));
-                    }
-                });
-
-                //Parse.User.current().fetch();
-                var alertPopup = $ionicPopup.alert({
-                    title: 'Your account will be refunded.',
-                });
-                alertPopup.then(function() {
-                    // history.go(0);
-                    $state.go("parker.upcomingSpaces");
-                });
-            }
-        });
+    if (days <2) {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Cannot unregister from this space.',
+        template: 'You can\'t unregister from a spot that you reserved for less than 2 days from now.',
+      });
     }
-
+    var confirmPopup = $ionicPopup.confirm({
+       title: 'Unreserve',
+       template: 'Are you sure you want to remove this parking space?'
+     });
+     confirmPopup.then(function(res) {
+       if(res) {
+         space.set("parker", "");
+         space.save();
+         var alertPopup = $ionicPopup.alert({
+           title: 'Your account will be refunded.',
+         });
+         alertPopup.then(function() {
+           $scope.spaces.splice($scope.spaces.indexOf(space), 1);
+         });
+       }
+     });
+  }
 })
 
 .controller('spotOwnerInformationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults) {
@@ -1003,7 +998,7 @@ angular.module('starter.controllers', [])
     today.setHours(0, 0, 0, 0);
     //if(Parse == null){
     //FOR TESTING
-    Parse.initialize("com.team3.parkhere");
+  //  Parse.initialize("com.team3.parkhere");
     //Parse.serverURL = 'http://138.68.43.212:1337/parse';
     //}
     var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
