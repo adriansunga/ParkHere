@@ -11,6 +11,7 @@ angular.module('starter.controllers', [])
     var currUser = Parse.User.current();
     if (currUser != null) {
         var userType = currUser.get("userType");
+
         if (userType == 'parker') {
             $state.go('parker.search');
         } else {
@@ -549,6 +550,7 @@ angular.module('starter.controllers', [])
 .service('reservationInfo', function() {
     var reservationInfo = this;
     reservationInfo.price = '';
+    reservationInfo.reserved = [];
     return reservationInfo;
 })
 
@@ -593,13 +595,19 @@ angular.module('starter.controllers', [])
             if ($scope.availableTimes[i].checked == true) {
                 if ($scope.availableTimes[i].get("reserved") == true) {
                     setReservation = false;
+                    console.log("setReservation set to false!");
+                    var alertPopup = $ionicPopup.alert({
+                        title: "Please only select spots that are unreserved",
+                    });
+                    break;
+                } else {
+                    checkedTimes.push(i);
                 }
-                checkedTimes.push(i);
-
+                 
             }
         }
 
-        if (checkedTimes.length == 0) {
+        if (checkedTimes.length == 0 && setReservation) {
             var alertPopup = $ionicPopup.alert({
                 title: "Please select the times you would like to reserve below",
             });
@@ -608,37 +616,51 @@ angular.module('starter.controllers', [])
 
         console.log(user.email);
         if (setReservation) {
-            var error = false;
-            for (var i = 0; i < checkedTimes.length; i++) {
-                console.log('setting reserved');
-                $scope.availableTimes[checkedTimes[i]].set('reserved', true);
-                $scope.availableTimes[checkedTimes[i]].set('parker', user.username);
+            //var error = false;
+            // for (var i = 0; i < checkedTimes.length; i++) {
+            //     console.log('setting reserved');
+            //     $scope.availableTimes[checkedTimes[i]].set('reserved', true);
+            //     $scope.availableTimes[checkedTimes[i]].set('parker', user.username);
 
-                // Save
-                $scope.availableTimes[checkedTimes[i]].save(null, {
-                    success: function(point) {},
-                    error: function(point, error) {
-                        alert(error);
-                        error = true;
-                    }
-                });
+            //     // Save
+            //     $scope.availableTimes[checkedTimes[i]].save(null, {
+            //         success: function(pofint) {},
+            //         error: function(point, error) {
+            //             alert(error);
+            //             error = true;
+            //         }
+            //     });
 
-            }
-            if (!error && checkedTimes.length != 0) {
+            // }
+
+           
+            // SO FAR SO GOOD
+            // if (!error && checkedTimes.length != 0) {
+            if(checkedTimes.length != 0) {
                 var price = parkerSearchResults.selectedSpace.get("price");
+
+                // Set info in service so it is available in parker.pay
                 reservationInfo.price = price * checkedTimes.length;
+
+
+                var reservedSpaces = [];
+                for(var i = 0; i < checkedTimes.length; i++) {
+                    reservedSpaces.push($scope.availableTimes[checkedTimes[i]]);
+                }
+                reservationInfo.reservedSpaces = reservedSpaces;
+
                 console.log('price is ' + reservationInfo.price);
                 $state.go("parker.pay");
                 /*var alertPopup = $ionicPopup.alert({
                   title: "Your spaces have been reserved!",
                 });*/
-            } else if (checkedTimes.length != 0) {
-            var alertPopup = $ionicPopup.alert({
-                title: "You cannot reserve a parking space that is already reserved ",
-            });
+            } 
+            // else if (checkedTimes.length != 0) {
+            // var alertPopup = $ionicPopup.alert({
+            //     title: "You cannot reserve a parking space that is already reserved ",
+            // });
         }
     }
-}
 })
 
 .controller('upcomingSpacesCtrl', function($scope, $ionicPopup, $state, user) {
@@ -782,6 +804,8 @@ angular.module('starter.controllers', [])
                         $scope.ResponseData['paymentId'] = 'Error, see console';
                     };
 
+
+
                 }
             )
             .error(
@@ -797,7 +821,7 @@ angular.module('starter.controllers', [])
 
 
 //where we set up the payment... should be for parker
-.controller('parkerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, reservationInfo) {
+.controller('parkerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, reservationInfo, user) {
     var total = reservationInfo.price;
 
     $scope.ProductMeta = {
@@ -843,7 +867,38 @@ angular.module('starter.controllers', [])
                 function(StripeInvoiceData) {
 
                     if (StripeInvoiceData.hasOwnProperty('id')) {
+                        //if charge successfull
                         $scope.status['message'] = "Success! Check your Stripe Account";
+                        console.log("Successful charge!");
+                        var error = false;
+
+                        var reservedSpaces = reservationInfo.reservedSpaces;
+
+                        console.log(reservationInfo.reservedSpaces.length);
+
+                        for (var i = 0; i < reservedSpaces.length; i++) {
+                            console.log('setting reserved');
+                            console.log(reservedSpaces[i].get('reserved'));
+
+                            reservedSpaces[i].set('reserved', true);
+                            reservedSpaces[i].set('parker', Parse.User.current().get("username"));
+
+
+                            // Save in database
+                            reservedSpaces[i].save( null, {
+                                success: function(point) {
+                                    console.log("Successful saving AFTER payment");
+                                },
+                                error: function(point, error) {
+                                    console.log("ERROR saving parking spaces :(");
+                                }
+                            });
+                        }
+
+
+
+
+
                     } else {
                         $scope.status['message'] = "Error, check your console";
                     };
