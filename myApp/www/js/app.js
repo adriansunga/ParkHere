@@ -7,7 +7,6 @@
 
 
 //noodlio pay ish
-
 var NOODLIO_PAY_API_URL = "https://noodlio-pay.p.mashape.com";
 var NOODLIO_PAY_API_KEY = "hkou9g9rVgmshTeafr21FodTUdsip1Gsko3jsn8G4LLowC6ReO";
 var STRIPE_ACCOUNT_ID = "acct_197dO3BnddH3DZLG";
@@ -237,7 +236,7 @@ angular.module('starter.services', [])
         var qCharge = $q.defer();
 
         var chargeUrl = NOODLIO_PAY_API_URL + "/charge/token";
-        
+
         var param = {
             source: stripeToken,
             amount: Math.floor(ProductMeta.priceUSD * 100), // amount in cents

@@ -225,15 +225,15 @@ angular.module('starter.controllers', [])
                 $scope.search = address;
                 document.getElementById('searchTextBox').value = address;
             }else{
-                
+
             }
             });
         console.log(currLat);
     }, function(error) {
         console.log("Could not get location");
     });
-    
-    
+
+
     $scope.countryCode = 'US';
 
     $scope.onAddressSelection = function(location) {
@@ -246,7 +246,7 @@ angular.module('starter.controllers', [])
     var startTime;
     var endDate;
     var endTime;
-    
+
     $scope.openTimePicker = function() {
         //date picker
         //variables we need to send to the back end
@@ -726,6 +726,50 @@ angular.module('starter.controllers', [])
 
 //getting payment token for owner
 .controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $ionicNavBarDelegate, $http) {
+    console.log("in owner payment");
+
+    var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
+    var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
+
+    var TOKEN_URI = 'https://connect.stripe.com/oauth/token';
+    var AUTHORIZE_URI = 'https://connect.stripe.com/oauth/authorize';
+
+    $http.post(AUTHORIZE_URI + "?response_type=code&client_id="+CLIENT_ID + "&scope=read_write")
+      .success(
+        function(response) {
+        }
+      )
+      .error(
+        function(response) {
+            console.log(response)
+        }
+      );
+  /*
+    $http.post("/oauth/callback", function(req, res) {
+      var code = req.query.code;
+
+      // Make /oauth/token endpoint POST request
+      request.post({
+        url: TOKEN_URI,
+        form: {
+          grant_type: "authorization_code",
+          client_id: CLIENT_ID,
+          code: code,
+          client_secret: API_KEY
+        }
+      }, function(err, r, body) {
+
+        var accessToken = JSON.parse(body).access_token;
+
+        // Do something with your accessToken
+
+        // For demo"s sake, output in response:
+        res.send({ "Your Token": accessToken });
+
+      });
+    });*/
+/*
+
     // add the following headers for authentication
     $ionicNavBarDelegate.showBackButton(false);
     $http.defaults.headers.common['X-Mashape-Key'] = NOODLIO_PAY_API_KEY;
@@ -812,7 +856,7 @@ angular.module('starter.controllers', [])
                 }
             );
     };
-
+*/
 })
 
 
