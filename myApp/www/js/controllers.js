@@ -661,6 +661,7 @@ angular.module('starter.controllers', [])
     var query = new Parse.Query(parkingSpace);
     query.equalTo("parker", user.email);
     console.log("username: " + user.email);
+    query.ascending("Date");
     query.find({
         success: function(results) {
             $scope.spaces = results;
