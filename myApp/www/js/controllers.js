@@ -431,17 +431,6 @@ angular.module('starter.controllers', [])
 .controller('parkingSearchResultsCtrl', function($scope, $ionicPopup, $state, parkerSearch, parkerSearchResults) {
     console.log("in parking search results!");
 
-    // TODO: modify code to use query results rather than preset id values
-    // maybe by making each item a query object
-    console.log("parking space objects: " + JSON.stringify(parkerSearch.parkingSpaceList[0]));
-    console.log("geoPoint: " + parkerSearch.geoPoint);
-    console.log("parkerSearch.parkingSpaceType = " + parkerSearch.parkingSpaceType);
-
-    console.log("start date = " + (parkerSearch.startDate.getMonth() + 1) + '/' + parkerSearch.startDate.getDate() + '/' + parkerSearch.startDate.getFullYear());
-    console.log("start time = " + parkerSearch.startTime.getUTCHours());
-    console.log("end date = " + (parkerSearch.endDate.getMonth() + 1) + '/' + parkerSearch.endDate.getDate() + '/' + parkerSearch.endDate.getFullYear());
-    console.log("end time = " + parkerSearch.endTime.getUTCHours());
-
     var viableSpaces = [];
 
 
@@ -483,7 +472,7 @@ angular.module('starter.controllers', [])
             }
         }
         if (addToList) {
-            var distance = parkerSearch.geoPoint.milesTo(viableSpaces[i].get("location"));
+            var distance = parkerSearch.geoPoint.milesTo(viableSpaces[i].get("location")).toFixed(2);
             viableSpaces[i].set("distance", distance);
             $scope.parkingSpaces.push(viableSpaces[i]);
         }
@@ -491,7 +480,6 @@ angular.module('starter.controllers', [])
 
 
     $scope.itemClicked = function(parkingSpace) {
-        console.log("This item was clicked: " + parkingSpace + "!");
         parkerSearchResults.selectedSpace = parkingSpace;
         $state.go("parker.reservation");
     }
@@ -585,7 +573,6 @@ angular.module('starter.controllers', [])
         var aDate = a.get("Date");
         var bDate = b.get("Date");
         if (((aDate.getMonth() + 1) == (bDate.getMonth() + 1)) &&       (aDate.getDate() == bDate.getDate()) &&       (aDate.getFullYear() == bDate.getFullYear())) {
-            console.log("hi");
             return a.get("Hour") - b.get("Hour");
         }
         return aDate - bDate;
