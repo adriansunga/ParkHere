@@ -3,7 +3,7 @@
         <ion-list id="parkingSearchResultsList">
         <ion-item class="item-thumbnail-left" id="parkingSearchResults-list-item11" ng-repeat="parkingSpace in parkingSpaces" ng-click="itemClicked(parkingSpace)">
             <img ng-src= "{{parkingSpace.get('picture')._url}}"/>
-            <h2>Price per hour: {{parkingSpace.get("price")}}</h2>
+            <h2>Price per hour: ${{parkingSpace.get("price")}}</h2>
             <p>Distance: {{parkingSpace.get("distance")}} miles</p>
             <p>Address: {{parkingSpace.get("address")}}</p>
         </ion-list>
