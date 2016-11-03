@@ -154,6 +154,10 @@ angular.module('starter.controllers', [])
         });
     }
 
+    $scope.loginClicked = function() {
+        $state.go("login");
+    }
+
 })
 
 
