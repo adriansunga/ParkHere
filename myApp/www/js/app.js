@@ -241,6 +241,7 @@ angular.module('starter.services', [])
             currency: "usd",
             description: "Your custom description here",
             stripe_account: STRIPE_ACCOUNT_ID,
+            //application_fee: Math.floor(ProductMeta.priceUSD * 100)*.1,
             test: TEST_MODE,
         };
 
