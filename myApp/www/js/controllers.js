@@ -887,7 +887,6 @@ angular.module('starter.controllers', [])
                             reservedSpaces[i].set('reserved', true);
                             reservedSpaces[i].set('parker', Parse.User.current().get("username"));
 
-
                             // Save in database
                             reservedSpaces[i].save( null, {
                                 success: function(point) {
@@ -898,6 +897,26 @@ angular.module('starter.controllers', [])
                                 }
                             });
                         }
+
+                        if(reservedSpaces.length > 0) {
+                            var currUnratedSpaces = Parse.User.current().get("unratedSpaces");
+                            if(currUnratedSpaces != null) {
+                                currUnratedSpaces = currUnratedSpaces.concat(reservedSpaces);
+                                Parse.User.current().set("unratedSpaces", currUnratedSpaces);
+                            } else {
+                                Parse.User.current().set("unratedSpaces", reservedSpaces);
+                            }
+                            Parse.User.current().save( null, {
+                                success: function(point) {
+                                    console.log("Successful saving user unrated space");
+                                },
+                                error: function(point, error) {
+                                    console.log("ERROR saving user unrated spaces");
+                                }
+                            });
+                        }
+                        
+                        
 
 
 
