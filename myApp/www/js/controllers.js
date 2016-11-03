@@ -483,7 +483,7 @@ angular.module('starter.controllers', [])
             }
         }
         if (addToList) {
-            var distance = parkerSearch.geoPoint.milesTo(viableSpaces[i].get("location"));
+            var distance = parkerSearch.geoPoint.milesTo(viableSpaces[i].get("location")).toFixed(2);
             viableSpaces[i].set("distance", distance);
             $scope.parkingSpaces.push(viableSpaces[i]);
         }
