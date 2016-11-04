@@ -246,11 +246,7 @@ angular.module('starter.controllers', [])
                 }
             }
         }
-
-        console.log(uniqueSpaces.length);
-        for (var i = 0; i < uniqueSpaces.length; i++) {
-
-            $scope.ratingsObject = {
+         $scope.ratingsObject = {
                     iconOn: 'ion-ios-star',
                     iconOff: 'ion-ios-star-outline',
                     iconOnColor: 'rgb(251, 212, 1)',
@@ -262,15 +258,39 @@ angular.module('starter.controllers', [])
                     }
                 };
 
-                var confirmPopup = $ionicPopup.show({
-                    title: 'Rating',
-                    template: '<ionic-ratings ratingsobj="ratingsObject" index =0></ionic-ratings>',
-                    subTitle: 'Please rate your experience with ' + uniqueSpaces[i].get("name") ,
-                    scope : $scope,
-                    buttons : [{text : 'Cancel'}, {text : 'Submit'}]
+        var confirmPopup = $ionicPopup.show({
+            template: '<input type="Rating" ng-model="data.rating">',
+            title: 'Please rate your experience with ' + user.name,
+            subTitle: 'Please use normal things',
+            scope: $scope,
+            buttons: [
+              { text: 'Cancel' },
+              {
+                text: '<b>Save</b>',
+                type: 'button-positive',
+                onTap: function(e) {
+                  if (!$scope.data.wifi) {
+                    //don't allow the user to close unless he enters wifi password
+                    e.preventDefault();
+                  } else {
+                    return $scope.data.wifi;
+                  }
+                }
+              }
+            ]
+          });
+        confirmPopup.then(function(res) {
+            if (res) {
+                for (var i = 0; i < uniqueSpaces.length; i++) {
 
-                });
+           
+                 }
+            } else {
+                console.log('You are not sure');
             }
+        });
+        console.log(uniqueSpaces.length);
+
         }
         
 
