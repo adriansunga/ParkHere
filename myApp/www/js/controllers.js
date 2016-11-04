@@ -24,7 +24,7 @@ angular.module('starter.controllers', [])
         var username = "" + $scope.data.username;
         var password = "" + $scope.data.password;
         var userType = document.querySelector('input[name = "loginType"]:checked');
-        console.log(username);
+        console.log(username); 
         console.log(password);
         var div = document.getElementById('invalid');
         if (userType == null) {
