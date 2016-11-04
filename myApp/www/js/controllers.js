@@ -1016,12 +1016,16 @@ angular.module('starter.controllers', [])
         var data = {
           grant_type     :'authorization_code',
           client_secret  : API_KEY,
-          code   : value
+          code   : value,
         };
         $http({
           url: 'https://connect.stripe.com/oauth/token',
           method: 'POST',
           data: data,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            //'Content-Type': 'application/json;charset=UTF-8'
+          },
         }).success(function (response) {
           console.log("WOW");
           console.log(response);
