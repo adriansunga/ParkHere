@@ -211,6 +211,44 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerSearchCtrl', function($scope, $cordovaGeolocation, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch, user) {
+    //Make user rate owner if parking spot has expired
+    var unratedSpaces = Parse.User.current().get("unratedSpaces");
+    var uniqueSpaces = [];
+    if(unratedSpaces != null) {
+        for(var i = 0; i < unratedSpaces.length; i++) {
+            var currSpace = unratedSpaces[i];
+            var expDate = new Date(currSpace.get("Date"));
+            var currDate = new Date();
+            console.log(expDate);
+            console.log(currDate);
+
+            if(currDate.getTime() > expDate.getTime()) { //expired
+
+                //Check if space time exists in parking spaces
+                for(var j = 0; j < uniqueSpaces.length; j++) {
+                    if(currSpace.get("address") == uniqueSpaces[j].get("address") &&
+                        currSpace.get("ownerEmail") == uniqueSpaces[j].get("ownerEmail")) {
+                        var uniqueSpaceDate = new Date(unqiueSpaces[j].get("Date"));
+                        if(expDate.getTime() > uniqueSpaceDate) {
+                            uniqueSpaces[j] = currSpace;
+                        }
+                    }
+                }
+            } else {
+                for(var j = 0; j < uniqueSpaces.length; j++) {
+                    if(currSpace.get("address") == uniqueSpaces[j].get("address") &&
+                        currSpace.get("ownerEmail") == uniqueSpaces[j].get("ownerEmail")) {
+                        //remove item
+                        uniquespaces.splice(j, 1);
+                    }
+                }
+            }
+        }
+    }
+    
+
+
+
     var currLat = null;
     var currLong = null;
     $scope.search = "Change address"
@@ -916,11 +954,7 @@ angular.module('starter.controllers', [])
                             });
                         }
                         
-                        
-
-
-
-
+                        //$state.go('parker.upcomingSpaces');
 
                     } else {
                         $scope.status['message'] = "Error, check your console";
