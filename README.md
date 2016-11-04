@@ -2,6 +2,8 @@ How to implement Team 3’s ParkHere:
 1. Download ionic Download v1.3.2. You can also clone it on GitHub
   a. Alternatively, if you have node installed and npm functionality you can run the command:
     npm install -g ionic
+  b. You must also install cordova:
+   npm install -g cordova
 2. cd into ParkHere then cd into myApp
 3. Ensure that the app is compiled (optional, this should already be done)
     npm build android
