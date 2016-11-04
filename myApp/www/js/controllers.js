@@ -222,6 +222,11 @@ angular.module('starter.controllers', [])
             console.log(expDate);
             console.log(currDate);
 
+            var confirmPopup = $ionicPopup.confirm({
+                title: 'Rating',
+                template: 'Rate your space'
+            });
+
             if(currDate.getTime() > expDate.getTime()) { //expired
 
                 //Check if space time exists in parking spaces
