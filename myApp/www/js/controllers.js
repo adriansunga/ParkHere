@@ -222,10 +222,7 @@ angular.module('starter.controllers', [])
             console.log(expDate);
             console.log(currDate);
 
-            var confirmPopup = $ionicPopup.confirm({
-                title: 'Rating',
-                template: 'Rate your space'
-            });
+            
 
             if(currDate.getTime() > expDate.getTime()) { //expired
 
@@ -249,8 +246,33 @@ angular.module('starter.controllers', [])
                 }
             }
         }
-    }
-    
+
+        console.log(uniqueSpaces.length);
+        for (var i = 0; i < uniqueSpaces.length; i++) {
+
+            $scope.ratingsObject = {
+                    iconOn: 'ion-ios-star',
+                    iconOff: 'ion-ios-star-outline',
+                    iconOnColor: 'rgb(251, 212, 1)',
+                    iconOffColor: 'rgb(224, 224, 224)',
+                    rating: 5,
+                    minRating: 0,
+                    callback: function(rating) {
+                        $scope.ratingsCallback(rating);
+                    }
+                };
+
+                var confirmPopup = $ionicPopup.show({
+                    title: 'Rating',
+                    template: '<ionic-ratings ratingsobj="ratingsObject" index =0></ionic-ratings>',
+                    subTitle: 'Please rate your experience with ' + uniqueSpaces[i].get("name") ,
+                    scope : $scope,
+                    buttons : [{text : 'Cancel'}, {text : 'Submit'}]
+
+                });
+            }
+        }
+        
 
 
 
