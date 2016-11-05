@@ -1,44 +1,48 @@
-describe('Controllers', function(){
-    var scope;
+/*describe('My parsejs app', function () {
+ 
+  it('should load some data from parse', function () {
+    var stub = Parse.Mock.stubQueryFind(function (options) {
+      return [new Parse.Object('User', {name: 'test@gmail.com'})]
+    });
+ 
+    expect(getUser()).toBeUndefined();
+ 
+    loadUser(); //function that invokes Query.find
+ 
+    expect(getUser()).toBeDefined();
+    expect(stub.callCount).toEqual(1); //do assertions on stub object if necessary
+  });
+ 
+  afterEach(inject(function () {
+    Parse.Mock.clearStubs(); //manually dispose of stubs
+  }));
+ 
+ 
+});*/
+
+
+describe('LoginCtrl', function(){
+    var $scope, scope;
 
     // load the controller's module
     beforeEach(module('starter'));
     beforeEach(module('starter.controllers'));
+    var $controller;
+
     beforeEach(inject(function($rootScope, $controller) {
         scope = $rootScope.$new();
-        $controller('LoginCtrl', {$scope: scope});
+        $scope = {};
+        $controller('LoginCtrl', {$scope: $scope});
     }));
 
-    // tests start here
-    it('checking username', function(){
-        expect(scope.data.username).toEqual("");
+    it('back end login testing', function(){
+
+        $scope.data.username = "test@gmail.com";
+        //scope.data.password = "password123";
+        //scope.login();
+        //scope.digest();
+
+        
     });
 });
 
-/*describe('Friends Unit Tests', function(){
-    var Friends;
-    beforeEach(module('starter.services'));
-
-    beforeEach(inject(function (_Friends_) {
-        Friends = _Friends_;
-    }));
-
-    it('can get an instance of my factory', inject(function(Friends) {
-        expect(Friends).toBeDefined();
-    }));
-
-    it('has 5 chats', inject(function(Friends) {
-        expect(Friends.all().length).toEqual(5);
-    }));
-
-    it('has Max as friend with id 1', inject(function(Friends) {
-        var oneFriend = {
-            id: 1,
-            name: 'Max Lynx',
-            notes: 'Odd obsession with everything',
-            face: 'https://avatars3.githubusercontent.com/u/11214?v=3&amp;s=460'
-        };
-
-        expect(Friends.get(1).name).toEqual(oneFriend.name);
-    }));
-});*/
