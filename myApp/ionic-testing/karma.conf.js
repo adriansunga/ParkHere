@@ -1,5 +1,5 @@
 // Karma configuration
-// Generated on Tue Nov 01 2016 00:04:26 GMT-0700 (PDT)
+// Generated on Sat Nov 05 2016 09:56:50 GMT-0700 (PDT)
 
 module.exports = function(config) {
   config.set({
@@ -13,21 +13,10 @@ module.exports = function(config) {
     frameworks: ['jasmine'],
 
 
-        // list of files / patterns to load in the browser
-       // list of files / patterns to load in the browser
+    // list of files / patterns to load in the browser
     files: [
-      
-      //'../node_modules/parse-mock/src/parse-mock.js',
-      
-      '../www/js/parse.min.js',
-      '../www/lib/angular/angular.js',
-      '../www/js/app.js',
-      '../www/js/controllers.js',
-      
-      '../www/js/*.js',
-
-      '../www/lib/angular-mocks/angular-mocks.js',
-      '**/*tests.js'
+      './www/js/*.js',
+      './www/lib/ngCordova/dist/ng-cordova.js'
     ],
 
 

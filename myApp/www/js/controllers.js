@@ -144,10 +144,10 @@ angular.module('starter.controllers', [])
                 console.log(error.message);
                 if (error.message == "invalid session token") {
                     parseUser.logOut();
-                    div.innerHTML = "Somethined went wrong, please try again";
+                    div.innerHTML = "Somethineg went wrong, please try again";
                 }
                 if (error.message == "UserEmailTaken") {
-                    div.innerHTML = user.email + ' already exists please try another email';
+                    document.getElementById('invalid')= 'This email already exists please try another email';
                 } else {
                     div.innerHTML = "Somethined went wrong, please try again";
                 }
@@ -1378,7 +1378,7 @@ angular.module('starter.controllers', [])
             console.log("type: " + type);
             console.log(address);
             var div = document.getElementById('addSpaceInvalid');
-            if (type === 'undefined' || parkingSpaceName === 'undefined' || price === 'undefined' || address === 'undefined' || picFile === 'undefined') {
+            if (type === 'undefined' || parkingSpaceName === 'undefined' || price === 'undefined' || address === 'undefined') {
                 //invalid login
                 div.innerHTML = 'Please insert all required fields';
                 return;

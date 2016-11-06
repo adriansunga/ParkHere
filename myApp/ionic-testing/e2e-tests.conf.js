@@ -9,7 +9,10 @@ exports.config = {
         specs: [
             'e2e-tests/**/*.tests.js'
         ],
+        allScriptsTimeout: 20000,
         jasmineNodeOpts: {
             isVerbose: true,
+            showColors: true,
+            defaultTimeoutInterval: 100000
         }
 };

@@ -9,12 +9,12 @@
                 <ion-item  class="item-thumbnail-left" ng-repeat="item in items" 
                   item="item" ng-click="edit(item)"  class="item-remove-animate">
                         <img ng-src="{{ item.image }}">
-                        <h2>{{item.name}}</h2>
+                        <h2 class="itemName">{{item.name}}</h2>
                         <p>${{item.price}}/hour</p>
                         <div id="divhidden" style="display: none;">{{item.uniqueID}}</div>
                         <div id="divhidden2" style="display: none;">{{item.email}}</div>
                     <ion-option-button class="button-positive" ng-click="edit(item)">View</ion-option-button>
-                   <ion-option-button class="button-assertive"
+                   <ion-option-button id="deleteButton" class="button-assertive"
                              ng-click="onItemDelete(item)">Delete</ion-option-button>
                 </ion-item>
             </ion-list>
