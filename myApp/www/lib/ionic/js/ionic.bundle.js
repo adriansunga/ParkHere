@@ -17876,6 +17876,7 @@ function createInjector(modulesToLoad, strictDi) {
     assertArg(isUndefined(modulesToLoad) || isArray(modulesToLoad), 'modulesToLoad', 'not an array');
     var runBlocks = [], moduleFn;
     forEach(modulesToLoad, function(module) {
+      // console.log("LOAD: " + module);
       if (loadedModules.get(module)) return;
       loadedModules.put(module, true);
 
@@ -17914,6 +17915,7 @@ function createInjector(modulesToLoad, strictDi) {
           /* jshint -W022 */
           e = e.message + '\n' + e.stack;
         }
+	// console.log("FAIL: " + module );
         throw $injectorMinErr('modulerr', "Failed to instantiate module {0} due to:\n{1}",
                   module, e.stack || e.message || e);
       }
