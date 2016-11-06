@@ -7,7 +7,7 @@ exports.config = {
         },
         baseUrl: 'http://localhost:8100',
         specs: [
-            'e2e-tests/**/*.tests.js'
+            'controller-tests/**/*.tests.js'
         ],
         allScriptsTimeout: 20000,
         jasmineNodeOpts: {
