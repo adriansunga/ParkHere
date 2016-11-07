@@ -16,7 +16,10 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       './www/js/*.js',
-      './www/lib/ngCordova/dist/ng-cordova.js'
+      './www/lib/ngCordova/dist/ng-cordova.js',
+      '../www/lib/angular/angular.js',
+      '../www/lib/angular-mocks/angular-mocks.js',
+      '**/*tests.js'
     ],
 
 
