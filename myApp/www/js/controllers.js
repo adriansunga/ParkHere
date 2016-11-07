@@ -212,7 +212,23 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerSearchCtrl', function($scope, $cordovaGeolocation, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch, user) {
+    Parse.Cloud.useMasterKey();
+
     $scope.data = {};
+
+    //TEST upload
+    // var u = Parse.Object.extend("User");
+    // if(Parse.User.current() instanceof u ) console.log("current is user");
+    // Parse.User.current().set("numRatings", 69);
+    // Parse.User.current().set("sumRatings", 69);
+    // Parse.User.current().save(null, {
+    //     success: function(object) {
+    //         console.log("Successfully save currUser's num/sumRatings");
+    //     },
+    //     error: function(error) {
+    //         console.log(error);
+    //     }
+    // })
 
     //Make user rate owner if parking spot has expired
     var unratedSpaces = Parse.User.current().get("unratedSpaces");
@@ -232,6 +248,12 @@ angular.module('starter.controllers', [])
             console.log("curr time: " + currDate.getTime());
             console.log("exp time: " + expDate.getTime());
 
+            ///!!!!!!!!!!!!
+            //!!!!!!!!!!!!!
+            //CHANGE BACK TO GREATER THAN
+            //!!!!!!!!!!!!!
+            //!!!!!!!!!!!!!
+
             if (currDate.getTime() < expDate.getTime()) { //expired 
                 if(uniqueSpaces.length == 0) { //uniqueSpaces is empty
                     uniqueSpaces.push(currSpace);
@@ -248,6 +270,7 @@ angular.module('starter.controllers', [])
                     }
                 }
             } else {
+                //Remove from uniqueSpaces if the same parking space exists in uniqueSpaces
                 for (var j = uniqueSpaces.length-1; j >= 0; j--) {
                     if (isSameSpace(currSpace, uniqueSpaces[j])) {
                         uniqueSpaces.splice(j,1);
@@ -257,7 +280,8 @@ angular.module('starter.controllers', [])
         }
 
         console.log("UniqueSpaces length: " + uniqueSpaces.length);
-        for (var i = 0; i < uniqueSpaces.length; i++) {
+
+        for (var i = 0; i < uniqueSpaces.length; i++) { 
             var currSpace = uniqueSpaces[i];
 
             var confirmPopup = $ionicPopup.show({
@@ -279,9 +303,12 @@ angular.module('starter.controllers', [])
                                 if (rating >= 0 && rating <= 5) {
                                     console.log("returning rating");
                                     return rating;
+                                } else {
+                                    alert("Please choose a rating from 0 - 5");
+                                    e.preventDefault();
                                 }
                             } else {
-                                console.log("rating is not an integer");
+                                alert("Please rate with an integer");
                                 e.preventDefault();
                             }
                         }
@@ -290,20 +317,79 @@ angular.module('starter.controllers', [])
             });
             confirmPopup.then(function(rating) {
                 if (rating) {
+                    console.log("rating: " + rating);
                     //get owner of parking space
-                    var owner;
+                    //var owner;
 
-                    var User = Parse.Object.extend("User");
-                    var query = Parse.Query(User);
+                    //var User = Parse.Object.extend("User");
+                    var query = new Parse.Query(Parse.User);
                     query.equalTo("username", currSpace.get("ownerEmail"));
-                    query.find({
-                        success: function(results) {
-                            alert("Successfully retrieved " + results.length + " users.");
+                    query.first({
+                        success: function(owner) {
+                            //owner = result;
+                            var sumRatings = owner.get("sumRatings");
+                            var numRatings = owner.get("numRatings");
+
+                            if(sumRatings == undefined) {
+                                //console.log("sumratings is undefined");
+                                sumRatings = rating;
+                            } else {
+                                sumRatings += rating;
+                            }
+
+                            if(numRatings == undefined) {
+                                console.log("numratings is undefined");
+                                numRatings = 1;
+                            } else {
+                                numRatings++;
+                            }
+
+                            // owner.increment("numRatings");
+                            // owner.save(null, {
+                            //     success: function(owner) {
+                            //         console.log("successful save!");
+                            //     },
+                            //     error: function(error) {
+                            //         //alert("Error: " + error.code + " " + error.message);
+                            //         console.log("Error: " + error.code + " " + error.message);
+                            //     }
+                            // });
+
+                            console.log(sumRatings);
+                            console.log(numRatings);
+
+                            console.log(owner.get("objectId"));
+
+                            if(owner instanceof Parse.User) {
+                                console.log("Owner is of type user!");
+                            } else {
+                                console.log("Owner IS NOT of type user :(");
+                            }
+
+                            owner.set("sumRatings", sumRatings);
+                            //owner.set("numRatings", numRatings);
+                            //owner.increment("sumRatings");
+
+                            owner.save(null, {
+                                success: function(owner) {
+                                    console.log("successful save!");
+                                },
+                                error: function(error, owner) {
+                                    console.log(owner);
+                                    //alert("Error: " + error.code + " " + error.message);
+                                    console.log("Error: " + error.code + " " + error.message);
+                                }
+                            });
+
+
                         },
                         error: function(error) {
-                            alert("Error: " + error.code + " " + error.message);
+                            //alert("Error: " + error.code + " " + error.message);
+                            console.log("Error: " + error.code + " " + error.message);
                         }
                     });
+
+
 
                 } else {
                     console.log("Error getting rating");
