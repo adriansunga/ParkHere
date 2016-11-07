@@ -17,17 +17,13 @@ module.exports = function(config) {
        // list of files / patterns to load in the browser
     files: [
       
-      //'../node_modules/parse-mock/src/parse-mock.js',
-      
-      '../www/js/parse.min.js',
-      '../www/lib/angular/angular.js',
-      '../www/js/app.js',
-      '../www/js/controllers.js',
-      
-      '../www/js/*.js',
+        '../../www/js/controller.js',
+        '../../www/js/app,js',
+        '../../www/lib/angular/angular.js',
+        '../../www/lib/angular-mocks/angular-mocks.js',
+        'Controllers/*tests.js'
 
-      '../www/lib/angular-mocks/angular-mocks.js',
-      '**/*tests.js'
+        // '../e2e-tests/*tests.js'
     ],
 
 

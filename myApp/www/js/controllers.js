@@ -5,6 +5,8 @@ angular.module('starter.controllers', [])
 .controller('LoginCtrl', function($scope, $ionicPopup, $state, user) {
   Parse.initialize("com.team3.parkhere", "medvidobitches");
 
+    $scope.test = true;
+
     $scope.data = {};
     console.log("in login controller");
 
