@@ -3,7 +3,7 @@ angular.module('starter.controllers', [])
 
 //LogIn Controller
 .controller('LoginCtrl', function($scope, $ionicPopup, $state, user) {
-  Parse.initialize("com.team3.parkhere", "medvidobitches");
+    Parse.initialize("com.team3.parkhere", "medvidobitches");
 
     $scope.data = {};
     console.log("in login controller");
@@ -148,7 +148,7 @@ angular.module('starter.controllers', [])
                     div.innerHTML = "Somethineg went wrong, please try again";
                 }
                 if (error.message == "UserEmailTaken") {
-                    document.getElementById('invalid')= 'This email already exists please try another email';
+                    document.getElementById('invalid') = 'This email already exists please try another email';
                 } else {
                     div.innerHTML = "Somethined went wrong, please try again";
                 }
@@ -212,87 +212,105 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerSearchCtrl', function($scope, $cordovaGeolocation, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch, user) {
+    $scope.data = {};
+
     //Make user rate owner if parking spot has expired
     var unratedSpaces = Parse.User.current().get("unratedSpaces");
     var uniqueSpaces = [];
-    if(unratedSpaces != null) {
-        for(var i = 0; i < unratedSpaces.length; i++) {
+    var indecesToRemove = [];
+    if (unratedSpaces != null) {
+        for (var i = 0; i < unratedSpaces.length; i++) {
             var currSpace = unratedSpaces[i];
+
+            //Timezones are trivial becauase we get time
             var expDate = new Date(currSpace.get("Date"));
             var currDate = new Date();
-            console.log(expDate);
-            console.log(currDate);
 
+            console.log("curr date: " + currDate);
+            console.log("exp date: " + expDate);
 
+            console.log("curr time: " + currDate.getTime());
+            console.log("exp time: " + expDate.getTime());
 
-            if(currDate.getTime() > expDate.getTime()) { //expired
-
-                //Check if space time exists in parking spaces
-                for(var j = 0; j < uniqueSpaces.length; j++) {
-                    if(currSpace.get("address") == uniqueSpaces[j].get("address") &&
-                        currSpace.get("ownerEmail") == uniqueSpaces[j].get("ownerEmail")) {
-                        var uniqueSpaceDate = new Date(unqiueSpaces[j].get("Date"));
-                        if(expDate.getTime() > uniqueSpaceDate) {
-                            uniqueSpaces[j] = currSpace;
+            if (currDate.getTime() < expDate.getTime()) { //expired 
+                if(uniqueSpaces.length == 0) { //uniqueSpaces is empty
+                    uniqueSpaces.push(currSpace);
+                } else {
+                    //Check if space time exists in uniqueSpaces
+                    //update space with later time if it exists
+                    for (var j = 0; j < uniqueSpaces.length; j++) {
+                        if (isSameSpace(currSpace, uniqueSpaces[j])) {
+                            var uniqueSpaceDate = new Date(unqiueSpaces[j].get("Date"));
+                            if (expDate.getTime() > uniqueSpaceDate.getTime()) {
+                                uniqueSpaces[j] = currSpace;
+                            }
                         }
                     }
                 }
             } else {
-                for(var j = 0; j < uniqueSpaces.length; j++) {
-                    if(currSpace.get("address") == uniqueSpaces[j].get("address") &&
-                        currSpace.get("ownerEmail") == uniqueSpaces[j].get("ownerEmail")) {
-                        //remove item
-                        uniquespaces.splice(j, 1);
+                for (var j = uniqueSpaces.length-1; j >= 0; j--) {
+                    if (isSameSpace(currSpace, uniqueSpaces[j])) {
+                        uniqueSpaces.splice(j,1);
                     }
                 }
             }
         }
-         $scope.ratingsObject = {
-                    iconOn: 'ion-ios-star',
-                    iconOff: 'ion-ios-star-outline',
-                    iconOnColor: 'rgb(251, 212, 1)',
-                    iconOffColor: 'rgb(224, 224, 224)',
-                    rating: 5,
-                    minRating: 0,
-                    callback: function(rating) {
-                        $scope.ratingsCallback(rating);
+
+        console.log("UniqueSpaces length: " + uniqueSpaces.length);
+        for (var i = 0; i < uniqueSpaces.length; i++) {
+            var currSpace = uniqueSpaces[i];
+
+            var confirmPopup = $ionicPopup.show({
+                template: '<input type="Rating" ng-model="data.rating">',
+                title: 'Please rate your experience with ' + Parse.User.current().get("name"),
+                subTitle: 'Please use normal things',
+                scope: $scope,
+                buttons: [{
+                    text: '<b>Submit</b>',
+                    type: 'button-positive',
+                    onTap: function(e) {
+                        if (!$scope.data.rating) {
+                            e.preventDefault();
+                        } else {
+                            var rating = Number($scope.data.rating);
+                            console.log(rating);
+                            if (Number.isInteger(rating)) {
+                                console.log("rating is an integer");
+                                if (rating >= 0 && rating <= 5) {
+                                    console.log("returning rating");
+                                    return rating;
+                                }
+                            } else {
+                                console.log("rating is not an integer");
+                                e.preventDefault();
+                            }
+                        }
                     }
-                };
+                }]
+            });
+            confirmPopup.then(function(rating) {
+                if (rating) {
+                    //get owner of parking space
+                    var owner;
 
-        var confirmPopup = $ionicPopup.show({
-            template: '<input type="Rating" ng-model="data.rating">',
-            title: 'Please rate your experience with ' + user.name,
-            subTitle: 'Please use normal things',
-            scope: $scope,
-            buttons: [
-              { text: 'Cancel' },
-              {
-                text: '<b>Save</b>',
-                type: 'button-positive',
-                onTap: function(e) {
-                  if (!$scope.data.wifi) {
-                    //don't allow the user to close unless he enters wifi password
-                    e.preventDefault();
-                  } else {
-                    return $scope.data.wifi;
-                  }
+                    var User = Parse.Object.extend("User");
+                    var query = Parse.Query(User);
+                    query.equalTo("username", currSpace.get("ownerEmail"));
+                    query.find({
+                        success: function(results) {
+                            alert("Successfully retrieved " + results.length + " users.");
+                        },
+                        error: function(error) {
+                            alert("Error: " + error.code + " " + error.message);
+                        }
+                    });
+
+                } else {
+                    console.log("Error getting rating");
                 }
-              }
-            ]
-          });
-        confirmPopup.then(function(res) {
-            if (res) {
-                for (var i = 0; i < uniqueSpaces.length; i++) {
-
-
-                 }
-            } else {
-                console.log('You are not sure');
-            }
-        });
-        console.log(uniqueSpaces.length);
-
+            });
         }
+    }
 
 
 
@@ -317,10 +335,10 @@ angular.module('starter.controllers', [])
                 address = currLat + " " + currLong;
                 $scope.search = address;
                 document.getElementById('searchTextBox').value = address;
-            }else{
+            } else {
 
             }
-            });
+        });
         console.log(currLat);
     }, function(error) {
         console.log("Could not get location");
@@ -456,8 +474,8 @@ angular.module('starter.controllers', [])
         var geocoder = new google.maps.Geocoder();
         var latitude;
         var longitude;
-        if(parkingSpaceType == null || startDate == null || startTime == null || endDate == null
-            || address == null || endTime == null){
+        if (parkingSpaceType == null || startDate == null || startTime == null || endDate == null ||
+            address == null || endTime == null) {
             document.getElementById("invalid").innerHTML = "Please insert all fields";
             return;
         }
@@ -547,7 +565,7 @@ angular.module('starter.controllers', [])
 
     console.log("viable spaces filled, size : " + viableSpaces.length);
     parkerSearchResults.viableSpaces = viableSpaces;
-    if(viableSpaces.length == 0){
+    if (viableSpaces.length == 0) {
         document.getElementById("noResults").innerHTML = "No results matched your search";
     }
     $scope.parkingSpaces = [];
@@ -727,13 +745,13 @@ angular.module('starter.controllers', [])
 
             // SO FAR SO GOOD
             // if (!error && checkedTimes.length != 0) {
-            if(checkedTimes.length != 0) {
+            if (checkedTimes.length != 0) {
                 var price = parkerSearchResults.selectedSpace.get("price");
 
                 // Set info in service so it is available in parker.pay
                 reservationInfo.price = price * checkedTimes.length;
                 var reservedSpaces = [];
-                for(var i = 0; i < checkedTimes.length; i++) {
+                for (var i = 0; i < checkedTimes.length; i++) {
                     reservedSpaces.push($scope.availableTimes[checkedTimes[i]]);
                 }
                 reservationInfo.reservedSpaces = reservedSpaces;
@@ -764,39 +782,39 @@ angular.module('starter.controllers', [])
         success: function(results) {
             $scope.spaces = results;
         }
-  });
-  $scope.delete = function(space) {
-    console.log("This item was deleted: " + space.get("address") +  "!");
-    var today = new Date();
-    var difference = space.get("Date") - today;
-    console.log("now date: " + today);
-    console.log("subtracted date: " + space.get("Date"));
-    var days = Math.abs(space.get("Date").valueOf() - today.valueOf()) / 36e5/24;
-    console.log("date difference: " + days );
+    });
+    $scope.delete = function(space) {
+        console.log("This item was deleted: " + space.get("address") + "!");
+        var today = new Date();
+        var difference = space.get("Date") - today;
+        console.log("now date: " + today);
+        console.log("subtracted date: " + space.get("Date"));
+        var days = Math.abs(space.get("Date").valueOf() - today.valueOf()) / 36e5 / 24;
+        console.log("date difference: " + days);
 
-    if (days <2) {
-      var alertPopup = $ionicPopup.alert({
-        title: 'Cannot unregister from this space.',
-        template: 'You can\'t unregister from a spot that you reserved for less than 2 days from now.',
-      });
+        if (days < 2) {
+            var alertPopup = $ionicPopup.alert({
+                title: 'Cannot unregister from this space.',
+                template: 'You can\'t unregister from a spot that you reserved for less than 2 days from now.',
+            });
+        }
+        var confirmPopup = $ionicPopup.confirm({
+            title: 'Unreserve',
+            template: 'Are you sure you want to remove this parking space?'
+        });
+        confirmPopup.then(function(res) {
+            if (res) {
+                space.set("parker", "");
+                space.save();
+                var alertPopup = $ionicPopup.alert({
+                    title: 'Your account will be refunded.',
+                });
+                alertPopup.then(function() {
+                    $scope.spaces.splice($scope.spaces.indexOf(space), 1);
+                });
+            }
+        });
     }
-    var confirmPopup = $ionicPopup.confirm({
-       title: 'Unreserve',
-       template: 'Are you sure you want to remove this parking space?'
-     });
-     confirmPopup.then(function(res) {
-       if(res) {
-         space.set("parker", "");
-         space.save();
-         var alertPopup = $ionicPopup.alert({
-           title: 'Your account will be refunded.',
-         });
-         alertPopup.then(function() {
-           $scope.spaces.splice($scope.spaces.indexOf(space), 1);
-         });
-       }
-     });
-  }
 })
 
 .controller('spotOwnerInformationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults) {
@@ -818,138 +836,138 @@ angular.module('starter.controllers', [])
 //getting payment token for owner
 .controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $ionicNavBarDelegate, $http) {
     console.log("in owner payment");
-/*
-    var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
-    var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
+    /*
+        var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
+        var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
 
-    var TOKEN_URI = 'https://connect.stripe.com/oauth/token';
-    var AUTHORIZE_URI = 'httpvbg s://connect.stripe.com/oauth/authorize';
+        var TOKEN_URI = 'https://connect.stripe.com/oauth/token';
+        var AUTHORIZE_URI = 'httpvbg s://connect.stripe.com/oauth/authorize';
 
-    $http.post(AUTHORIZE_URI + "?response_type=code&client_id="+CLIENT_ID + "&scope=read_write")
-      .success(
-        function(response) {
-        }
-      )
-      .error(
-        function(response) {
-            console.log(response)
-        }
-      );*/
-  /*
-    $http.post("/oauth/callback", function(req, res) {
-      var code = req.query.code;
+        $http.post(AUTHORIZE_URI + "?response_type=code&client_id="+CLIENT_ID + "&scope=read_write")
+          .success(
+            function(response) {
+            }
+          )
+          .error(
+            function(response) {
+                console.log(response)
+            }
+          );*/
+    /*
+      $http.post("/oauth/callback", function(req, res) {
+        var code = req.query.code;
 
-      // Make /oauth/token endpoint POST reques
-      request.post({
-        url: TOKEN_URI,
-        form: {
-          grant_type: "authorization_code",
-          client_id: CLIENT_ID,
-          code: code,
-          client_secret: API_KEY
-        }
-      }, function(err, r, body) {
+        // Make /oauth/token endpoint POST reques
+        request.post({
+          url: TOKEN_URI,
+          form: {
+            grant_type: "authorization_code",
+            client_id: CLIENT_ID,
+            code: code,
+            client_secret: API_KEY
+          }
+        }, function(err, r, body) {
 
-        var accessToken = JSON.parse(body).access_token;
+          var accessToken = JSON.parse(body).access_token;
 
-        // Do something with your accessToken
+          // Do something with your accessToken
 
-        // For demo"s sake, output in response:
-        res.send({ "Your Token": accessToken });
+          // For demo"s sake, output in response:
+          res.send({ "Your Token": accessToken });
 
-      });
-    });*/
-/*
+        });
+      });*/
+    /*
 
-    // add the following headers for authentication
-    $ionicNavBarDelegate.showBackButton(false);
-    $http.defaults.headers.common['X-Mashape-Key'] = NOODLIO_PAY_API_KEY;
-    $http.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
-    $http.defaults.headers.common['Accept'] = 'application/json';
+        // add the following headers for authentication
+        $ionicNavBarDelegate.showBackButton(false);
+        $http.defaults.headers.common['X-Mashape-Key'] = NOODLIO_PAY_API_KEY;
+        $http.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
+        $http.defaults.headers.common['Accept'] = 'application/json';
 
-    $scope.FormData = {
-        number: "",
-        cvc: "",
-        exp_month: "",
-        exp_year: "",
-        test: TEST_MODE,
-    };
-
-    $scope.createToken = function() {
-
-        // init for the DOM
-        $scope.ResponseData = {
-            loading: true
-        };
-
-        // create a token and validate the credit card details
-        $http.post(NOODLIO_PAY_API_URL + "/tokens/create", $scope.FormData)
-            .success(
-                function(response) {
-
-                    // --> success
-                    console.log(response)
-
-                    if (response.hasOwnProperty('id')) {
-                        var token = response.id;
-                        $scope.ResponseData['token'] = token;
-                        proceedCharge(token);
-                    } else {
-                        $scope.ResponseData['token'] = 'You did not input all fields properly, please try again';
-                        $scope.ResponseData['loading'] = false;
-                    };
-
-                }
-            )
-            .error(
-                function(response) {
-                    console.log(response)
-                    $scope.ResponseData['token'] = 'You did not input all fields properly, please try again';
-                    $scope.ResponseData['loading'] = false;
-                }
-            );
-    };
-
-    // charge the customer with the token
-    function proceedCharge(token) {
-
-        var param = {
-            source: token,
-            amount: 100,
-            currency: "usd",
-            description: "Your custom description here",
-            stripe_account: STRIPE_ACCOUNT_ID,
+        $scope.FormData = {
+            number: "",
+            cvc: "",
+            exp_month: "",
+            exp_year: "",
             test: TEST_MODE,
         };
 
-        $http.post(NOODLIO_PAY_API_URL + "/charge/token", param)
-            .success(
-                function(response) {
+        $scope.createToken = function() {
 
-                    // --> success
-                    console.log(response);
-                    $scope.ResponseData['loading'] = false;
+            // init for the DOM
+            $scope.ResponseData = {
+                loading: true
+            };
 
-                    if (response.hasOwnProperty('id')) {
-                        var paymentId = response.id;
-                        $scope.ResponseData['paymentId'] = paymentId;
-                    } else {
+            // create a token and validate the credit card details
+            $http.post(NOODLIO_PAY_API_URL + "/tokens/create", $scope.FormData)
+                .success(
+                    function(response) {
+
+                        // --> success
+                        console.log(response)
+
+                        if (response.hasOwnProperty('id')) {
+                            var token = response.id;
+                            $scope.ResponseData['token'] = token;
+                            proceedCharge(token);
+                        } else {
+                            $scope.ResponseData['token'] = 'You did not input all fields properly, please try again';
+                            $scope.ResponseData['loading'] = false;
+                        };
+
+                    }
+                )
+                .error(
+                    function(response) {
+                        console.log(response)
+                        $scope.ResponseData['token'] = 'You did not input all fields properly, please try again';
+                        $scope.ResponseData['loading'] = false;
+                    }
+                );
+        };
+
+        // charge the customer with the token
+        function proceedCharge(token) {
+
+            var param = {
+                source: token,
+                amount: 100,
+                currency: "usd",
+                description: "Your custom description here",
+                stripe_account: STRIPE_ACCOUNT_ID,
+                test: TEST_MODE,
+            };
+
+            $http.post(NOODLIO_PAY_API_URL + "/charge/token", param)
+                .success(
+                    function(response) {
+
+                        // --> success
+                        console.log(response);
+                        $scope.ResponseData['loading'] = false;
+
+                        if (response.hasOwnProperty('id')) {
+                            var paymentId = response.id;
+                            $scope.ResponseData['paymentId'] = paymentId;
+                        } else {
+                            $scope.ResponseData['paymentId'] = 'Error, see console';
+                        };
+
+
+
+                    }
+                )
+                .error(
+                    function(response) {
+                        console.log(response)
                         $scope.ResponseData['paymentId'] = 'Error, see console';
-                    };
-
-
-
-                }
-            )
-            .error(
-                function(response) {
-                    console.log(response)
-                    $scope.ResponseData['paymentId'] = 'Error, see console';
-                    $scope.ResponseData['loading'] = false;
-                }
-            );
-    };
-*/
+                        $scope.ResponseData['loading'] = false;
+                    }
+                );
+        };
+    */
 })
 
 
@@ -993,30 +1011,30 @@ angular.module('starter.controllers', [])
         ); // ./ getStripeToken
 
         function proceedCharge(stripeToken) {
-/*
-            $scope.status['message'] = "Processing your payment...";
-            var stripe = require("stripe")("sk_test_46tPC5KonTnuuvz1dbl0Q7J7");
+            /*
+                        $scope.status['message'] = "Processing your payment...";
+                        var stripe = require("stripe")("sk_test_46tPC5KonTnuuvz1dbl0Q7J7");
 
-            // Get the credit card details submitted by the form
-            var token = request.body.stripeToken;
+                        // Get the credit card details submitted by the form
+                        var token = request.body.stripeToken;
 
-            // Create the charge with Stripe
-            stripe.charges.create({
-              amount: total, // amount in cents
-              currency: "usd",
-              source: token,
-              description: "Example charge",
-              application_fee: total*.1 // amount in cents
-            }, {
-            stripe_account: STRIPE_ACCOUNT_ID
-            //$scope.status['message'] = "Success! Check your Stripe Account";
-           },
-           function(err, charge) {
-             $scope.status['message'] = "Error, check your console";
-            // check for `err`
-            // do something with `charge`
-           }
-         );*/
+                        // Create the charge with Stripe
+                        stripe.charges.create({
+                          amount: total, // amount in cents
+                          currency: "usd",
+                          source: token,
+                          description: "Example charge",
+                          application_fee: total*.1 // amount in cents
+                        }, {
+                        stripe_account: STRIPE_ACCOUNT_ID
+                        //$scope.status['message'] = "Success! Check your Stripe Account";
+                       },
+                       function(err, charge) {
+                         $scope.status['message'] = "Error, check your console";
+                        // check for `err`
+                        // do something with `charge`
+                       }
+                     );*/
 
             // then chare the user through your custom node.js server (server-side)
             StripeCharge.chargeUser(stripeToken, $scope.ProductMeta).then(
@@ -1040,7 +1058,7 @@ angular.module('starter.controllers', [])
                             reservedSpaces[i].set('parker', Parse.User.current().get("username"));
 
                             // Save in database
-                            reservedSpaces[i].save( null, {
+                            reservedSpaces[i].save(null, {
                                 success: function(point) {
                                     console.log("Successful saving AFTER payment");
                                 },
@@ -1050,15 +1068,15 @@ angular.module('starter.controllers', [])
                             });
                         }
 
-                        if(reservedSpaces.length > 0) {
+                        if (reservedSpaces.length > 0) {
                             var currUnratedSpaces = Parse.User.current().get("unratedSpaces");
-                            if(currUnratedSpaces != null) {
+                            if (currUnratedSpaces != null) {
                                 currUnratedSpaces = currUnratedSpaces.concat(reservedSpaces);
                                 Parse.User.current().set("unratedSpaces", currUnratedSpaces);
                             } else {
                                 Parse.User.current().set("unratedSpaces", reservedSpaces);
                             }
-                            Parse.User.current().save( null, {
+                            Parse.User.current().save(null, {
                                 success: function(point) {
                                     console.log("Successful saving user unrated space");
                                 },
@@ -1162,40 +1180,39 @@ angular.module('starter.controllers', [])
     var keyvalpair = window.location.search.slice(1).split('&');
     // Loop through items
     var x = 0;
-    for (x = 0; x <= keyvalpair.length-1; x++)
-    {
-      // Split the key from the value
-      var splitted=keyvalpair[x].split('=');
-      var value=splitted[1];
-      if(value != 'undefined'){
-        //var parseUser = Parse.User.current();
-        var data = {
-          grant_type     :'authorization_code',
-          client_secret  : API_KEY,
-          code   : value,
-        };
-        $http({
-          url: 'https://connect.stripe.com/oauth/token',
-          method: 'POST',
-          data: data,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            //'Content-Type': 'application/json;charset=UTF-8'
-          },
-        }).success(function (response) {
-          console.log("WOW");
-          console.log(response);
-            //handle success
-            //$location.path('/'); //maybe you want to do this
-          }).error(function (response) {
-            console.log('bad');
-            //handle error
-          });
-        console.log(Parse.User.current().get("name"));
-        //Parse.User.current().set("stripeAccountID", value);
-        //user.stripeAccountID = value;
-        console.log('posted ' + value);
-      }
+    for (x = 0; x <= keyvalpair.length - 1; x++) {
+        // Split the key from the value
+        var splitted = keyvalpair[x].split('=');
+        var value = splitted[1];
+        if (value != 'undefined') {
+            //var parseUser = Parse.User.current();
+            var data = {
+                grant_type: 'authorization_code',
+                client_secret: API_KEY,
+                code: value,
+            };
+            $http({
+                url: 'https://connect.stripe.com/oauth/token',
+                method: 'POST',
+                data: data,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    //'Content-Type': 'application/json;charset=UTF-8'
+                },
+            }).success(function(response) {
+                console.log("WOW");
+                console.log(response);
+                //handle success
+                //$location.path('/'); //maybe you want to do this
+            }).error(function(response) {
+                console.log('bad');
+                //handle error
+            });
+            console.log(Parse.User.current().get("name"));
+            //Parse.User.current().set("stripeAccountID", value);
+            //user.stripeAccountID = value;
+            console.log('posted ' + value);
+        }
     }
 
 
@@ -1209,7 +1226,7 @@ angular.module('starter.controllers', [])
     today.setHours(0, 0, 0, 0);
     //if(Parse == null){
     //FOR TESTING
-  //  Parse.initialize("com.team3.parkhere");
+    //  Parse.initialize("com.team3.parkhere");
     //Parse.serverURL = 'http://138.68.43.212:1337/parse';
     //}
     var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
@@ -1818,10 +1835,10 @@ angular.module('starter.controllers', [])
     }, function(error) {
         console.log("Could not get location");
     });
-
-
-
-
-
-
 })
+
+var isSameSpace = function(a, b) {
+    // A and B must be ParkingSpaces
+    return a.get("location") == b.get("location") &&
+        a.get("ownerEmail") == b.get("ownerEmail");
+}
