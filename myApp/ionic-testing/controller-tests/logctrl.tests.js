@@ -9,6 +9,15 @@ describe('LogCtrl ', function(){
         loginButton = element(by.id('login-button1'));
     });
 
+    // beforeEach(inject(function($rootScope, $controller, $compile) {
+    //          compile = $compile;
+    //          scope = $rootScope.$new();
+    //          stateMock = jasmine.createSpyObj('$state spy', ['go']);
+    //          ionicPopupMock = jasmine.createSpyObj('$ionicPopup spy', ['alert']);
+    //          log("$controller value: " + $controller);
+    //          controller = $controller('LoginCtrl', {$scope: scope, '$state': stateMock, '$ionicPopup': ionicPopupMock, 'user':null});
+    //      }));
+
 
    it('checking controller state', function() {
         var thisUsername = 'test@gmail.com';
@@ -24,9 +33,7 @@ describe('LogCtrl ', function(){
             }, 10000);
 
         });
-
-       expect(browser.getLocationAbsUrl()).toMatch('/owner/home');
-
+        expect(controller.username).toEqual("parker@gmail.com");
     })
 
 
