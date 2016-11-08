@@ -47,7 +47,7 @@ describe('Clicking on the login button ', function(){
 
     })
 
-    it('with PARKER should validate the credentials for a successful login and display parker search', function() {
+   it('with PARKER should validate the credentials for a successful login and display parker search', function() {
         var thisUsername = 'parker@gmail.com';
         username.sendKeys(thisUsername);
         password.sendKeys('parkerparker5');
@@ -64,16 +64,16 @@ describe('Clicking on the login button ', function(){
        expect(browser.getLocationAbsUrl()).toMatch('/parker/parkerSearch');
     })
 
-    // it('should take you to sign up on "or create an acount" clicked', function() {
-    //     createAccountButton.click().then(function(){
-    //       return browser.driver.wait(function() {
-    //         return browser.driver.getCurrentUrl().then(function(url) {
-    //           console.log("url  " + url);
-    //           return /owner/.test(url);
-    //         });
-    //       }, 10000);
-    //
-    //   });
-    //  expect(browser.getLocationAbsUrl()).toMatch('/signUp');
-    // })
+    it('should take you to sign up on "or create an acount" clicked', function() {
+        createAccountButton.click().then(function(){
+          return browser.driver.wait(function() {
+            return browser.driver.getCurrentUrl().then(function(url) {
+              console.log("url  " + url);
+              return /owner/.test(url);
+            });
+          }, 10000);
+
+      });
+     expect(browser.getLocationAbsUrl()).toMatch('/signUp');
+    })
 });
