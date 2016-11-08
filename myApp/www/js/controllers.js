@@ -24,7 +24,7 @@ angular.module('starter.controllers', [])
         var username = "" + $scope.data.username;
         var password = "" + $scope.data.password;
         var userType = document.querySelector('input[name = "loginType"]:checked');
-        console.log(username); 
+        console.log(username);
         console.log(password);
         var div = document.getElementById('invalid');
         if (userType == null) {
@@ -97,13 +97,13 @@ angular.module('starter.controllers', [])
         console.log(email);
         console.log(password);
         if (userType == null) {
-            var div = document.getElementById('invalid');
+            var div = document.getElementById('invalidSignUp');
             div.innerHTML = 'Please select parker or owner';
             return;
         }
         userType = userType.value;
         console.log(userType);
-        var div = document.getElementById('invalid');
+        var div = document.getElementById('invalidSignUp');
         if (password == "undefined" || username == "undefined" || email == "undefined") {
             //invalid login
             div.innerHTML = 'Please insert all fields';
@@ -214,85 +214,85 @@ angular.module('starter.controllers', [])
     //Make user rate owner if parking spot has expired
     var unratedSpaces = Parse.User.current().get("unratedSpaces");
     var uniqueSpaces = [];
-    if(unratedSpaces != null) {
-        for(var i = 0; i < unratedSpaces.length; i++) {
-            var currSpace = unratedSpaces[i];
-            var expDate = new Date(currSpace.get("Date"));
-            var currDate = new Date();
-            console.log(expDate);
-            console.log(currDate);
+    // if(unratedSpaces != null) {
+    //     for(var i = 0; i < unratedSpaces.length; i++) {
+    //         var currSpace = unratedSpaces[i];
+    //         var expDate = new Date(currSpace.get("Date"));
+    //         var currDate = new Date();
+    //         console.log(expDate);
+    //         console.log(currDate);
+    //
+    //
+    //
+    //         if(currDate.getTime() > expDate.getTime()) { //expired
+    //
+    //             //Check if space time exists in parking spaces
+    //             for(var j = 0; j < uniqueSpaces.length; j++) {
+    //                 if(currSpace.get("address") == uniqueSpaces[j].get("address") &&
+    //                     currSpace.get("ownerEmail") == uniqueSpaces[j].get("ownerEmail")) {
+    //                     var uniqueSpaceDate = new Date(unqiueSpaces[j].get("Date"));
+    //                     if(expDate.getTime() > uniqueSpaceDate) {
+    //                         uniqueSpaces[j] = currSpace;
+    //                     }
+    //                 }
+    //             }
+    //         } else {
+    //             for(var j = 0; j < uniqueSpaces.length; j++) {
+    //                 if(currSpace.get("address") == uniqueSpaces[j].get("address") &&
+    //                     currSpace.get("ownerEmail") == uniqueSpaces[j].get("ownerEmail")) {
+    //                     //remove item
+    //                     uniquespaces.splice(j, 1);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //      $scope.ratingsObject = {
+    //                 iconOn: 'ion-ios-star',
+    //                 iconOff: 'ion-ios-star-outline',
+    //                 iconOnColor: 'rgb(251, 212, 1)',
+    //                 iconOffColor: 'rgb(224, 224, 224)',
+    //                 rating: 5,
+    //                 minRating: 0,
+    //                 callback: function(rating) {
+    //                     $scope.ratingsCallback(rating);
+    //                 }
+    //             };
+    //
+    //     var confirmPopup = $ionicPopup.show({
+    //         template: '<input type="Rating" ng-model="data.rating">',
+    //         title: 'Please rate your experience with ' + user.name,
+    //         subTitle: 'Please use normal things',
+    //         scope: $scope,
+    //         buttons: [
+    //           { text: 'Cancel' },
+    //           {
+    //             text: '<b>Save</b>',
+    //             type: 'button-positive',
+    //             onTap: function(e) {
+    //               if (!$scope.data.wifi) {
+    //                 //don't allow the user to close unless he enters wifi password
+    //                 e.preventDefault();
+    //               } else {
+    //                 return $scope.data.wifi;
+    //               }
+    //             }
+    //           }
+    //         ]
+    //       });
+    //     confirmPopup.then(function(res) {
+    //         if (res) {
+    //             for (var i = 0; i < uniqueSpaces.length; i++) {
+    //
+    //
+    //              }
+    //         } else {
+    //             console.log('You are not sure');
+    //         }
+    //     });
+    //     console.log(uniqueSpaces.length);
+    //
+    //     }
 
-            
-
-            if(currDate.getTime() > expDate.getTime()) { //expired
-
-                //Check if space time exists in parking spaces
-                for(var j = 0; j < uniqueSpaces.length; j++) {
-                    if(currSpace.get("address") == uniqueSpaces[j].get("address") &&
-                        currSpace.get("ownerEmail") == uniqueSpaces[j].get("ownerEmail")) {
-                        var uniqueSpaceDate = new Date(unqiueSpaces[j].get("Date"));
-                        if(expDate.getTime() > uniqueSpaceDate) {
-                            uniqueSpaces[j] = currSpace;
-                        }
-                    }
-                }
-            } else {
-                for(var j = 0; j < uniqueSpaces.length; j++) {
-                    if(currSpace.get("address") == uniqueSpaces[j].get("address") &&
-                        currSpace.get("ownerEmail") == uniqueSpaces[j].get("ownerEmail")) {
-                        //remove item
-                        uniquespaces.splice(j, 1);
-                    }
-                }
-            }
-        }
-         $scope.ratingsObject = {
-                    iconOn: 'ion-ios-star',
-                    iconOff: 'ion-ios-star-outline',
-                    iconOnColor: 'rgb(251, 212, 1)',
-                    iconOffColor: 'rgb(224, 224, 224)',
-                    rating: 5,
-                    minRating: 0,
-                    callback: function(rating) {
-                        $scope.ratingsCallback(rating);
-                    }
-                };
-
-        var confirmPopup = $ionicPopup.show({
-            template: '<input type="Rating" ng-model="data.rating">',
-            title: 'Please rate your experience with ' + user.name,
-            subTitle: 'Please use normal things',
-            scope: $scope,
-            buttons: [
-              { text: 'Cancel' },
-              {
-                text: '<b>Save</b>',
-                type: 'button-positive',
-                onTap: function(e) {
-                  if (!$scope.data.wifi) {
-                    //don't allow the user to close unless he enters wifi password
-                    e.preventDefault();
-                  } else {
-                    return $scope.data.wifi;
-                  }
-                }
-              }
-            ]
-          });
-        confirmPopup.then(function(res) {
-            if (res) {
-                for (var i = 0; i < uniqueSpaces.length; i++) {
-
-           
-                 }
-            } else {
-                console.log('You are not sure');
-            }
-        });
-        console.log(uniqueSpaces.length);
-
-        }
-        
 
 
 
@@ -304,26 +304,26 @@ angular.module('starter.controllers', [])
         timeout: 100000,
         enableHighAccuracy: false
     };
-    $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
-        currLat = position.coords.latitude;
-        currLong = position.coords.longitude;
-        var confirmPopup = $ionicPopup.confirm({
-            title: 'Current Location',
-            template: 'Can ParkHere use your current location?'
-        });
-        confirmPopup.then(function(res) {
-            if (res) {
-                address = currLat + " " + currLong;
-                $scope.search = address;
-                document.getElementById('searchTextBox').value = address;
-            }else{
-
-            }
-            });
-        console.log(currLat);
-    }, function(error) {
-        console.log("Could not get location");
-    });
+    // $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
+    //     currLat = position.coords.latitude;
+    //     currLong = position.coords.longitude;
+    //     var confirmPopup = $ionicPopup.confirm({
+    //         title: 'Current Location',
+    //         template: 'Can ParkHere use your current location?'
+    //     });
+    //     confirmPopup.then(function(res) {
+    //         if (res) {
+    //             address = currLat + " " + currLong;
+    //             $scope.search = address;
+    //             document.getElementById('searchTextBox').value = address;
+    //         }else{
+    //
+    //         }
+    //         });
+    //     console.log(currLat);
+    // }, function(error) {
+    //     console.log("Could not get location");
+    // });
 
 
     $scope.countryCode = 'US';
@@ -692,7 +692,7 @@ angular.module('starter.controllers', [])
                 } else {
                     checkedTimes.push(i);
                 }
-                 
+
             }
         }
 
@@ -722,7 +722,7 @@ angular.module('starter.controllers', [])
 
             // }
 
-           
+
             // SO FAR SO GOOD
             // if (!error && checkedTimes.length != 0) {
             if(checkedTimes.length != 0) {
@@ -743,7 +743,7 @@ angular.module('starter.controllers', [])
                 /*var alertPopup = $ionicPopup.alert({
                   title: "Your spaces have been reserved!",
                 });*/
-            } 
+            }
             // else if (checkedTimes.length != 0) {
             // var alertPopup = $ionicPopup.alert({
             //     title: "You cannot reserve a parking space that is already reserved ",
@@ -1000,7 +1000,7 @@ angular.module('starter.controllers', [])
                                 }
                             });
                         }
-                        
+
                         //$state.go('parker.upcomingSpaces');
 
                     } else {

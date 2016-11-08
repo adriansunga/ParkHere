@@ -1,4 +1,4 @@
-describe('OwnerDelete', function(){  
+describe('OwnerDelete', function(){
     var thisUsername;
     beforeEach(function() {
         browser.get('/#/login');
@@ -18,7 +18,7 @@ describe('OwnerDelete', function(){
                 return /owner/.test(url);
               });
             }, 10000);
-            
+
         });
 
     });
@@ -29,8 +29,8 @@ describe('OwnerDelete', function(){
       canDelete.element(byid('deleteButton')).click();
       var popup = element(by.css('.popup-container.popup-showing.active'));
       expect(popup.isDisplayed()).toBeTruthy();
-      var ptor = protractor.getInstance();
-      var alertDialog = ptor.switchTo().alert();
+    //  var ptor = protractor.getInstance();
+      var alertDialog = browser.switchTo().alert();
       alertDialog.accept()
       var numItems = element.all(by.repeator('item in times')).count();
       expect(numItems).toEqual(1);
@@ -42,7 +42,7 @@ describe('OwnerDelete', function(){
       canDelete.element(byid('deleteButton')).click();
       var popup = element(by.css('.popup-container.popup-showing.active'));
       expect(popup.isDisplayed()).toBeTruthy();
-      
+
     })
 
 });
