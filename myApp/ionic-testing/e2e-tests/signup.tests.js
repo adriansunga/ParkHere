@@ -41,7 +41,7 @@ describe('Clicking on the signup button ', function(){
         expect(browser.getLocationAbsUrl()).toMatch('/parker/parkerSearch');
     })
 
-    /*it('signup with email already in database', function() {
+    it('signup with email already in database', function() {
         name.sendKeys("Test Four");
         email.sendKeys('test@gmail.com');
         password.sendKeys('password123');
@@ -49,5 +49,5 @@ describe('Clicking on the signup button ', function(){
         signUpButton.click().then(function() {
             expect(element(by.id('invalid')).getText()).toEqual('Somethined went wrong, please try again');
         });
-    });*/
+    });
 });
