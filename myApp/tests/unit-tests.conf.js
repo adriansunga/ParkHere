@@ -17,23 +17,16 @@ module.exports = function(config) {
     files: [
 
         '../www/lib/ionic/js/ionic.bundle.js',
-
-        // '../www/lib/angular/angular.min.js',
-        
-         
-      
-      // '../www/lib/ionic/js/ionic-angular.js',
-      // '../www/lib/ionic/js/ionic.js',
-      // '../www/lib/moment.min.js',
+        '../www/js/parse.min.js',
         '../www/js/app.js',
         '../www/js/controllers.js',
-         // '../www/js/services.js',
+        '../www/js/services.js',
+        '../www/lib/angular-mocks/angular-mocks.js',
 
-         '../www/lib/angular-mocks/angular-mocks.js',
-      
-      // '../www/lib/angular-animate/angular-animate.min.js',
-      // '../www/lib/angular-sanatize/angular-sanatize.min.js',
-         'unit-tests/**/*.js'
+        'unit-tests/*.js'
+         // 'unit-tests/parkersearch.service.test.js'
+        // 'unit-tests/login.controller.tests.js',
+          // 'unit-tests/signUp.controller.tests.js'
     ],
 
 
@@ -73,7 +66,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // Continuous Integration mode
