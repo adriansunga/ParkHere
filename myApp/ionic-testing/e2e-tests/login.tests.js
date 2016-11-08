@@ -1,5 +1,5 @@
 describe('Clicking on the login button ', function(){  
-
+    var parker, username, password;
     beforeEach(function() {
         browser.get('/#/login');
         username = element(by.model('data.username'));
@@ -36,12 +36,13 @@ describe('Clicking on the login button ', function(){
        
     })
 
-   it('with PARKER should validate the credentials for a successful login and display parker search', function() {
+     it('with PARKER should validate the credentials for a successful login and display parker search', function() {
         var thisUsername = 'parker@gmail.com';
         username.sendKeys(thisUsername);
         password.sendKeys('parkerparker5');
+        var parkerVar = 'parker';
         parker.click();
-
+        
         loginButton.click().then(function(){
             return browser.driver.wait(function() {
               return browser.driver.getCurrentUrl().then(function(url) {
@@ -53,5 +54,6 @@ describe('Clicking on the login button ', function(){
        expect(browser.getLocationAbsUrl()).toMatch('/parker/parkerSearch');
        
     })
+
 
 });
