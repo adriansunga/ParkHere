@@ -36,7 +36,7 @@ describe('Clicking on the login button ', function(){
        
     })
 
-    it('with PARKER should validate the credentials for a successful login and display parker search', function() {
+   it('with PARKER should validate the credentials for a successful login and display parker search', function() {
         var thisUsername = 'parker@gmail.com';
         username.sendKeys(thisUsername);
         password.sendKeys('parkerparker5');
