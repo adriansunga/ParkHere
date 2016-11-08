@@ -80,6 +80,20 @@ describe('clicking on options from the parker menu', function() {
         expect(browser.getLocationAbsUrl()).toMatch('/parker/parkerSearch');
     })
 
+    it('should not log out of parker if cancelled', function() {
+      var EC = protractor.ExpectedConditions;
+      var menuToggleButton = element(by.css('ion-side-menus [nav-bar="active"] [menu-toggle="left"]'));
+      menuToggleButton.click();
+      var logOutLink = element(by.id('parkerMenu-list-item4'));
+      var isLogOutLinkClickable = EC.elementToBeClickable(logOutLink);
+      browser.wait(isLogOutLinkClickable, 5000); //wait for the element to become clickable
+      logOutLink.click();
+      var popup = element(by.css('.popup-container.popup-showing.active'));
+      expect(popup.isDisplayed()).toBeTruthy();
+      popup.element(by.css('.button.ng-binding.button-default')).click();
+      expect(browser.getLocationAbsUrl()).toMatch('/parker/parkerSearch');
+    })
+
     it('should log out of parker', function() {
       var EC = protractor.ExpectedConditions;
       var menuToggleButton = element(by.css('ion-side-menus [nav-bar="active"] [menu-toggle="left"]'));
@@ -94,19 +108,7 @@ describe('clicking on options from the parker menu', function() {
       expect(browser.getLocationAbsUrl()).toMatch('/login');
     })
 
-    it('should not log out of parker if cancelled', function() {
-      var EC = protractor.ExpectedConditions;
-      var menuToggleButton = element(by.css('ion-side-menus [nav-bar="active"] [menu-toggle="left"]'));
-      menuToggleButton.click();
-      var logOutLink = element(by.id('parkerMenu-list-item4'));
-      var isLogOutLinkClickable = EC.elementToBeClickable(logOutLink);
-      browser.wait(isLogOutLinkClickable, 5000); //wait for the element to become clickable
-      logOutLink.click();
-      var popup = element(by.css('.popup-container.popup-showing.active'));
-      expect(popup.isDisplayed()).toBeTruthy();
-      popup.element(by.css('.button.ng-binding.button-default')).click();
-      expect(browser.getLocationAbsUrl()).toMatch('/parker/parkerSearch');
-    })
+
 
   });
 });

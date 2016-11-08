@@ -61,7 +61,7 @@ describe('OwnerHomepage', function(){
       var isLogOutLinkClickable = EC.elementToBeClickable(logOutLink);
       browser.wait(isLogOutLinkClickable, 5000); //wait for the element to become clickable
       logOutLink.click();
-      var popup = element(by.css('.popup-container.popup-showing.default'));
+      var popup = element(by.css('.popup-container.popup-showing.active'));
       expect(popup.isDisplayed()).toBeTruthy();
       popup.element(by.css('.button.ng-binding.button-default')).click();
       expect(browser.getLocationAbsUrl()).toMatch('/owner/home');
@@ -75,7 +75,4 @@ describe('OwnerHomepage', function(){
       expect(itemName2.getText()).toEqual("Test Parking Space");
 
     })
-
-
-
 });
