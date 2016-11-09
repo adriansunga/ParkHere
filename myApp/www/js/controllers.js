@@ -1378,6 +1378,9 @@ angular.module('starter.controllers', [])
             console.log("type: " + type);
             console.log(address);
             var div = document.getElementById('addSpaceInvalid');
+            if(type === 'undefined'){
+                type = 'other';
+            }
             if (type === 'undefined' || parkingSpaceName === 'undefined' || price === 'undefined' || address === 'undefined') {
                 //invalid login
                 div.innerHTML = 'Please insert all required fields';
