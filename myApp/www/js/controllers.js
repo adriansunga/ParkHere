@@ -24,7 +24,7 @@ angular.module('starter.controllers', [])
         var username = "" + $scope.data.username;
         var password = "" + $scope.data.password;
         var userType = document.querySelector('input[name = "loginType"]:checked');
-        console.log(username); 
+        console.log(username);
         console.log(password);
         var div = document.getElementById('invalid');
         if (userType == null) {
@@ -82,6 +82,7 @@ angular.module('starter.controllers', [])
     user.phoneNumber = '';
     user.rating = '';
     user.uniqueID = '';
+    user.stripeAccountID = '';
     return user;
 })
 
@@ -222,7 +223,7 @@ angular.module('starter.controllers', [])
             console.log(expDate);
             console.log(currDate);
 
-            
+
 
             if(currDate.getTime() > expDate.getTime()) { //expired
 
@@ -283,7 +284,7 @@ angular.module('starter.controllers', [])
             if (res) {
                 for (var i = 0; i < uniqueSpaces.length; i++) {
 
-           
+
                  }
             } else {
                 console.log('You are not sure');
@@ -292,7 +293,7 @@ angular.module('starter.controllers', [])
         console.log(uniqueSpaces.length);
 
         }
-        
+
 
 
 
@@ -643,6 +644,7 @@ angular.module('starter.controllers', [])
     var reservationInfo = this;
     reservationInfo.price = '';
     reservationInfo.reserved = [];
+    reservationInfo.spotName = '';
     return reservationInfo;
 })
 
@@ -695,7 +697,7 @@ angular.module('starter.controllers', [])
                 } else {
                     checkedTimes.push(i);
                 }
-                 
+
             }
         }
 
@@ -725,7 +727,7 @@ angular.module('starter.controllers', [])
 
             // }
 
-           
+
             // SO FAR SO GOOD
             // if (!error && checkedTimes.length != 0) {
             if(checkedTimes.length != 0) {
@@ -733,20 +735,18 @@ angular.module('starter.controllers', [])
 
                 // Set info in service so it is available in parker.pay
                 reservationInfo.price = price * checkedTimes.length;
-
-
                 var reservedSpaces = [];
                 for(var i = 0; i < checkedTimes.length; i++) {
                     reservedSpaces.push($scope.availableTimes[checkedTimes[i]]);
                 }
                 reservationInfo.reservedSpaces = reservedSpaces;
-
+                reservationInfo.spotName = parkerSearchResults.selectedSpace.get("name");
                 console.log('price is ' + reservationInfo.price);
                 $state.go("parker.pay");
                 /*var alertPopup = $ionicPopup.alert({
                   title: "Your spaces have been reserved!",
                 });*/
-            } 
+            }
             // else if (checkedTimes.length != 0) {
             // var alertPopup = $ionicPopup.alert({
             //     title: "You cannot reserve a parking space that is already reserved ",
@@ -820,6 +820,50 @@ angular.module('starter.controllers', [])
 
 //getting payment token for owner
 .controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $ionicNavBarDelegate, $http) {
+    console.log("in owner payment");
+/*
+    var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
+    var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
+
+    var TOKEN_URI = 'https://connect.stripe.com/oauth/token';
+    var AUTHORIZE_URI = 'httpvbg s://connect.stripe.com/oauth/authorize';
+
+    $http.post(AUTHORIZE_URI + "?response_type=code&client_id="+CLIENT_ID + "&scope=read_write")
+      .success(
+        function(response) {
+        }
+      )
+      .error(
+        function(response) {
+            console.log(response)
+        }
+      );*/
+  /*
+    $http.post("/oauth/callback", function(req, res) {
+      var code = req.query.code;
+
+      // Make /oauth/token endpoint POST reques
+      request.post({
+        url: TOKEN_URI,
+        form: {
+          grant_type: "authorization_code",
+          client_id: CLIENT_ID,
+          code: code,
+          client_secret: API_KEY
+        }
+      }, function(err, r, body) {
+
+        var accessToken = JSON.parse(body).access_token;
+
+        // Do something with your accessToken
+
+        // For demo"s sake, output in response:
+        res.send({ "Your Token": accessToken });
+
+      });
+    });*/
+/*
+
     // add the following headers for authentication
     $ionicNavBarDelegate.showBackButton(false);
     $http.defaults.headers.common['X-Mashape-Key'] = NOODLIO_PAY_API_KEY;
@@ -908,16 +952,17 @@ angular.module('starter.controllers', [])
                 }
             );
     };
-
+*/
 })
 
 
 //where we set up the payment... should be for parker
 .controller('parkerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, reservationInfo, user) {
     var total = reservationInfo.price;
+    var STRIPE_ACCOUNT_ID = "acct_197dO3BnddH3DZLG";
 
     $scope.ProductMeta = {
-        title: "Awesome product",
+        title: reservationInfo.spotName,
         description: "Yes it really is",
         priceUSD: total,
     };
@@ -951,8 +996,30 @@ angular.module('starter.controllers', [])
         ); // ./ getStripeToken
 
         function proceedCharge(stripeToken) {
-
+/*
             $scope.status['message'] = "Processing your payment...";
+            var stripe = require("stripe")("sk_test_46tPC5KonTnuuvz1dbl0Q7J7");
+
+            // Get the credit card details submitted by the form
+            var token = request.body.stripeToken;
+
+            // Create the charge with Stripe
+            stripe.charges.create({
+              amount: total, // amount in cents
+              currency: "usd",
+              source: token,
+              description: "Example charge",
+              application_fee: total*.1 // amount in cents
+            }, {
+            stripe_account: STRIPE_ACCOUNT_ID
+            //$scope.status['message'] = "Success! Check your Stripe Account";
+           },
+           function(err, charge) {
+             $scope.status['message'] = "Error, check your console";
+            // check for `err`
+            // do something with `charge`
+           }
+         );*/
 
             // then chare the user through your custom node.js server (server-side)
             StripeCharge.chargeUser(stripeToken, $scope.ProductMeta).then(
@@ -1003,7 +1070,7 @@ angular.module('starter.controllers', [])
                                 }
                             });
                         }
-                        
+
                         //$state.go('parker.upcomingSpaces');
 
                     } else {
@@ -1087,8 +1154,52 @@ angular.module('starter.controllers', [])
     return parkingSpace;
 })
 
-.controller('ownerHomeCtrl', function($scope, $ionicNavBarDelegate, $ionicPopup, $state, parkingSpace, user) {
+.controller('ownerHomeCtrl', function($scope, $http, $ionicNavBarDelegate, $ionicPopup, $state, parkingSpace, user) {
+    var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
+    var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
+
+    Parse.initialize("com.team3.parkhere", "medvidobitches");
     $ionicNavBarDelegate.showBackButton(false);
+
+    // Obtain all args (key=val) format and store to array
+    var keyvalpair = window.location.search.slice(1).split('&');
+    // Loop through items
+    var x = 0;
+    for (x = 0; x <= keyvalpair.length-1; x++)
+    {
+      // Split the key from the value
+      var splitted=keyvalpair[x].split('=');
+      var value=splitted[1];
+      if(value != 'undefined'){
+        //var parseUser = Parse.User.current();
+        var data = {
+          grant_type     :'authorization_code',
+          client_secret  : API_KEY,
+          code   : value,
+        };
+        $http({
+          url: 'https://connect.stripe.com/oauth/token',
+          method: 'POST',
+          data: data,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            //'Content-Type': 'application/json;charset=UTF-8'
+          },
+        }).success(function (response) {
+          console.log("WOW");
+          console.log(response);
+            //handle success
+            //$location.path('/'); //maybe you want to do this
+          }).error(function (response) {
+            console.log('bad');
+            //handle error
+          });
+        console.log(Parse.User.current().get("name"));
+        //Parse.User.current().set("stripeAccountID", value);
+        //user.stripeAccountID = value;
+        console.log('posted ' + value);
+      }
+    }
 
 
 
