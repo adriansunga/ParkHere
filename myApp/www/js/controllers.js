@@ -6,7 +6,6 @@ angular.module('starter.controllers', [])
   Parse.initialize("com.team3.parkhere", "medvidobitches");
 
     $scope.data = {};
-    console.log("in login controller");
 
     var currUser = Parse.User.current();
     if (currUser != null) {
@@ -73,6 +72,8 @@ angular.module('starter.controllers', [])
 })
 
 .service('user', function() {
+
+
     var user = this;
     user = {};
     user.username = '';
@@ -83,11 +84,27 @@ angular.module('starter.controllers', [])
     user.rating = '';
     user.uniqueID = '';
     user.stripeAccountID = '';
+
+     var setUsername = function(name) {
+        Parse.User.current().set("username", name);
+        Parse.user.current().save();
+        return name;
+    }
+
+    var setEmail = function(email) {
+        Parse.User.current().set("email", email);
+        Parse.user.current().save();
+        return email;
+    }
+
     return user;
 })
 
 //SignUp Controller
 .controller('signUpCtrl', function($scope, $ionicPopup, $state, user) {
+    var func = function() {
+        return 2;
+    }
     $scope.data = {};
     $scope.signUp = function() {
 
@@ -209,6 +226,10 @@ angular.module('starter.controllers', [])
     parkerSearch.endTime = new Date();
     parkerSearch.parkingSpaceType = '';
     return parkerSearch;
+
+
+
+
 })
 
 .controller('parkerSearchCtrl', function($scope, $cordovaGeolocation, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch, user) {
@@ -642,6 +663,17 @@ angular.module('starter.controllers', [])
     reservationInfo.price = '';
     reservationInfo.reserved = [];
     reservationInfo.spotName = '';
+
+    var setPrice = function(price) {
+        reservationInfo.price = price;
+        return price;
+    }
+
+    var setSpotName = function(sn) {
+        reservationInfo.spotName = sn;
+        return sn;
+    }
+
     return reservationInfo;
 })
 
@@ -753,12 +785,10 @@ angular.module('starter.controllers', [])
 })
 
 .controller('upcomingSpacesCtrl', function($scope, $ionicPopup, $state, user) {
-    console.log("inside upcoming with user: " + user.email + " password: " + user.password);
     $scope.listCanSwipe = true;
     var parkingSpace = Parse.Object.extend("ParkingSpace");
     var query = new Parse.Query(parkingSpace);
     query.equalTo("parker", user.email);
-    console.log("username: " + user.email);
     query.ascending("Date");
     query.find({
         success: function(results) {
@@ -1148,6 +1178,13 @@ angular.module('starter.controllers', [])
     parkingSpace.uniqueID = '';
     parkingSpace.ownerEmail = '';
     parkingSpace.type = '';
+
+
+    var setURL = function (url){
+        parkingSpace.url = url;
+        return url;
+    }
+
     return parkingSpace;
 })
 
@@ -1469,8 +1506,7 @@ angular.module('starter.controllers', [])
     console.log("user", user.email);
 
     var address = "";
-
-    $scope.countryCode = 'US';
+  
     $scope.onAddressSelection = function(location) {
         address = location.formatted_address;
         console.log(address);
@@ -1743,10 +1779,14 @@ angular.module('starter.controllers', [])
 
 //map controller
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, parkerSearch) {
-    var options = {
+    
+
+    $scope.options = {
         timeout: 10000,
         enableHighAccuracy: true
     };
+
+    var options = $scope.options;
 
     $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
 
