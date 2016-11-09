@@ -7,9 +7,9 @@ describe('ParkerSearch', function(){
         parker = element(by.id('login-radio1'));
         owner = element(by.id('login-radio3'));
         loginButton = element(by.id('login-button1'));
-        thisUsername = 'parker@gmail.com'
+        thisUsername = 'anotherParker2@gmail.com';
         username.sendKeys(thisUsername);
-        password.sendKeys('parkerparker5');
+        password.sendKeys('password123');
         parker.click();
 
         loginButton.click().then(function(){
@@ -24,13 +24,14 @@ describe('ParkerSearch', function(){
     });
 
     it('search should produce the correct space', function() {
-        expect(2).toEqual(2);
         //insert address
         element(by.id('searchTextBox')).sendKeys('255 N D St, San Bernardino, CA 92401, USA');
-        //the car is of type compact
-        element.all(by.model('data2.searchType')).get(2).click();
-        browser.pause();
-        //insert times (nov 8, times 1 to 2) here, then input c to continue test
+        element(by.id('setTimeButton')).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        element(by.css('.col-25')).element(by.css('.button')).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
         //should redirect to parking space results
         element(by.id('parkingSearch-button')).click().then(function(){
             return browser.driver.wait(function() {
@@ -39,18 +40,20 @@ describe('ParkerSearch', function(){
               });
             }, 10000);
         });
-        var address = element.all(by.repeator('parkingSpace in parkingSpaces')).first().element.get(by.model(parkingSpace.get("address")));
-        expect(address.getText()).toEqual("American Heritage University of Southern California, 255 N D St, San Bernardino, CA 92401, USA");
+        var rep = 'parkingSpace in parkingSpaces';
+        var address = element.all(by.repeater(rep)).get(0);
+        var addressString = address.getText();
+        expect(addressString).toContain("American Heritage University of Southern California, 255 N D St, San Bernardino, CA 92401, USA");
        
-    })
-    it('search should search within 3 miles', function() {
-        
-        //insert address
+    }) 
+   it('search should search within 3 miles', function() {
         element(by.id('searchTextBox')).sendKeys('69 E Central Ave, San Bernardino, CA  92408');
-        //the car is of type compact
-        element.all(by.model('data2.searchType')).get(2).click();
-        browser.pause();
-        //insert times (nov 8, times 1 to 2) here, then input c to continue test
+        element(by.id('setTimeButton')).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        element(by.css('.col-25')).element(by.css('.button')).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
         //should redirect to parking space results
         element(by.id('parkingSearch-button')).click().then(function(){
             return browser.driver.wait(function() {
@@ -59,18 +62,23 @@ describe('ParkerSearch', function(){
               });
             }, 10000);
         });
-        var address = element.all(by.repeator('parkingSpace in parkingSpaces')).first().element.get(by.model(parkingSpace.get("address")));
-        expect(address.getText()).toEqual("American Heritage University of Southern California, 255 N D St, San Bernardino, CA 92401, USA");
+        var rep = 'parkingSpace in parkingSpaces';
+        var address = element.all(by.repeater(rep)).get(0);
+        var addressString = address.getText();
+        expect(addressString).toContain("American Heritage University of Southern California, 255 N D St, San Bernardino, CA 92401, USA");
        
     })
     it('search failure should produce a warning', function() {
+    
         //insert address
         element(by.id('searchTextBox')).sendKeys('1111 North Pole');
-        //the car is of type compact
-        element.all(by.model('data2.searchType')).get(0).click();
-        browser.pause();
-        //insert times (nov 8, times 1 to 2) here, then input c to continue test
-        //should redirect to parking space results
+        element(by.id('setTimeButton')).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        element(by.css('.col-25')).element(by.css('.button')).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        
         element(by.id('parkingSearch-button')).click().then(function(){
             return browser.driver.wait(function() {
               return browser.driver.getCurrentUrl().then(function(url) {
@@ -78,7 +86,8 @@ describe('ParkerSearch', function(){
               });
             }, 10000);
         });
-        expect(element(by.id(noResults)).toEqual("No reuslts matched your search");
+        var noResults = element(by.id("noResults")).getText();
+        expect(noResults).toEqual("No results matched your search");
        
     })
 
