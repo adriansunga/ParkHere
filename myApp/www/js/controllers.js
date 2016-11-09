@@ -330,6 +330,7 @@ angular.module('starter.controllers', [])
 
     $scope.onAddressSelection = function(location) {
         address = location.formatted_address;
+        document.getElementById('searchTextBox').value = address;
     };
 
     var timeSlots = 0;
@@ -1365,6 +1366,7 @@ angular.module('starter.controllers', [])
     $scope.countryCode = 'US';
     $scope.onAddressSelection = function(location) {
         address = location.formatted_address;
+        console.log(address);
         document.getElementById('typedAddress').value = address;
     };
 
@@ -1382,9 +1384,9 @@ angular.module('starter.controllers', [])
             console.log("type: " + type);
             console.log(address);
             var div = document.getElementById('addSpaceInvalid');
-            if(type === 'undefined'){
+            /*if(type === 'undefined'){
                 type = 'other';
-            }
+            }*/
             if (type === 'undefined' || parkingSpaceName === 'undefined' || price === 'undefined' || address === 'undefined') {
                 //invalid login
                 div.innerHTML = 'Please insert all required fields';
