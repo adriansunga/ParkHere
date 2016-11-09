@@ -15,8 +15,9 @@
                 <input type="text" placeholder="Price/hour" ng-model="data.price">
             </label>
             <label class="item item-input" id="ownerAddSpace-input9">
-                <input type="text" ng-model="data.address" placeholder="Address or Long and Lat">
-                 <!--<input type="text" placeholder="Change address" google-autocomplete-suggestion location="data.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data.location.formatted_address" readonly required>-->
+                <input id ="typedAddress" type="text" ng-model="data.address" placeholder="Typed Address or Long and Lat">
+                <div style="margin-right:12pt;">or</div>
+                 <input type="text" placeholder="Find Address" google-autocomplete-suggestion location="data.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data.location.formatted_address" readonly required>
             </label>
              <label class="item item-select" id="ownerAddSpace-select1">
                 <span class="input-label">Parking Space Type</span>

@@ -1512,7 +1512,7 @@ angular.module('starter.controllers', [])
   
     $scope.onAddressSelection = function(location) {
         address = location.formatted_address;
-        console.log(address);
+        document.getElementById('typedAddress').value = address;
     };
 
     $scope.addSpace = function() {
