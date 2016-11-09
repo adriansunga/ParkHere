@@ -22,11 +22,8 @@ module.exports = function(config) {
         '../www/js/controllers.js',
         '../www/js/services.js',
         '../www/lib/angular-mocks/angular-mocks.js',
-
-        'unit-tests/*.js'
-         // 'unit-tests/parkersearch.service.test.js'
-        // 'unit-tests/login.controller.tests.js',
-          // 'unit-tests/signUp.controller.tests.js'
+        // 'unit-tests/*tests.js'
+        'unit-tests/*test.js'
     ],
 
 
