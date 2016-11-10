@@ -6,6 +6,7 @@
                 <div style="margin-right:12pt;">or</div>
                  <input type="text" id="searchTextBox2" class="controls" placeholder="Address Lookup" google-autocomplete-suggestion location="data2.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data2.location.formatted_address" style="width:100%;" readonly required>
             </label>
+            <button id="currentLoc" class="button button-stable button-block icon" ng-click = "showCurrLoc()" ng-disabled="data.currLoc">Use Current Location</button>
         <!--<input id="searchTextBox" class="controls" type="text" placeholder="Search" style="width:100%;" ></input>-->
          <!--<input type="text" id="searchTextBox" class="controls" placeholder="{{search}}" google-autocomplete-suggestion location="data2.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data2.location.formatted_address" style="width:100%;" readonly required>-->
 
