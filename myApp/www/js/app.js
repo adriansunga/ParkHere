@@ -83,6 +83,7 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete', 'ngC
         })
         .state('parker.search', {
             url: '/parkerSearch',
+            cache: false,
             views: {
                 'side-menu21': {
                     templateUrl: 'templates/parkingSearch.html',
