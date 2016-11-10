@@ -609,7 +609,8 @@ angular.module('starter.controllers', [])
     $scope.user = {};
     $scope.user.name = Parse.User.current().get('name');
     $scope.user.email = Parse.User.current().get('username');
-    $scope.user.phoneNumber = Parse.User.current().get('phoneNumber');;
+    $scope.user.phoneNumber = Parse.User.current().get('phoneNumber');
+    $scope.user.url = Parse.User.current().get("picture")._url;
     var sumR = Parse.User.current().get('sumRatings');
     console.log(sumR);
     var numR = Parse.User.current().get('numRatings');
@@ -635,6 +636,7 @@ angular.module('starter.controllers', [])
     };
     var imageUploader = new ImageUploader();
     $scope.file = {};
+    $scope.ownerData = {};
     $scope.ratingsCallback = function(rating) {
         console.log('Selected rating is : ', rating);
     };
@@ -642,7 +644,7 @@ angular.module('starter.controllers', [])
     $scope.updateOwner = function() {
         var parseUser = Parse.User.current();
         console.log("in update owner");
-        console.log(ownerData.name);
+        console.log($scope.ownerData.name);
         if ($scope.ownerData.name != null) {
             user.username = $scope.ownerData.name;
             parseUser.set("name", $scope.ownerData.name);
@@ -653,6 +655,12 @@ angular.module('starter.controllers', [])
         }
         var picFile = document.getElementById('fileUpload').files[0];
         console.log(picFile);
+        if(picFile != null && picFile != "undefined"){
+            var parseFile = new Parse.File("image", picFile);
+            parseFile.save();
+            parseUser.set("picture", parseFile);
+
+        }
         parseUser.save(null, {
             success: function(user) {
                 console.log("in update owner success");
@@ -662,7 +670,7 @@ angular.module('starter.controllers', [])
                 document.getElementById('invalidOwner').innerHTML = "Something went wrong please try again";
             }
         });
-
+        $scope.user.url = Parse.User.current().get("picture")._url;
     };
 
 })
@@ -873,8 +881,7 @@ angular.module('starter.controllers', [])
         function(response) {
             console.log(response)
         }
-      );*/
-  /*
+      );
     $http.post("/oauth/callback", function(req, res) {
       var code = req.query.code;
 
@@ -897,8 +904,7 @@ angular.module('starter.controllers', [])
         res.send({ "Your Token": accessToken });
 
       });
-    });*/
-/*
+    });
 
     // add the following headers for authentication
     $ionicNavBarDelegate.showBackButton(false);
@@ -1392,7 +1398,7 @@ angular.module('starter.controllers', [])
         success: function(qSpace) {
             console.log(qSpace);
             parkingSpace.notes = qSpace.get("notes");
-            parkingSpace.url = qSpace.get('picture')._url
+            parkingSpace.url = qSpace.get('picture')._url;
             parkingSpace.type = qSpace.get("type");
             console.log("parking space pic in obj" + parkingSpace.url);
             parkingSpace.address = qSpace.get("address");
