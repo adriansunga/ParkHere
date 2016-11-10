@@ -589,7 +589,14 @@ angular.module('starter.controllers', [])
     $scope.user = {};
     $scope.user.name = Parse.User.current().get('name');
     $scope.user.email = Parse.User.current().get('username');
-    $scope.user.phoneNumber = Parse.User.current().get('phoneNumber');;
+    $scope.user.phoneNumber = Parse.User.current().get('phoneNumber');
+    console.log(Parse.User.current().get("picture"));
+    if(Parse.User.current().get("picture") == 'undefined' || Parse.User.current().get("picture") == null){     
+        $scope.user.url = "";
+     }else{
+         $scope.user.url = Parse.User.current().get("picture")._url;
+     }
+   
     var sumR = Parse.User.current().get('sumRatings');
     console.log(sumR);
     var numR = Parse.User.current().get('numRatings');
@@ -615,6 +622,7 @@ angular.module('starter.controllers', [])
     };
     var imageUploader = new ImageUploader();
     $scope.file = {};
+    $scope.ownerData = {};
     $scope.ratingsCallback = function(rating) {
         console.log('Selected rating is : ', rating);
     };
@@ -622,7 +630,7 @@ angular.module('starter.controllers', [])
     $scope.updateOwner = function() {
         var parseUser = Parse.User.current();
         console.log("in update owner");
-        console.log(ownerData.name);
+        console.log($scope.ownerData.name);
         if ($scope.ownerData.name != null) {
             user.username = $scope.ownerData.name;
             parseUser.set("name", $scope.ownerData.name);
@@ -633,6 +641,12 @@ angular.module('starter.controllers', [])
         }
         var picFile = document.getElementById('fileUpload').files[0];
         console.log(picFile);
+        if(picFile != null && picFile != "undefined"){
+            var parseFile = new Parse.File("image", picFile);
+            parseFile.save();
+            parseUser.set("picture", parseFile);
+
+        }
         parseUser.save(null, {
             success: function(user) {
                 console.log("in update owner success");
@@ -642,7 +656,7 @@ angular.module('starter.controllers', [])
                 document.getElementById('invalidOwner').innerHTML = "Something went wrong please try again";
             }
         });
-
+        $scope.user.url = Parse.User.current().get("picture")._url;
     };
 
 })
@@ -828,6 +842,48 @@ angular.module('starter.controllers', [])
 
 //getting payment token for owner
 .controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $ionicNavBarDelegate, $http) {
+    console.log("in owner payment");
+
+    var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
+    var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
+
+    var TOKEN_URI = 'https://connect.stripe.com/oauth/token';
+    var AUTHORIZE_URI = 'httpvbg s://connect.stripe.com/oauth/authorize';
+
+    $http.post(AUTHORIZE_URI + "?response_type=code&client_id="+CLIENT_ID + "&scope=read_write")
+      .success(
+        function(response) {
+        }
+      )
+      .error(
+        function(response) {
+            console.log(response)
+        }
+      );
+    $http.post("/oauth/callback", function(req, res) {
+      var code = req.query.code;
+
+      // Make /oauth/token endpoint POST reques
+      request.post({
+        url: TOKEN_URI,
+        form: {
+          grant_type: "authorization_code",
+          client_id: CLIENT_ID,
+          code: code,
+          client_secret: API_KEY
+        }
+      }, function(err, r, body) {
+
+        var accessToken = JSON.parse(body).access_token;
+
+        // Do something with your accessToken
+
+        // For demo"s sake, output in response:
+        res.send({ "Your Token": accessToken });
+
+      });
+    });
+
     // add the following headers for authentication
     $ionicNavBarDelegate.showBackButton(false);
     $http.defaults.headers.common['X-Mashape-Key'] = NOODLIO_PAY_API_KEY;
@@ -1246,7 +1302,7 @@ angular.module('starter.controllers', [])
         success: function(qSpace) {
             console.log(qSpace);
             parkingSpace.notes = qSpace.get("notes");
-            parkingSpace.url = qSpace.get('picture')._url
+            parkingSpace.url = qSpace.get('picture')._url;
             parkingSpace.type = qSpace.get("type");
             console.log("parking space pic in obj" + parkingSpace.url);
             parkingSpace.address = qSpace.get("address");
