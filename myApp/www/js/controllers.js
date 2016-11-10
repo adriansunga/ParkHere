@@ -324,10 +324,16 @@ angular.module('starter.controllers', [])
         timeout: 100000,
         enableHighAccuracy: false
     };
-
-    /*$cordovaGeolocation.getCurrentPosition(options).then(function(position) {
+    $scope.data = {};
+    $scope.data.currLoc  = true;
+    $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
         currLat = position.coords.latitude;
+        console.log(currLat);
         currLong = position.coords.longitude;
+        $scope.data.currLoc = false;
+    });
+    $scope.showCurrLoc = function(){
+        console.log("in curr loc");
         var confirmPopup = $ionicPopup.confirm({
             title: 'Current Location',
             template: 'Can ParkHere use your current location?'
@@ -336,6 +342,7 @@ angular.module('starter.controllers', [])
             if (res) {
                 address = currLat + " " + currLong;
                 $scope.search = address;
+                console.log(address);
                 document.getElementById('searchTextBox').value = address;
             }else{
 
@@ -344,8 +351,7 @@ angular.module('starter.controllers', [])
         console.log(currLat);
     }, function(error) {
         console.log("Could not get location");
-    });*/
-
+    };
     $scope.countryCode = 'US';
 
     $scope.onAddressSelection = function(location) {
@@ -1160,6 +1166,7 @@ angular.module('starter.controllers', [])
                     disableBack: true,
                     historyRoot: true
                 });
+                Parse.User.logOut();
                 $state.go('login');
             } else {
                 console.log('You are not sure');
