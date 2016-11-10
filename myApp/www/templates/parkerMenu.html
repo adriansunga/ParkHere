@@ -3,7 +3,7 @@
         <ion-nav-bar class="bar-stable">
             <ion-nav-back-button></ion-nav-back-button>
             <ion-nav-buttons side="left">
-                <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+                <button id="menuToggle" class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
             </ion-nav-buttons>
         </ion-nav-bar>
         <ion-nav-view name="side-menu21"></ion-nav-view>
@@ -15,7 +15,7 @@
         <ion-content padding="false" class="side-menu-left has-header ">
             <ion-list id="parkerMenu-list1">
                 <ion-item id="parkerMenu-list-item1"  ng-click="search()" menu-close="">Search</ion-item>
-                <ion-item id="parkerMenu-list-item2" ng-click="payment()" menu-close="">Payment</ion-item>
+                <!--<ion-item id="parkerMenu-list-item2" ng-click="payment()" menu-close="">Payment</ion-item>-->
                 <ion-item id="parkerMenu-list-item3" ng-click="upcomingSpaces()" menu-close="">Upcoming Spaces</ion-item>
                 <ion-item id="parkerMenu-list-item2" ui-sref="parker.map" menu-close="">Map View</ion-item>
                 <ion-item id="parkerMenu-list-item4"  ng-click="showLogout()" menu-close="">Logout</ion-item>

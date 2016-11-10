@@ -115,13 +115,13 @@ angular.module('starter.controllers', [])
         console.log(email);
         console.log(password);
         if (userType == null) {
-            var div = document.getElementById('invalid');
+            var div = document.getElementById('invalidSignUp');
             div.innerHTML = 'Please select parker or owner';
             return;
         }
         userType = userType.value;
         console.log(userType);
-        var div = document.getElementById('invalid');
+        var div = document.getElementById('invalidSignUp');
         if (password == "undefined" || username == "undefined" || email == "undefined") {
             //invalid login
             div.innerHTML = 'Please insert all fields';
@@ -316,8 +316,6 @@ angular.module('starter.controllers', [])
         }
 
 
-
-
     var currLat = null;
     var currLong = null;
     $scope.search = "Change address"
@@ -326,6 +324,7 @@ angular.module('starter.controllers', [])
         timeout: 100000,
         enableHighAccuracy: false
     };
+
     /*$cordovaGeolocation.getCurrentPosition(options).then(function(position) {
         currLat = position.coords.latitude;
         currLong = position.coords.longitude;
@@ -346,7 +345,6 @@ angular.module('starter.controllers', [])
     }, function(error) {
         console.log("Could not get location");
     });*/
-
 
     $scope.countryCode = 'US';
 
@@ -750,22 +748,22 @@ angular.module('starter.controllers', [])
 
         console.log(user.email);
         if (setReservation) {
-            //var error = false;
-            // for (var i = 0; i < checkedTimes.length; i++) {
-            //     console.log('setting reserved');
-            //     $scope.availableTimes[checkedTimes[i]].set('reserved', true);
-            //     $scope.availableTimes[checkedTimes[i]].set('parker', user.username);
+            var error = false;
+            for (var i = 0; i < checkedTimes.length; i++) {
+                console.log('setting reserved');
+                $scope.availableTimes[checkedTimes[i]].set('reserved', true);
+                $scope.availableTimes[checkedTimes[i]].set('parker', user.username);
 
-            //     // Save
-            //     $scope.availableTimes[checkedTimes[i]].save(null, {
-            //         success: function(pofint) {},
-            //         error: function(point, error) {
-            //             alert(error);
-            //             error = true;
-            //         }
-            //     });
+                // Save
+                $scope.availableTimes[checkedTimes[i]].save(null, {
+                    success: function(pofint) {},
+                    error: function(point, error) {
+                        alert(error);
+                        error = true;
+                    }
+                });
 
-            // }
+            }
 
 
             // SO FAR SO GOOD
@@ -859,7 +857,7 @@ angular.module('starter.controllers', [])
 //getting payment token for owner
 .controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $ionicNavBarDelegate, $http) {
     console.log("in owner payment");
-/*
+
     var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
     var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
 
@@ -990,7 +988,7 @@ angular.module('starter.controllers', [])
                 }
             );
     };
-*/
+
 })
 
 
