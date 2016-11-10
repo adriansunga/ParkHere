@@ -587,52 +587,59 @@ angular.module('starter.controllers', [])
     }
 
     $scope.user = {};
-    $scope.user.name = user.username;
-    $scope.user.email = user.email;
-    $scope.user.phoneNumber = user.phoneNumber;
-    console.log("here");
-
-    console.log($scope.user);
-    $scope.ownerData = {};
-    if (user.averageRating == null) {
-        user.averageRating = 0;
+    $scope.user.name = Parse.User.current().get('name');
+    $scope.user.email = Parse.User.current().get('username');
+    $scope.user.phoneNumber = Parse.User.current().get('phoneNumber');;
+    var sumR = Parse.User.current().get('sumRatings');
+    console.log(sumR);
+    var numR = Parse.User.current().get('numRatings');
+    var avRating
+    if(sumR == null || numR == null){
+        avRating = 0;
+    }else{
+        avRating = parseInt(sumR/numR);
     }
+   
+    console.log(avRating);
     $scope.ratingsObject = {
         iconOn: 'ion-ios-star',
         iconOff: 'ion-ios-star-outline',
         iconOnColor: 'rgb(251, 212, 1)',
         iconOffColor: 'rgb(224, 224, 224)',
-        rating: user.averageRating,
+        rating: avRating,
         minRating: 0,
         readOnly: true,
         callback: function(rating) {
             $scope.ratingsCallback(rating);
         }
     };
-
+    var imageUploader = new ImageUploader();
+    $scope.file = {};
     $scope.ratingsCallback = function(rating) {
         console.log('Selected rating is : ', rating);
     };
-
+    //fix this
     $scope.updateOwner = function() {
-        if ($scope.ownerData.username != null) {
+        var parseUser = Parse.User.current();
+        console.log("in update owner");
+        console.log(ownerData.name);
+        if ($scope.ownerData.name != null) {
             user.username = $scope.ownerData.name;
+            parseUser.set("name", $scope.ownerData.name);
         }
         if ($scope.ownerData.phoneNumber != null) {
-            user.phoneNumber = $scope.ownerData.phoneNumber
+            user.phoneNumber = $scope.ownerData.phoneNumber;
+            parseUser.set("phoneNumber", $scope.ownerData.phoneNumber);
         }
-        var parseUser = new Parse.User();
-        parseUser.id = user.uniqueID;
-        parseUser.set("name", user.username);
-        parseUser.set("phoneNumber", user.phoneNumber);
+        var picFile = document.getElementById('fileUpload').files[0];
+        console.log(picFile);
         parseUser.save(null, {
             success: function(user) {
                 console.log("in update owner success");
-
-                document.getElementById('invalid').innerHTML = "Profile updated";
+                document.getElementById('invalidOwner').innerHTML = "Profile updated";
             },
             error: function(user, error) {
-                document.getElementById('invalid').innerHTML = "Something went wrong please try again";
+                document.getElementById('invalidOwner').innerHTML = "Something went wrong please try again";
             }
         });
 
