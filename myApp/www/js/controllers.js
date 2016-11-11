@@ -331,9 +331,17 @@ angular.module('starter.controllers', [])
         timeout: 100000,
         enableHighAccuracy: false
     };
-    /*$cordovaGeolocation.getCurrentPosition(options).then(function(position) {
+
+    $scope.data = {};
+    $scope.data.currLoc  = true;
+    $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
         currLat = position.coords.latitude;
+        console.log(currLat);
         currLong = position.coords.longitude;
+        $scope.data.currLoc = false;
+    });
+    $scope.showCurrLoc = function(){
+        console.log("in curr loc");
         var confirmPopup = $ionicPopup.confirm({
             title: 'Current Location',
             template: 'Can ParkHere use your current location?'
@@ -342,6 +350,7 @@ angular.module('starter.controllers', [])
             if (res) {
                 address = currLat + " " + currLong;
                 $scope.search = address;
+                console.log(address);
                 document.getElementById('searchTextBox').value = address;
             }else{
 
@@ -350,13 +359,14 @@ angular.module('starter.controllers', [])
         console.log(currLat);
     }, function(error) {
         console.log("Could not get location");
-    });*/
 
+    };
 
     $scope.countryCode = 'US';
 
     $scope.onAddressSelection = function(location) {
         address = location.formatted_address;
+        document.getElementById('searchTextBox').value = address;
     };
 
     var timeSlots = 0;
@@ -654,55 +664,76 @@ angular.module('starter.controllers', [])
     }
 
     $scope.user = {};
-    $scope.user.name = user.username;
-    $scope.user.email = user.email;
-    $scope.user.phoneNumber = user.phoneNumber;
-    console.log("here");
-
-    console.log($scope.user);
-    $scope.ownerData = {};
-    if (user.averageRating == null) {
-        user.averageRating = 0;
+    $scope.user.name = Parse.User.current().get('name');
+    $scope.user.email = Parse.User.current().get('username');
+    $scope.user.phoneNumber = Parse.User.current().get('phoneNumber');
+    console.log(Parse.User.current().get("picture"));
+    if(Parse.User.current().get("picture") == 'undefined' || Parse.User.current().get("picture") == null){     
+        $scope.user.url = "";
+     }else{
+         $scope.user.url = Parse.User.current().get("picture")._url;
+     }
+   
+    var sumR = Parse.User.current().get('sumRatings');
+    console.log(sumR);
+    var numR = Parse.User.current().get('numRatings');
+    var avRating
+    if(sumR == null || numR == null){
+        avRating = 0;
+    }else{
+        avRating = parseInt(sumR/numR);
     }
+   
+    console.log(avRating);
     $scope.ratingsObject = {
         iconOn: 'ion-ios-star',
         iconOff: 'ion-ios-star-outline',
         iconOnColor: 'rgb(251, 212, 1)',
         iconOffColor: 'rgb(224, 224, 224)',
-        rating: user.averageRating,
+        rating: avRating,
         minRating: 0,
         readOnly: true,
         callback: function(rating) {
             $scope.ratingsCallback(rating);
         }
     };
-
+    var imageUploader = new ImageUploader();
+    $scope.file = {};
+    $scope.ownerData = {};
     $scope.ratingsCallback = function(rating) {
         console.log('Selected rating is : ', rating);
     };
-
+    //fix this
     $scope.updateOwner = function() {
-        if ($scope.ownerData.username != null) {
+        var parseUser = Parse.User.current();
+        console.log("in update owner");
+        console.log($scope.ownerData.name);
+        if ($scope.ownerData.name != null) {
             user.username = $scope.ownerData.name;
+            parseUser.set("name", $scope.ownerData.name);
         }
         if ($scope.ownerData.phoneNumber != null) {
-            user.phoneNumber = $scope.ownerData.phoneNumber
+            user.phoneNumber = $scope.ownerData.phoneNumber;
+            parseUser.set("phoneNumber", $scope.ownerData.phoneNumber);
         }
-        var parseUser = new Parse.User();
-        parseUser.id = user.uniqueID;
-        parseUser.set("name", user.username);
-        parseUser.set("phoneNumber", user.phoneNumber);
+        var picFile = document.getElementById('fileUpload').files[0];
+        console.log(picFile);
+        if(picFile != null && picFile != "undefined"){
+            var parseFile = new Parse.File("image", picFile);
+            parseFile.save();
+            parseUser.set("picture", parseFile);
+
+        }
         parseUser.save(null, {
             success: function(user) {
                 console.log("in update owner success");
-
-                document.getElementById('invalid').innerHTML = "Profile updated";
+                document.getElementById('invalidOwner').innerHTML = "Profile updated";
             },
             error: function(user, error) {
-                document.getElementById('invalid').innerHTML = "Something went wrong please try again";
+                document.getElementById('invalidOwner').innerHTML = "Something went wrong please try again";
             }
         });
-
+        $scope.user.url = Parse.User.current().get("picture")._url;
     };
 
 })
@@ -897,7 +928,11 @@ angular.module('starter.controllers', [])
 //getting payment token for owner
 .controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $ionicNavBarDelegate, $http) {
     console.log("in owner payment");
+<<<<<<< HEAD
 /*
+=======
+
+>>>>>>> notBrokenSprint1-sara
     var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
     var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
 
@@ -914,7 +949,10 @@ angular.module('starter.controllers', [])
             console.log(response)
         }
       );
+<<<<<<< HEAD
   /*
+=======
+>>>>>>> notBrokenSprint1-sara
     $http.post("/oauth/callback", function(req, res) {
       var code = req.query.code;
 
@@ -938,8 +976,11 @@ angular.module('starter.controllers', [])
 
       });
     });
+<<<<<<< HEAD
     */
 
+=======
+>>>>>>> notBrokenSprint1-sara
 
     // add the following headers for authentication
     $ionicNavBarDelegate.showBackButton(false);
@@ -1195,6 +1236,7 @@ angular.module('starter.controllers', [])
                     disableBack: true,
                     historyRoot: true
                 });
+                Parse.User.logOut();
                 $state.go('login');
             } else {
                 console.log('You are not sure');
@@ -1433,7 +1475,7 @@ angular.module('starter.controllers', [])
         success: function(qSpace) {
             console.log(qSpace);
             parkingSpace.notes = qSpace.get("notes");
-            parkingSpace.url = qSpace.get('picture')._url
+            parkingSpace.url = qSpace.get('picture')._url;
             parkingSpace.type = qSpace.get("type");
             console.log("parking space pic in obj" + parkingSpace.url);
             parkingSpace.address = qSpace.get("address");
@@ -1560,6 +1602,7 @@ angular.module('starter.controllers', [])
     $scope.onAddressSelection = function(location) {
         address = location.formatted_address;
         console.log(address);
+        document.getElementById('typedAddress').value = address;
     };
 
     $scope.addSpace = function() {
@@ -1576,9 +1619,9 @@ angular.module('starter.controllers', [])
             console.log("type: " + type);
             console.log(address);
             var div = document.getElementById('addSpaceInvalid');
-            if(type === 'undefined'){
+            /*if(type === 'undefined'){
                 type = 'other';
-            }
+            }*/
             if (type === 'undefined' || parkingSpaceName === 'undefined' || price === 'undefined' || address === 'undefined') {
                 //invalid login
                 div.innerHTML = 'Please insert all required fields';
