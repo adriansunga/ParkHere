@@ -326,12 +326,12 @@ angular.module('starter.controllers', [])
     var currLat = null;
     var currLong = null;
     $scope.search = "Change address"
-    var address = "";
+    var address = document.getElementById('searchTextBox').value;
     var options = {
         timeout: 100000,
         enableHighAccuracy: false
     };
-    $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
+    /*$cordovaGeolocation.getCurrentPosition(options).then(function(position) {
         currLat = position.coords.latitude;
         currLong = position.coords.longitude;
         var confirmPopup = $ionicPopup.confirm({
@@ -350,7 +350,7 @@ angular.module('starter.controllers', [])
         console.log(currLat);
     }, function(error) {
         console.log("Could not get location");
-    });
+    });*/
 
 
     $scope.countryCode = 'US';
@@ -478,6 +478,9 @@ angular.module('starter.controllers', [])
     $scope.findParkingSpaces = function() {
         var address = document.getElementById('searchTextBox').value;
         var parkingSpaceType = $scope.data2.searchType;
+        if(parkingSpaceType == null){
+            parkingSpaceType = "Compact";
+        }
         parkerSearch.parkingSpaceType = parkingSpaceType;
         var geocoder = new google.maps.Geocoder();
         var latitude;
@@ -1523,6 +1526,7 @@ angular.module('starter.controllers', [])
             var price = $scope.data.price;
             var notes = $scope.data.notes;
             var type = $scope.data.type;
+            address = $scope.data.address;
             var latitude = 0;
             var longitude = 0;
             picFile = document.getElementById('fileUpload').files[0];
@@ -1530,11 +1534,15 @@ angular.module('starter.controllers', [])
             console.log("type: " + type);
             console.log(address);
             var div = document.getElementById('addSpaceInvalid');
+            if(type === 'undefined'){
+                type = 'other';
+            }
             if (type === 'undefined' || parkingSpaceName === 'undefined' || price === 'undefined' || address === 'undefined') {
                 //invalid login
                 div.innerHTML = 'Please insert all required fields';
                 return;
             }
+
             console.log(address);
             var geocoder = new google.maps.Geocoder();
             geocoder.geocode({

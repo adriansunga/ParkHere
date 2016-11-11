@@ -15,13 +15,13 @@
                 <input type="text" placeholder="Price/hour" ng-model="data.price">
             </label>
             <label class="item item-input" id="ownerAddSpace-input9">
-                <!--<input type="text" ng-model="data.address" placeholder="Address or Long and Lat">-->
-                 <input type="text" placeholder="Change address" google-autocomplete-suggestion location="data.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data.location.formatted_address" readonly required>
+                <input type="text" ng-model="data.address" placeholder="Address or Long and Lat">
+                 <!--<input type="text" placeholder="Change address" google-autocomplete-suggestion location="data.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data.location.formatted_address" readonly required>-->
             </label>
              <label class="item item-select" id="ownerAddSpace-select1">
                 <span class="input-label">Parking Space Type</span>
                 <select name ="typeOption" ng-model="data.type">
-                  <option>Handicap</option>
+                  <option id="handicap">Handicap</option>
                   <option>Compact</option>
                   <option>Covered</option>
                   <option>Other</option>
@@ -44,6 +44,6 @@
                 
         </ion-list>
         <button id="ownerAddSpace-button4" class="button button-positive  button-block icon ion-android-add-circle" ng-click="openTimePicker()">Add Additional Timeslot</button>
-        <button id="ownerAddSpace-button5" style="border-radius:0px 0px 0px 0px;" class="button button-balanced  button-block" ng-click="addSpace()">Confirm Space</button>
+        <button id="confirmSpace" style="border-radius:0px 0px 0px 0px;" class="button button-balanced  button-block" ng-click="addSpace()">Confirm Space</button>
     </ion-content>
 </ion-view>

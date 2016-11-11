@@ -1,15 +1,15 @@
 <ion-view title="Parking Search" id="page1">
     <ion-content padding="true" class="has-header">
     	<div id="invalid" style="color: red;"></div>
-        <!--<input id="searchTextBox" class="controls" type="text" placeholder="Search" style="width:100%;" ></input>-->
-         <input type="text" id="searchTextBox" class="controls" placeholder="{{search}}" google-autocomplete-suggestion location="data2.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data2.location.formatted_address" style="width:100%;" readonly required>
+        <input id="searchTextBox" class="controls" type="text" placeholder="Search" style="width:100%;" ></input>
+         <!--<input type="text" id="searchTextBox" class="controls" placeholder="{{search}}" google-autocomplete-suggestion location="data2.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data2.location.formatted_address" style="width:100%;" readonly required>-->
 
         <label class="item item-select" id="ownerAddSpace-select1">
 	        <span class="input-label">Parking Space Type</span>
 	        <select ng-model="data2.searchType">
-                <option>All</option>
+                <option >All</option>
 		        <option>Handicap</option>
-		        <option>Compact</option>
+		        <option id="compact">Compact</option>
 		        <option>Covered</option>
 		        <option>Other</option>
 	        </select>

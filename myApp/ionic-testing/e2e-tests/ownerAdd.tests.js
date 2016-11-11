@@ -30,22 +30,31 @@ describe('OwnerHomepage', function(){
         });*/
         
         browser.get('/#/owner/addSpace');
-        var EC = protractor.ExpectedConditions;
+        /*var EC = protractor.ExpectedConditions;
 
         browser.driver.wait(function () {
             browser.wait(EC.visibilityOf(element(by.id('ownerAddSpace-form4'))), 10000);
             return elem;
-        });
+        });*/
         //go to owner add space
     });
 
     it('check owner add space', function() {
+        var spaceName = "Test Space 1";
         element(by.model('data.spaceName')).sendKeys('Test Space 1');
         element(by.model('data.price')).sendKeys('20');
-        element(by.model('data.location.formatted_address')).sendKeys('3030 Shrine pl Los Angeles CA');
-        element.all(by.tagName('typeOption')).first().click();
-
-
+        //element(by.model('data.location.formatted_address')).click();
+        element(by.model('data.address')).sendKeys('3030 Shrine pl Los Angeles CA');
+        element(by.id('ownerAddSpace-button4')).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        element(by.css('.col-25')).element(by.css('.button')).click();
+        element.all(by.repeater("button in buttons")).get(0).click();
+        var options = element.all(by.model('data.type'));
+        options.get(0).click()
+        element(by.id('handicap')).click();
+        expect(spaceName).toEqual("Test Space 1");
        
     })
 

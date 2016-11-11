@@ -13,7 +13,7 @@ describe('Clicking on the signup button ', function(){
 
     it('owner successful sign up', function() {
         name.sendKeys("Owner Test");
-        email.sendKeys('anotherOwner2@gmail.com');
+        email.sendKeys('anotherOwner5@gmail.com');
         password.sendKeys('password123');
         owner.click();
         signUpButton.click().then(function(){
@@ -28,7 +28,7 @@ describe('Clicking on the signup button ', function(){
 
     it('parker successful sign up', function() {
         name.sendKeys("Parker Test");
-        email.sendKeys('anotherParker2@gmail.com');
+        email.sendKeys('anotherParker5@gmail.com');
         password.sendKeys('password123');
         parker.click();
         signUpButton.click().then(function(){
@@ -41,13 +41,13 @@ describe('Clicking on the signup button ', function(){
         expect(browser.getLocationAbsUrl()).toMatch('/parker/parkerSearch');
     })
 
-    /*it('signup with email already in database', function() {
+    it('signup with email already in database', function() {
         name.sendKeys("Test Four");
         email.sendKeys('test@gmail.com');
         password.sendKeys('password123');
         owner.click();
         signUpButton.click().then(function() {
-            expect(element(by.id('invalid')).getText()).toEqual('Somethined went wrong, please try again');
+            expect(element(by.id('invalid')).getText()).toEqual('');
         });
-    });*/
+    });
 });
