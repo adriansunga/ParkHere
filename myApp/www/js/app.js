@@ -110,6 +110,16 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete', 'ngC
                 }
             },
         })
+        .state('parker.profile', {
+            url: '/parkerProfile',
+            views: {
+                'side-menu21': {
+                    templateUrl: 'templates/parkerProfile.html',
+                    controller: 'parkerPageProfileCtrl'
+                }
+            },
+
+        })
         .state('parker.spotOwnerInformation', {
             url: '/spotOwnerInformation',
             views: {

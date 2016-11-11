@@ -29,7 +29,7 @@ describe('OwnerDelete', function(){
       canDelete.element(byid('deleteButton')).click();
       var popup = element(by.css('.popup-container.popup-showing.active'));
       expect(popup.isDisplayed()).toBeTruthy();
-    //  var ptor = protractor.getInstance();
+      var ptor = protractor.getInstance();
       var alertDialog = browser.switchTo().alert();
       alertDialog.accept()
       var numItems = element.all(by.repeator('item in times')).count();

@@ -62,7 +62,7 @@ describe('Clicking on the signup button ', function(){
                 .getText()).toEqual('Please select parker or owner');
         });
     })
-    
+
     it('signup with email already in database', function() {
         name.sendKeys("Test Four");
         email.sendKeys('test@gmail.com');
@@ -73,4 +73,3 @@ describe('Clicking on the signup button ', function(){
         });
     });
 });
->>>>>>> 4f3e5121b0d6f5c2786e8d823afd50129f93ea66
