@@ -36,7 +36,7 @@ describe('OwnerHomepage', function(){
       var isSettingsLinkClickable = EC.elementToBeClickable(settingsLink);
       browser.wait(isSettingsLinkClickable, 5000); //wait for the element to become clickable
       settingsLink.click();
-      expect(browser.getLocationAbsUrl()).toMatch('/owner/profile');
+      expect(browser.driver.getCurrentUrl()).toMatch('/owner/profile');
     })
 
     it('should log out of owner', function() {
@@ -49,7 +49,8 @@ describe('OwnerHomepage', function(){
       logOutLink.click();
       var popup = element(by.css('.popup-container.popup-showing.active'));
       expect(popup.isDisplayed()).toBeTruthy();
-      popup.element(by.css('.button.ng-binding.button-positive')).click();
+
+      console.log("url: " + browser.getLocationAbsUrl());
       expect(browser.getLocationAbsUrl()).toMatch('/login');
     })
 
