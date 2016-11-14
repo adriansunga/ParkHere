@@ -1,15 +1,21 @@
 <ion-view title="Parking Search" id="page1">
     <ion-content padding="true" class="has-header">
     	<div id="invalid" style="color: red;"></div>
+        <label class="item item-input" id="ownerAddSpace-input9">
+                <input id ="searchTextBox" type="text" ng-model="data.address" placeholder="Typed Address or Long and Lat">
+                <div style="margin-right:12pt;">or</div>
+                 <input type="text" id="searchTextBox2" class="controls" placeholder="Address Lookup" google-autocomplete-suggestion location="data2.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data2.location.formatted_address" style="width:100%;" readonly required>
+            </label>
+            <button id="currentLoc" class="button button-stable button-block icon" ng-click = "showCurrLoc()" ng-disabled="data.currLoc">Use Current Location</button>
         <!--<input id="searchTextBox" class="controls" type="text" placeholder="Search" style="width:100%;" ></input>-->
-         <input type="text" id="searchTextBox" class="controls" placeholder="{{search}}" google-autocomplete-suggestion location="data2.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data2.location.formatted_address" style="width:100%;" readonly required>
+         <!--<input type="text" id="searchTextBox" class="controls" placeholder="{{search}}" google-autocomplete-suggestion location="data2.location" country-code="{{countryCode}}" on-selection="onAddressSelection(location)" ng-model="data2.location.formatted_address" style="width:100%;" readonly required>-->
 
         <label class="item item-select" id="ownerAddSpace-select1">
 	        <span class="input-label">Parking Space Type</span>
 	        <select ng-model="data2.searchType">
-                <option>All</option>
+                <option >All</option>
 		        <option>Handicap</option>
-		        <option>Compact</option>
+		        <option id="compact">Compact</option>
 		        <option>Covered</option>
 		        <option>Other</option>
 	        </select>

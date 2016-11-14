@@ -1,4 +1,7 @@
+
+
 describe('Clicking on the login button ', function(){  
+    var parker, username, password;
 
     beforeEach(function() {
         browser.get('/#/login');
@@ -36,12 +39,14 @@ describe('Clicking on the login button ', function(){
        
     })
 
-    it('with PARKER should validate the credentials for a successful login and display parker search', function() {
+
+     it('with PARKER should validate the credentials for a successful login and display parker search', function() {
         var thisUsername = 'parker@gmail.com';
         username.sendKeys(thisUsername);
         password.sendKeys('parkerparker5');
+        var parkerVar = 'parker';
         parker.click();
-
+        
         loginButton.click().then(function(){
             return browser.driver.wait(function() {
               return browser.driver.getCurrentUrl().then(function(url) {
@@ -54,4 +59,17 @@ describe('Clicking on the login button ', function(){
        
     })
 
+    it('should take you to sign up on "or create an acount" clicked', function() {
+        createAccountButton.click().then(function(){
+          return browser.driver.wait(function() {
+            return browser.driver.getCurrentUrl().then(function(url) {
+              console.log("url  " + url);
+              return /owner/.test(url);
+            });
+          }, 10000);
+
+      });
+     expect(browser.getLocationAbsUrl()).toMatch('/signUp');
+    })
 });
+
