@@ -1441,6 +1441,7 @@ angular.module('starter.controllers', [])
         address = location.formatted_address;
         console.log(address);
         document.getElementById('typedAddress').value = address;
+        $scope.data.address = address;
     };
 
     $scope.addSpace = function() {
