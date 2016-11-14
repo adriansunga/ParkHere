@@ -171,6 +171,9 @@ angular.module('starter.controllers', [])
         console.log("in upcoming spaces");
         $state.go("parker.upcomingSpaces");
     }
+    $scope.cancellationPolicy = function() {
+        $state.go("parker.cancellationPolicy");
+    }
     $scope.showLogout = function() {
         console.log("in show logout");
         var confirmPopup = $ionicPopup.confirm({
@@ -196,6 +199,8 @@ angular.module('starter.controllers', [])
             }
         });
     };
+
+    
 })
 
 .service('parkerSearch', function() {
