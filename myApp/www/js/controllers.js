@@ -467,7 +467,7 @@ angular.module('starter.controllers', [])
         var address = document.getElementById('searchTextBox').value;
         var parkingSpaceType = $scope.data2.searchType;
         if(parkingSpaceType == null){
-            parkingSpaceType = "Compact";
+            parkingSpaceType = "All";
         }
         parkerSearch.parkingSpaceType = parkingSpaceType;
         var geocoder = new google.maps.Geocoder();
