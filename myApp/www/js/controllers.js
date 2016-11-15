@@ -685,6 +685,13 @@ angular.module('starter.controllers', [])
 .controller('reservationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults, user, reservationInfo) {
 
     $scope.selectedSpace = parkerSearchResults.selectedSpace;
+    $scope.reservation = {};
+    $scope.reservation[false] = "Available";
+    $scope.reservation[true] = "Reserved";
+    $scope.colors = {};
+    $scope.colors[false] = "#008000";
+    $scope.colors[true] = "#ff0000";
+
 
     availableTimes = [];
 

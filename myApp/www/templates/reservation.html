@@ -10,9 +10,8 @@
     <button id="reserveButton" ng-click = "reservationButtonClick()" class="button button-positive  button-block">Reserve Space</button>
     <ion-checkbox ng-repeat="parkingSpace in availableTimes" ng-model="parkingSpace.checked" ng-checked="parkingSpace.checked">
           <h2>Date: {{parkingSpace.get("PrettyDate")}}</h2>
-          <p>Hour: {{parkingSpace.get("Hour")}}</p>
-          <p>Reserved: {{parkingSpace.get("reserved")}}</p>
+          <p>Time: {{parkingSpace.get("Hour")}}:00</p>
+          <h2 style="color:{{colors[parkingSpace.get('reserved')]}};">{{reservation[parkingSpace.get("reserved")]}}</h2>
     </ion-checkbox>
-
   </ion-content>
 </ion-view>
