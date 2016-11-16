@@ -10,7 +10,7 @@
 var NOODLIO_PAY_API_URL = "https://noodlio-pay.p.mashape.com";
 var NOODLIO_PAY_API_KEY = "hkou9g9rVgmshTeafr21FodTUdsip1Gsko3jsn8G4LLowC6ReO";
 var STRIPE_ACCOUNT_ID = "acct_197dO3BnddH3DZLG";
-var TEST_MODE = true; //false for production mode
+var TEST_MODE = true;                  //false for production mode
 var NOODLIO_PAY_CHECKOUT_KEY = {
     test: "pk_test_QGTo45DJY5kKmsX21RB3Lwvn",
     live: "pk_live_ZjOCjtf1KBlSHSyjKDDmOGGE"
@@ -83,6 +83,7 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete', 'ngC
         })
         .state('parker.search', {
             url: '/parkerSearch',
+            cache: false,
             views: {
                 'side-menu21': {
                     templateUrl: 'templates/parkingSearch.html',
@@ -203,6 +204,15 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete', 'ngC
                 }
             },
 
+        })
+
+        .state('parker.cancellationPolicy', {
+            url:'/cancellationPolicy',
+            views: {
+                'side-menu21': {
+                    templateUrl: 'templates/cancellationPolicy.html',
+                }
+            },
         })
 
     $urlRouterProvider.otherwise('/login');

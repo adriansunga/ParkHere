@@ -6,7 +6,6 @@ angular.module('starter.controllers', [])
     Parse.initialize("com.team3.parkhere", "medvidobitches");
 
     $scope.data = {};
-    console.log("in login controller");
 
     var currUser = Parse.User.current();
     if (currUser != null) {
@@ -73,6 +72,8 @@ angular.module('starter.controllers', [])
 })
 
 .service('user', function() {
+
+
     var user = this;
     user = {};
     user.username = '';
@@ -83,11 +84,27 @@ angular.module('starter.controllers', [])
     user.rating = '';
     user.uniqueID = '';
     user.stripeAccountID = '';
+
+     var setUsername = function(name) {
+        Parse.User.current().set("username", name);
+        Parse.user.current().save();
+        return name;
+    }
+
+    var setEmail = function(email) {
+        Parse.User.current().set("email", email);
+        Parse.user.current().save();
+        return email;
+    }
+
     return user;
 })
 
 //SignUp Controller
 .controller('signUpCtrl', function($scope, $ionicPopup, $state, user) {
+    var func = function() {
+        return 2;
+    }
     $scope.data = {};
     $scope.signUp = function() {
 
@@ -172,6 +189,9 @@ angular.module('starter.controllers', [])
         console.log("in upcoming spaces");
         $state.go("parker.upcomingSpaces");
     }
+    $scope.cancellationPolicy = function() {
+        $state.go("parker.cancellationPolicy");
+    }
     $scope.showLogout = function() {
         console.log("in show logout");
         var confirmPopup = $ionicPopup.confirm({
@@ -197,6 +217,8 @@ angular.module('starter.controllers', [])
             }
         });
     };
+
+    
 })
 
 .service('parkerSearch', function() {
@@ -209,6 +231,10 @@ angular.module('starter.controllers', [])
     parkerSearch.endTime = new Date();
     parkerSearch.parkingSpaceType = '';
     return parkerSearch;
+
+
+
+
 })
 
 .controller('parkerSearchCtrl', function($scope, $cordovaGeolocation, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch, user) {
@@ -404,14 +430,22 @@ angular.module('starter.controllers', [])
     var currLat = null;
     var currLong = null;
     $scope.search = "Change address"
-    var address = "";
+    var address = document.getElementById('searchTextBox').value;
     var options = {
         timeout: 100000,
         enableHighAccuracy: false
     };
+
+    $scope.data = {};
+    $scope.data.currLoc  = true;
     $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
         currLat = position.coords.latitude;
+        console.log(currLat);
         currLong = position.coords.longitude;
+        $scope.data.currLoc = false;
+    });
+    $scope.showCurrLoc = function(){
+        console.log("in curr loc");
         var confirmPopup = $ionicPopup.confirm({
             title: 'Current Location',
             template: 'Can ParkHere use your current location?'
@@ -420,21 +454,19 @@ angular.module('starter.controllers', [])
             if (res) {
                 address = currLat + " " + currLong;
                 $scope.search = address;
+                console.log(address);
                 document.getElementById('searchTextBox').value = address;
-            } else {
-
             }
         });
         console.log(currLat);
     }, function(error) {
         console.log("Could not get location");
-    });
-
-
+    };
     $scope.countryCode = 'US';
 
     $scope.onAddressSelection = function(location) {
         address = location.formatted_address;
+        document.getElementById('searchTextBox').value = address;
     };
 
     var timeSlots = 0;
@@ -556,6 +588,9 @@ angular.module('starter.controllers', [])
     $scope.findParkingSpaces = function() {
         var address = document.getElementById('searchTextBox').value;
         var parkingSpaceType = $scope.data2.searchType;
+        if(parkingSpaceType == null){
+            parkingSpaceType = "Compact";
+        }
         parkerSearch.parkingSpaceType = parkingSpaceType;
         var geocoder = new google.maps.Geocoder();
         var latitude;
@@ -688,55 +723,70 @@ angular.module('starter.controllers', [])
     }
 
     $scope.user = {};
-    $scope.user.name = user.username;
-    $scope.user.email = user.email;
-    $scope.user.phoneNumber = user.phoneNumber;
-    console.log("here");
-
-    console.log($scope.user);
-    $scope.ownerData = {};
-    if (user.averageRating == null) {
-        user.averageRating = 0;
+    $scope.user.name = Parse.User.current().get('name');
+    $scope.user.email = Parse.User.current().get('username');
+    $scope.user.phoneNumber = Parse.User.current().get('phoneNumber');
+    $scope.user.url = Parse.User.current().get("picture")._url;
+    var sumR = Parse.User.current().get('sumRatings');
+    console.log(sumR);
+    var numR = Parse.User.current().get('numRatings');
+    var avRating
+    if(sumR == null || numR == null){
+        avRating = 0;
+    }else{
+        avRating = parseInt(sumR/numR);
     }
+   
+    console.log(avRating);
     $scope.ratingsObject = {
         iconOn: 'ion-ios-star',
         iconOff: 'ion-ios-star-outline',
         iconOnColor: 'rgb(251, 212, 1)',
         iconOffColor: 'rgb(224, 224, 224)',
-        rating: user.averageRating,
+        rating: avRating,
         minRating: 0,
         readOnly: true,
         callback: function(rating) {
             $scope.ratingsCallback(rating);
         }
     };
-
+    var imageUploader = new ImageUploader();
+    $scope.file = {};
+    $scope.ownerData = {};
     $scope.ratingsCallback = function(rating) {
         console.log('Selected rating is : ', rating);
     };
-
+    //fix this
     $scope.updateOwner = function() {
-        if ($scope.ownerData.username != null) {
+        var parseUser = Parse.User.current();
+        console.log("in update owner");
+        console.log($scope.ownerData.name);
+        if ($scope.ownerData.name != null) {
             user.username = $scope.ownerData.name;
+            parseUser.set("name", $scope.ownerData.name);
         }
         if ($scope.ownerData.phoneNumber != null) {
-            user.phoneNumber = $scope.ownerData.phoneNumber
+            user.phoneNumber = $scope.ownerData.phoneNumber;
+            parseUser.set("phoneNumber", $scope.ownerData.phoneNumber);
         }
-        var parseUser = new Parse.User();
-        parseUser.id = user.uniqueID;
-        parseUser.set("name", user.username);
-        parseUser.set("phoneNumber", user.phoneNumber);
+        var picFile = document.getElementById('fileUpload').files[0];
+        console.log(picFile);
+        if(picFile != null && picFile != "undefined"){
+            var parseFile = new Parse.File("image", picFile);
+            parseFile.save();
+            parseUser.set("picture", parseFile);
+
+        }
         parseUser.save(null, {
             success: function(user) {
                 console.log("in update owner success");
-
-                document.getElementById('invalid').innerHTML = "Profile updated";
+                document.getElementById('invalidOwner').innerHTML = "Profile updated";
             },
             error: function(user, error) {
-                document.getElementById('invalid').innerHTML = "Something went wrong please try again";
+                document.getElementById('invalidOwner').innerHTML = "Something went wrong please try again";
             }
         });
-
+        $scope.user.url = Parse.User.current().get("picture")._url;
     };
 
 })
@@ -746,6 +796,17 @@ angular.module('starter.controllers', [])
     reservationInfo.price = '';
     reservationInfo.reserved = [];
     reservationInfo.spotName = '';
+
+    var setPrice = function(price) {
+        reservationInfo.price = price;
+        return price;
+    }
+
+    var setSpotName = function(sn) {
+        reservationInfo.spotName = sn;
+        return sn;
+    }
+
     return reservationInfo;
 })
 
@@ -857,12 +918,10 @@ angular.module('starter.controllers', [])
 })
 
 .controller('upcomingSpacesCtrl', function($scope, $ionicPopup, $state, user) {
-    console.log("inside upcoming with user: " + user.email + " password: " + user.password);
     $scope.listCanSwipe = true;
     var parkingSpace = Parse.Object.extend("ParkingSpace");
     var query = new Parse.Query(parkingSpace);
     query.equalTo("parker", user.email);
-    console.log("username: " + user.email);
     query.ascending("Date");
     query.find({
         success: function(results) {
@@ -929,6 +988,7 @@ angular.module('starter.controllers', [])
         var TOKEN_URI = 'https://connect.stripe.com/oauth/token';
         var AUTHORIZE_URI = 'httpvbg s://connect.stripe.com/oauth/authorize';
 
+<<<<<<< HEAD
         $http.post(AUTHORIZE_URI + "?response_type=code&client_id="+CLIENT_ID + "&scope=read_write")
           .success(
             function(response) {
@@ -953,6 +1013,31 @@ angular.module('starter.controllers', [])
             client_secret: API_KEY
           }
         }, function(err, r, body) {
+=======
+    $http.post(AUTHORIZE_URI + "?response_type=code&client_id="+CLIENT_ID + "&scope=read_write")
+      .success(
+        function(response) {
+        }
+      )
+      .error(
+        function(response) {
+            console.log(response)
+        }
+      );
+    $http.post("/oauth/callback", function(req, res) {
+      var code = req.query.code;
+
+      // Make /oauth/token endpoint POST reques
+      request.post({
+        url: TOKEN_URI,
+        form: {
+          grant_type: "authorization_code",
+          client_id: CLIENT_ID,
+          code: code,
+          client_secret: API_KEY
+        }
+      }, function(err, r, body) {
+>>>>>>> master
 
           var accessToken = JSON.parse(body).access_token;
 
@@ -961,6 +1046,7 @@ angular.module('starter.controllers', [])
           // For demo"s sake, output in response:
           res.send({ "Your Token": accessToken });
 
+<<<<<<< HEAD
         });
       });*/
     /*
@@ -978,6 +1064,10 @@ angular.module('starter.controllers', [])
             exp_year: "",
             test: TEST_MODE,
         };
+=======
+      });
+    });
+>>>>>>> master
 
         $scope.createToken = function() {
 
@@ -1219,6 +1309,7 @@ angular.module('starter.controllers', [])
                     disableBack: true,
                     historyRoot: true
                 });
+                Parse.User.logOut();
                 $state.go('login');
             } else {
                 console.log('You are not sure');
@@ -1252,6 +1343,13 @@ angular.module('starter.controllers', [])
     parkingSpace.uniqueID = '';
     parkingSpace.ownerEmail = '';
     parkingSpace.type = '';
+
+
+    var setURL = function (url){
+        parkingSpace.url = url;
+        return url;
+    }
+
     return parkingSpace;
 })
 
@@ -1449,7 +1547,7 @@ angular.module('starter.controllers', [])
         success: function(qSpace) {
             console.log(qSpace);
             parkingSpace.notes = qSpace.get("notes");
-            parkingSpace.url = qSpace.get('picture')._url
+            parkingSpace.url = qSpace.get('picture')._url;
             parkingSpace.type = qSpace.get("type");
             console.log("parking space pic in obj" + parkingSpace.url);
             parkingSpace.address = qSpace.get("address");
@@ -1572,11 +1670,11 @@ angular.module('starter.controllers', [])
     console.log("user", user.email);
 
     var address = "";
-
-    $scope.countryCode = 'US';
+  
     $scope.onAddressSelection = function(location) {
         address = location.formatted_address;
         console.log(address);
+        document.getElementById('typedAddress').value = address;
     };
 
     $scope.addSpace = function() {
@@ -1585,6 +1683,7 @@ angular.module('starter.controllers', [])
             var price = $scope.data.price;
             var notes = $scope.data.notes;
             var type = $scope.data.type;
+            address = $scope.data.address;
             var latitude = 0;
             var longitude = 0;
             picFile = document.getElementById('fileUpload').files[0];
@@ -1592,11 +1691,15 @@ angular.module('starter.controllers', [])
             console.log("type: " + type);
             console.log(address);
             var div = document.getElementById('addSpaceInvalid');
+            /*if(type === 'undefined'){
+                type = 'other';
+            }*/
             if (type === 'undefined' || parkingSpaceName === 'undefined' || price === 'undefined' || address === 'undefined') {
                 //invalid login
                 div.innerHTML = 'Please insert all required fields';
                 return;
             }
+
             console.log(address);
             var geocoder = new google.maps.Geocoder();
             geocoder.geocode({
@@ -1846,10 +1949,14 @@ angular.module('starter.controllers', [])
 
 //map controller
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, parkerSearch) {
-    var options = {
+    
+
+    $scope.options = {
         timeout: 10000,
         enableHighAccuracy: true
     };
+
+    var options = $scope.options;
 
     $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
 

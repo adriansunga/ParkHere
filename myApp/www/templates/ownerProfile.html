@@ -1,13 +1,19 @@
 <ion-view title="Owner Profile" id="page10">
     <ion-content padding="true" class="has-header">
         <form id="ownerProfile-form6" class="list">
-        <div id="invalid" style="color: red;"></div>
+        <div id="invalidOwner" style="color: red;"></div>
             <label class="item item-input" id="ownerProfile-input15">
                 <span class="input-label">Name</span>
                 <input type="text" ng-model="ownerData.name" placeholder="{{user.name}}">
             </label>
+            <div style="margin: 0px; line-height: 250px; text-align: center;">
+            <i class="icon " style="font-size: 64px; vertical-align: middle;" > <img style="width: 200px;" ng-src="{{ user.url }}"></i> 
+            </div>
+            <input class="bottom-marg-15" id ="fileUpload" type="file" name="file" file="file">
+            <img class="fit" ng-if="uploadUri" ng-src="">
+            <a ng-href="" ng-bind="uploadUri"></a>
             <label class="item" id="ownerProfile-input14">
-                <span class="">Email:  {{user.email}}</span>
+                <span class="">Email:  <span style="margin-left: 115pt;">{{user.email}}</span></span>
                 <!--<input type="text" ng-model="ownerData.email" placeholder="{{user.email}}"> -->
             </label>
             <label class="item item-input" id="ownerProfile-input16">

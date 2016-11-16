@@ -24,22 +24,22 @@ describe('OwnerDelete', function(){
     });
 
     it('successful delete (no parkers)', function() {
-    expect(2).toEqual(2);
-      var canDelete = element.all(by.repeator('item in times')).last();
-      canDelete.element(byid('deleteButton')).click();
+      expect(2).toEqual(2);
+      var canDelete = element.all(by.repeater('item in times')).last();
+      canDelete.element(by.id('deleteButton')).click();
       var popup = element(by.css('.popup-container.popup-showing.active'));
       expect(popup.isDisplayed()).toBeTruthy();
       var ptor = protractor.getInstance();
       var alertDialog = ptor.switchTo().alert();
       alertDialog.accept()
-      var numItems = element.all(by.repeator('item in times')).count();
+      var numItems = element.all(by.repeater('item in times')).count();
       expect(numItems).toEqual(1);
 
     })
 
     it('cannot delete because of reservations', function() {
-      var canDelete = element.all(by.repeator('item in times')).first();
-      canDelete.element(byid('deleteButton')).click();
+      var canDelete = element.all(by.repeater('item in times')).first();
+      canDelete.element(by.id('deleteButton')).click();
       var popup = element(by.css('.popup-container.popup-showing.active'));
       expect(popup.isDisplayed()).toBeTruthy();
       
