@@ -1,0 +1,28 @@
+<ion-view title="Parker Profile" id="page11">
+  <ion-content padding="true" class="has-header">
+    <div style="margin: 0px; line-height: 250px; background-color: rgb(232, 235, 239); text-align: center;">
+      <!-- <img src="{{user.picture._url}}" style="font-size: 64px; color: rgb(136, 136, 136); vertical-align: middle;"> -->
+    </div>
+    <form id="parkerProfile-form8" class="list">
+      <ion-item class="item-thumbnail-left" id="imageName">Name:
+        <img ng-src= "{{user.url}}"/>
+        <input type="text" ng-model="parkerData.name" placeholder="{{user.name}}">
+      </ion-item>
+      <!-- <label class="item item-input" id="parkerProfile-input3">
+        <span class="input-label">Name: </span>
+        <input type="text" ng-model="parkerData.name" placeholder="{{user.name}}">
+      </label> -->
+      <ion-item id="parkerProfile-list-item21">Email: {{user.email}} </ion-item>
+      <label class="item item-input" id="parkerProfile-input2">
+        <span class="input-label">Phone number: </span>
+        <input type="text" ng-model="parkerData.phoneNumber" placeholder="{{user.phoneNumber}}">
+      </label>
+    </form>
+    <input class="bottom-marg-15" id ="fileUploadParker" type="file" name="file" file="file">
+    <img class="fit" ng-if="uploadUri" ng-src="">
+    <a ng-href="" ng-bind="uploadUri"></a>
+    <div class="text-center">
+      <button id="login-button1" class="button button-positive button-block" ng-click="updateParker()">Update Parker</button>
+    </div>
+  </ion-content>
+</ion-view>

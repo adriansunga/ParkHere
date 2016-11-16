@@ -139,6 +139,17 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete', 'ngC
                 }
             },
         })
+        .state('parker.profile', {
+            url: '/parkerProfile',
+            cache: false,
+            views: {
+                'side-menu21': {
+                    templateUrl: 'templates/parkerProfile.html',
+                    controller: 'parkerPageProfileCtrl'
+                }
+            },
+
+        })
         .state('owner', {
             url: '/owner',
             templateUrl: 'templates/ownerMenu.html',

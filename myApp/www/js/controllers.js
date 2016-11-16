@@ -178,6 +178,10 @@ angular.module('starter.controllers', [])
     $scope.cancellationPolicy = function() {
         $state.go("parker.cancellationPolicy");
     }
+    $scope.profile = function() {
+      console.log("in profile for parker");
+      $state.go("parker.profile");
+    }
     $scope.showLogout = function() {
         console.log("in show logout");
         var confirmPopup = $ionicPopup.confirm({
@@ -365,9 +369,6 @@ angular.module('starter.controllers', [])
             }
         });
     }
-
-
-
 
     var currLat = null;
     var currLong = null;
@@ -659,6 +660,63 @@ angular.module('starter.controllers', [])
         parkerSearchResults.selectedSpace = parkingSpace;
         $state.go("parker.reservation");
     }
+})
+
+.controller('parkerPageProfileCtrl', function($scope, $ionicPopup, $state, user) {
+    console.log(user);
+    if (user.phoneNumber == null || user.phoneNumber === 'undefined') {
+        console.log("bad phone number")
+        user.phoneNumber = "";
+    }
+
+    $scope.user = {};
+    $scope.user.name = user.username;
+    $scope.user.email = user.email;
+    $scope.user.phoneNumber = user.phoneNumber;
+    $scope.user.picture = user.picture;
+
+    if(Parse.User.current().get("picture") == 'undefined' || Parse.User.current().get("picture") == null){
+        $scope.user.url = "";
+     }else{
+         $scope.user.url = Parse.User.current().get("picture")._url;
+     }
+     var imageUploader = new ImageUploader();
+     $scope.file = {};
+    $scope.parkerData = {};
+    $scope.updateParker = function() {
+      var parseUser = Parse.User.current();
+        if ($scope.parkerData.username != null) {
+            user.username = $scope.parkerData.name;
+        }
+        if ($scope.parkerData.phoneNumber != null) {
+            user.phoneNumber = $scope.parkerData.phoneNumber
+        }
+
+        var picFile = document.getElementById('fileUploadParker').files[0];
+        console.log(picFile);
+        if(picFile != null && picFile != "undefined"){
+            var parseFile = new Parse.File("image", picFile);
+            console.log("new picture to set: " + picFile);
+            parseFile.save();
+            parseUser.set("picture", parseFile);
+        }
+        parseUser.id = user.uniqueID;
+        parseUser.set("name", user.username);
+        parseUser.set("phoneNumber", user.phoneNumber);
+        parseUser.save(null, {
+            success: function(user) {
+                console.log("in update owner success");
+                document.getElementById('invalidParkerProfile').innerHTML = "Profile updated";
+            },
+            error: function(user, error) {
+                document.getElementById('invalidParkerProfile').innerHTML = "Something went wrong please try again";
+            }
+        });
+        console.log("new picture: " + Parse.User.current().get("picture")._url);
+        $scope.user.url = Parse.User.current().get("picture")._url;
+
+    };
+
 })
 
 .controller('ownerPageProfileCtrl', function($scope, $ionicPopup, $state, user) {
