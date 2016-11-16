@@ -24,7 +24,7 @@ angular.module('starter.controllers', [])
         var username = "" + $scope.data.username;
         var password = "" + $scope.data.password;
         var userType = document.querySelector('input[name = "loginType"]:checked');
-        console.log(username); 
+        console.log(username);
         console.log(password);
         var div = document.getElementById('invalid');
         if (userType == null) {
@@ -171,6 +171,10 @@ angular.module('starter.controllers', [])
         console.log("in upcoming spaces");
         $state.go("parker.upcomingSpaces");
     }
+    $scope.profile = function() {
+      console.log("in profile for parker");
+      $state.go("parker.profile");
+    }
     $scope.showLogout = function() {
         console.log("in show logout");
         var confirmPopup = $ionicPopup.confirm({
@@ -222,7 +226,7 @@ angular.module('starter.controllers', [])
             console.log(expDate);
             console.log(currDate);
 
-            
+
 
             if(currDate.getTime() > expDate.getTime()) { //expired
 
@@ -283,7 +287,7 @@ angular.module('starter.controllers', [])
             if (res) {
                 for (var i = 0; i < uniqueSpaces.length; i++) {
 
-           
+
                  }
             } else {
                 console.log('You are not sure');
@@ -292,7 +296,7 @@ angular.module('starter.controllers', [])
         console.log(uniqueSpaces.length);
 
         }
-        
+
 
 
 
@@ -588,6 +592,63 @@ angular.module('starter.controllers', [])
     }
 })
 
+.controller('parkerPageProfileCtrl', function($scope, $ionicPopup, $state, user) {
+    console.log(user);
+    if (user.phoneNumber == null || user.phoneNumber === 'undefined') {
+        console.log("bad phone number")
+        user.phoneNumber = "";
+    }
+
+    $scope.user = {};
+    $scope.user.name = user.username;
+    $scope.user.email = user.email;
+    $scope.user.phoneNumber = user.phoneNumber;
+    $scope.user.picture = user.picture;
+
+    if(Parse.User.current().get("picture") == 'undefined' || Parse.User.current().get("picture") == null){
+        $scope.user.url = "";
+     }else{
+         $scope.user.url = Parse.User.current().get("picture")._url;
+     }
+     var imageUploader = new ImageUploader();
+     $scope.file = {};
+    $scope.parkerData = {};
+    $scope.updateParker = function() {
+      var parseUser = Parse.User.current();
+        if ($scope.parkerData.username != null) {
+            user.username = $scope.parkerData.name;
+        }
+        if ($scope.parkerData.phoneNumber != null) {
+            user.phoneNumber = $scope.parkerData.phoneNumber
+        }
+
+        var picFile = document.getElementById('fileUploadParker').files[0];
+        console.log(picFile);
+        if(picFile != null && picFile != "undefined"){
+            var parseFile = new Parse.File("image", picFile);
+            console.log("new picture to set: " + picFile);
+            parseFile.save();
+            parseUser.set("picture", parseFile);
+        }
+        parseUser.id = user.uniqueID;
+        parseUser.set("name", user.username);
+        parseUser.set("phoneNumber", user.phoneNumber);
+        parseUser.save(null, {
+            success: function(user) {
+                console.log("in update owner success");
+                document.getElementById('invalidParkerProfile').innerHTML = "Profile updated";
+            },
+            error: function(user, error) {
+                document.getElementById('invalidParkerProfile').innerHTML = "Something went wrong please try again";
+            }
+        });
+        console.log("new picture: " + Parse.User.current().get("picture")._url);
+        $scope.user.url = Parse.User.current().get("picture")._url;
+
+    };
+
+})
+
 .controller('ownerPageProfileCtrl', function($scope, $ionicPopup, $state, user) {
     console.log(user);
     if (user.phoneNumber == null || user.phoneNumber === 'undefined') {
@@ -600,12 +661,12 @@ angular.module('starter.controllers', [])
     $scope.user.email = Parse.User.current().get('username');
     $scope.user.phoneNumber = Parse.User.current().get('phoneNumber');
     console.log(Parse.User.current().get("picture"));
-    if(Parse.User.current().get("picture") == 'undefined' || Parse.User.current().get("picture") == null){     
+    if(Parse.User.current().get("picture") == 'undefined' || Parse.User.current().get("picture") == null){
         $scope.user.url = "";
      }else{
          $scope.user.url = Parse.User.current().get("picture")._url;
      }
-   
+
     var sumR = Parse.User.current().get('sumRatings');
     console.log(sumR);
     var numR = Parse.User.current().get('numRatings');
@@ -615,7 +676,7 @@ angular.module('starter.controllers', [])
     }else{
         avRating = parseInt(sumR/numR);
     }
-   
+
     console.log(avRating);
     $scope.ratingsObject = {
         iconOn: 'ion-ios-star',
@@ -726,7 +787,7 @@ angular.module('starter.controllers', [])
                 } else {
                     checkedTimes.push(i);
                 }
-                 
+
             }
         }
 
@@ -756,7 +817,7 @@ angular.module('starter.controllers', [])
 
             // }
 
-           
+
             // SO FAR SO GOOD
             // if (!error && checkedTimes.length != 0) {
             if(checkedTimes.length != 0) {
@@ -777,7 +838,7 @@ angular.module('starter.controllers', [])
                 /*var alertPopup = $ionicPopup.alert({
                   title: "Your spaces have been reserved!",
                 });*/
-            } 
+            }
             // else if (checkedTimes.length != 0) {
             // var alertPopup = $ionicPopup.alert({
             //     title: "You cannot reserve a parking space that is already reserved ",
@@ -1076,7 +1137,7 @@ angular.module('starter.controllers', [])
                                 }
                             });
                         }
-                        
+
                         //$state.go('parker.upcomingSpaces');
 
                     } else {
