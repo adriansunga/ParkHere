@@ -5,13 +5,13 @@
       <i class="icon " style="font-size: 64px; vertical-align: middle;"> <img style = "width: 200px;" ng-src = "{{selectedSpace.get('picture')._url}}"></i>
     </div>
     <h4 id="address" style="color:#000000;">Address: {{selectedSpace.get("address")}}</h4>
+    <h4 id="type" style="color:#000000;">Type: {{selectedSpace.get("type")}}</h4>
     <button id="ownerPageButton" class="button button-stable button-small button-block" ng-click="seeOwnerPage()">{{selectedSpace.get("ownerEmail")}}'s Owner Profile</button>
     <button id="reserveButton" ng-click = "reservationButtonClick()" class="button button-positive  button-block">Reserve Space</button>
     <ion-checkbox ng-repeat="parkingSpace in availableTimes" ng-model="parkingSpace.checked" ng-checked="parkingSpace.checked">
           <h2>Date: {{parkingSpace.get("PrettyDate")}}</h2>
-          <p>Hour: {{parkingSpace.get("Hour")}}</p>
-          <p>Reserved: {{parkingSpace.get("reserved")}}</p>
+          <p>Time: {{parkingSpace.get("Hour")}}:00</p>
+          <h2 style="color:{{colors[parkingSpace.get('reserved')]}};">{{reservation[parkingSpace.get("reserved")]}}</h2>
     </ion-checkbox>
-
   </ion-content>
 </ion-view>

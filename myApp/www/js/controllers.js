@@ -175,6 +175,9 @@ angular.module('starter.controllers', [])
       console.log("in profile for parker");
       $state.go("parker.profile");
     }
+    $scope.cancellationPolicy = function() {
+        $state.go("parker.cancellationPolicy");
+    }
     $scope.showLogout = function() {
         console.log("in show logout");
         var confirmPopup = $ionicPopup.confirm({
@@ -200,6 +203,8 @@ angular.module('starter.controllers', [])
             }
         });
     };
+
+
 })
 
 .service('parkerSearch', function() {
@@ -466,7 +471,7 @@ angular.module('starter.controllers', [])
         var address = document.getElementById('searchTextBox').value;
         var parkingSpaceType = $scope.data2.searchType;
         if(parkingSpaceType == null){
-            parkingSpaceType = "Compact";
+            parkingSpaceType = "All";
         }
         parkerSearch.parkingSpaceType = parkingSpaceType;
         var geocoder = new google.maps.Geocoder();
@@ -741,6 +746,13 @@ angular.module('starter.controllers', [])
 .controller('reservationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults, user, reservationInfo) {
 
     $scope.selectedSpace = parkerSearchResults.selectedSpace;
+    $scope.reservation = {};
+    $scope.reservation[false] = "Available";
+    $scope.reservation[true] = "Reserved";
+    $scope.colors = {};
+    $scope.colors[false] = "#008000";
+    $scope.colors[true] = "#ff0000";
+
 
     availableTimes = [];
 
@@ -1502,6 +1514,7 @@ angular.module('starter.controllers', [])
         address = location.formatted_address;
         console.log(address);
         document.getElementById('typedAddress').value = address;
+        $scope.data.address = address;
     };
 
     $scope.addSpace = function() {
