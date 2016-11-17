@@ -677,6 +677,7 @@ angular.module('starter.controllers', [])
 .service('reservationInfo', function() {
     var reservationInfo = this;
     reservationInfo.price = '';
+    reservationInfo.name = '';
     reservationInfo.reserved = [];
     return reservationInfo;
 })
@@ -772,6 +773,7 @@ angular.module('starter.controllers', [])
             // if (!error && checkedTimes.length != 0) {
             if(checkedTimes.length != 0) {
                 var price = parkerSearchResults.selectedSpace.get("price");
+                reservationInfo.name = parkerSearchResults.selectedSpace.get("name");
 
                 // Set info in service so it is available in parker.pay
                 reservationInfo.price = price * checkedTimes.length;
@@ -896,7 +898,6 @@ angular.module('starter.controllers', [])
             console.log("error: " + response);
           }
         });
-      }
 /*
     var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
     var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
@@ -1033,10 +1034,11 @@ angular.module('starter.controllers', [])
 //where we set up the payment... should be for parker
 .controller('parkerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, reservationInfo, user) {
     var total = reservationInfo.price;
+    var name = reservationInfo.name;
 
     $scope.ProductMeta = {
-        title: "Awesome product",
-        description: "Yes it really is",
+        title: name,
+        //description: "Yes it really is",
         priceUSD: total,
     };
 
