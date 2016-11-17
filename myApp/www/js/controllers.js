@@ -7,6 +7,11 @@ angular.module('starter.controllers', [])
 
     $scope.data = {};
 
+
+    // Parse.Cloud.run('hello').then(function(param) {
+    //     console.log(param);
+    // });
+
     var currUser = Parse.User.current();
     if (currUser != null) {
         var userType = currUser.get("userType");
@@ -238,8 +243,6 @@ angular.module('starter.controllers', [])
 })
 
 .controller('parkerSearchCtrl', function($scope, $cordovaGeolocation, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch, user) {
-    Parse.Cloud.useMasterKey();
-
     $scope.data = {};
 
     //TEST upload
@@ -261,6 +264,7 @@ angular.module('starter.controllers', [])
     var uniqueSpaces = [];
     var indecesToRemove = [];
     if (unratedSpaces != null) {
+        console.log("unrated spaces length: " + unratedSpaces.length);
         for (var i = 0; i < unratedSpaces.length; i++) {
             var currSpace = unratedSpaces[i];
 
@@ -280,7 +284,7 @@ angular.module('starter.controllers', [])
             //!!!!!!!!!!!!!
             //!!!!!!!!!!!!!
 
-            if (currDate.getTime() < expDate.getTime()) { //expired 
+            if (currDate.getTime() > expDate.getTime()) { //expired 
                 if(uniqueSpaces.length == 0) { //uniqueSpaces is empty
                     uniqueSpaces.push(currSpace);
                 } else {
@@ -342,84 +346,97 @@ angular.module('starter.controllers', [])
                 }]
             });
             confirmPopup.then(function(rating) {
-                if (rating) {
-                    console.log("rating: " + rating);
-                    //get owner of parking space
-                    //var owner;
-
-                    //var User = Parse.Object.extend("User");
-                    var query = new Parse.Query(Parse.User);
-                    query.equalTo("username", currSpace.get("ownerEmail"));
-                    query.first({
-                        success: function(owner) {
-                            //owner = result;
-                            var sumRatings = owner.get("sumRatings");
-                            var numRatings = owner.get("numRatings");
-
-                            if(sumRatings == undefined) {
-                                //console.log("sumratings is undefined");
-                                sumRatings = rating;
-                            } else {
-                                sumRatings += rating;
-                            }
-
-                            if(numRatings == undefined) {
-                                console.log("numratings is undefined");
-                                numRatings = 1;
-                            } else {
-                                numRatings++;
-                            }
-
-                            // owner.increment("numRatings");
-                            // owner.save(null, {
-                            //     success: function(owner) {
-                            //         console.log("successful save!");
-                            //     },
-                            //     error: function(error) {
-                            //         //alert("Error: " + error.code + " " + error.message);
-                            //         console.log("Error: " + error.code + " " + error.message);
-                            //     }
-                            // });
-
-                            console.log(sumRatings);
-                            console.log(numRatings);
-
-                            console.log(owner.get("objectId"));
-
-                            if(owner instanceof Parse.User) {
-                                console.log("Owner is of type user!");
-                            } else {
-                                console.log("Owner IS NOT of type user :(");
-                            }
-
-                            owner.set("sumRatings", sumRatings);
-                            //owner.set("numRatings", numRatings);
-                            //owner.increment("sumRatings");
-
-                            owner.save(null, {
-                                success: function(owner) {
-                                    console.log("successful save!");
-                                },
-                                error: function(error, owner) {
-                                    console.log(owner);
-                                    //alert("Error: " + error.code + " " + error.message);
-                                    console.log("Error: " + error.code + " " + error.message);
-                                }
-                            });
-
-
-                        },
-                        error: function(error) {
-                            //alert("Error: " + error.code + " " + error.message);
-                            console.log("Error: " + error.code + " " + error.message);
-                        }
+                if(rating) {
+                    console.log("Setting owner rating");
+                    Parse.Cloud.run('setOwnerRating', 
+                        { 
+                            "rating": rating,
+                            "ownerEmail": currSpace.get("ownerEmail")
+                        })
+                    .then(function(ratings) {
+                        console.log("Set owner rating");
                     });
 
-
-
-                } else {
-                    console.log("Error getting rating");
                 }
+
+                // if (rating) {
+                //     console.log("rating: " + rating);
+                //     //get owner of parking space
+                //     //var owner;
+
+                //     //var User = Parse.Object.extend("User");
+                //     var query = new Parse.Query(Parse.User);
+                //     query.equalTo("username", currSpace.get("ownerEmail"));
+                //     query.first({
+                //         success: function(owner) {
+                //             //owner = result;
+                //             var sumRatings = owner.get("sumRatings");
+                //             var numRatings = owner.get("numRatings");
+
+                //             if(sumRatings == undefined) {
+                //                 //console.log("sumratings is undefined");
+                //                 sumRatings = rating;
+                //             } else {
+                //                 sumRatings += rating;
+                //             }
+
+                //             if(numRatings == undefined) {
+                //                 console.log("numratings is undefined");
+                //                 numRatings = 1;
+                //             } else {
+                //                 numRatings++;
+                //             }
+
+                //             // owner.increment("numRatings");
+                //             // owner.save(null, {
+                //             //     success: function(owner) {
+                //             //         console.log("successful save!");
+                //             //     },
+                //             //     error: function(error) {
+                //             //         //alert("Error: " + error.code + " " + error.message);
+                //             //         console.log("Error: " + error.code + " " + error.message);
+                //             //     }
+                //             // });
+
+                //             console.log(sumRatings);
+                //             console.log(numRatings);
+
+                //             console.log(owner.get("objectId"));
+
+                //             if(owner instanceof Parse.User) {
+                //                 console.log("Owner is of type user!");
+                //             } else {
+                //                 console.log("Owner IS NOT of type user :(");
+                //             }
+
+                //             owner.set("sumRatings", sumRatings);
+                //             //owner.set("numRatings", numRatings);
+                //             //owner.increment("sumRatings");
+
+                //             owner.save(null, {
+                //                 success: function(owner) {
+                //                     console.log("successful save!");
+                //                 },
+                //                 error: function(error, owner) {
+                //                     console.log(owner);
+                //                     //alert("Error: " + error.code + " " + error.message);
+                //                     console.log("Error: " + error.code + " " + error.message);
+                //                 }
+                //             });
+
+
+                //         },
+                //         error: function(error) {
+                //             //alert("Error: " + error.code + " " + error.message);
+                //             console.log("Error: " + error.code + " " + error.message);
+                //         }
+                //     });
+
+
+
+                // } else {
+                //     console.log("Error getting rating");
+                // }
             });
         }
     }
