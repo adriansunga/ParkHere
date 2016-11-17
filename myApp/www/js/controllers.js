@@ -888,6 +888,17 @@ angular.module('starter.controllers', [])
 //getting payment token for owner
 .controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $ionicNavBarDelegate, $http) {
     console.log("in owner payment");
+    Parse.Cloud.run('payRequest', {
+         success:
+         function(response) {
+           console.log("success: " + response);
+         },
+         error:
+        function(response) {
+            console.log("error: " + response);
+          }
+        });
+      }
 /*
     var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
     var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
