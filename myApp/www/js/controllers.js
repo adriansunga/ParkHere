@@ -10,22 +10,14 @@ angular.module('starter.controllers', [])
 
     var currUser = Parse.User.current();
     if (currUser != null) {
-        var currObjID = currUser.get("objectId");
-        if(currObjID == null) {
-            console.log("Curr user doesn't exist");
-            currUser.logOut();
+        console.log("Curr user exists!");
+        var userType = currUser.get("userType");
+
+        if (userType == 'parker') {
+            $state.go('parker.search');
         } else {
-            console.log("Curr user exists!");
-            var userType = currUser.get("userType");
-
-            if (userType == 'parker') {
-                $state.go('parker.search');
-            } else {
-                $state.go('owner.home');
-            }
-        }
-
-        
+            $state.go('owner.home');
+        }        
     }
 
     $scope.login = function() {
