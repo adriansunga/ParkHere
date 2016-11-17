@@ -281,7 +281,6 @@ angular.module('starter.services', [])
             name: ProductMeta.title,
             description: ProductMeta.description,
             amount: Math.floor(ProductMeta.priceUSD * 100),
-            image: "img/perry.png",
         };
 
         var handler = StripeCheckout.configure({
