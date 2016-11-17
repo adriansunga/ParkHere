@@ -15,13 +15,22 @@ angular.module('starter.controllers', [])
 
     var currUser = Parse.User.current();
     if (currUser != null) {
-        var userType = currUser.get("userType");
-
-        if (userType == 'parker') {
-            $state.go('parker.search');
+        var currObjID = currUser.get("objectId");
+        if(currObjID == null) {
+            console.log("Curr user doesn't exist");
+            currUser.logOut();
         } else {
-            $state.go('owner.home');
+            console.log("Curr user exists!");
+            var userType = currUser.get("userType");
+
+            if (userType == 'parker') {
+                $state.go('parker.search');
+            } else {
+                $state.go('owner.home');
+            }
         }
+
+        
     }
 
     $scope.login = function() {
@@ -1009,167 +1018,17 @@ angular.module('starter.controllers', [])
 //getting payment token for owner
 .controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $ionicNavBarDelegate, $http) {
     console.log("in owner payment");
-    /*
-        var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
-        var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
 
-        var TOKEN_URI = 'https://connect.stripe.com/oauth/token';
-        var AUTHORIZE_URI = 'httpvbg s://connect.stripe.com/oauth/authorize';
-
-<<<<<<< HEAD
-        $http.post(AUTHORIZE_URI + "?response_type=code&client_id="+CLIENT_ID + "&scope=read_write")
-          .success(
-            function(response) {
-            }
-          )
-          .error(
-            function(response) {
-                console.log(response)
-            }
-          );*/
-    /*
-      $http.post("/oauth/callback", function(req, res) {
-        var code = req.query.code;
-
-        // Make /oauth/token endpoint POST reques
-        request.post({
-          url: TOKEN_URI,
-          form: {
-            grant_type: "authorization_code",
-            client_id: CLIENT_ID,
-            code: code,
-            client_secret: API_KEY
+    Parse.Cloud.run('payRequest', {
+         success:
+         function(response) {
+           console.log("success: " + response);
+         },
+         error:
+        function(response) {
+            console.log("error: " + response);
           }
-        }, function(err, r, body) {
-=======
-    $http.post(AUTHORIZE_URI + "?response_type=code&client_id="+CLIENT_ID + "&scope=read_write")
-      .success(
-        function(response) {
-        }
-      )
-      .error(
-        function(response) {
-            console.log(response)
-        }
-      );
-    $http.post("/oauth/callback", function(req, res) {
-      var code = req.query.code;
-
-      // Make /oauth/token endpoint POST reques
-      request.post({
-        url: TOKEN_URI,
-        form: {
-          grant_type: "authorization_code",
-          client_id: CLIENT_ID,
-          code: code,
-          client_secret: API_KEY
-        }
-      }, function(err, r, body) {
->>>>>>> master
-
-          var accessToken = JSON.parse(body).access_token;
-
-          // Do something with your accessToken
-
-          // For demo"s sake, output in response:
-          res.send({ "Your Token": accessToken });
-
-<<<<<<< HEAD
         });
-      });*/
-    /*
-
-        // add the following headers for authentication
-        $ionicNavBarDelegate.showBackButton(false);
-        $http.defaults.headers.common['X-Mashape-Key'] = NOODLIO_PAY_API_KEY;
-        $http.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
-        $http.defaults.headers.common['Accept'] = 'application/json';
-
-        $scope.FormData = {
-            number: "",
-            cvc: "",
-            exp_month: "",
-            exp_year: "",
-            test: TEST_MODE,
-        };
-=======
-      });
-    });
->>>>>>> master
-
-        $scope.createToken = function() {
-
-            // init for the DOM
-            $scope.ResponseData = {
-                loading: true
-            };
-
-            // create a token and validate the credit card details
-            $http.post(NOODLIO_PAY_API_URL + "/tokens/create", $scope.FormData)
-                .success(
-                    function(response) {
-
-                        // --> success
-                        console.log(response)
-
-                        if (response.hasOwnProperty('id')) {
-                            var token = response.id;
-                            $scope.ResponseData['token'] = token;
-                            proceedCharge(token);
-                        } else {
-                            $scope.ResponseData['token'] = 'You did not input all fields properly, please try again';
-                            $scope.ResponseData['loading'] = false;
-                        };
-
-                    }
-                )
-                .error(
-                    function(response) {
-                        console.log(response)
-                        $scope.ResponseData['token'] = 'You did not input all fields properly, please try again';
-                        $scope.ResponseData['loading'] = false;
-                    }
-                );
-        };
-
-        // charge the customer with the token
-        function proceedCharge(token) {
-
-            var param = {
-                source: token,
-                amount: 100,
-                currency: "usd",
-                description: "Your custom description here",
-                stripe_account: STRIPE_ACCOUNT_ID,
-                test: TEST_MODE,
-            };
-
-            $http.post(NOODLIO_PAY_API_URL + "/charge/token", param)
-                .success(
-                    function(response) {
-
-                        // --> success
-                        console.log(response);
-                        $scope.ResponseData['loading'] = false;
-
-                        if (response.hasOwnProperty('id')) {
-                            var paymentId = response.id;
-                            $scope.ResponseData['paymentId'] = paymentId;
-                        } else {
-                            $scope.ResponseData['paymentId'] = 'Error, see console';
-                        };
-
-                    }
-                )
-                .error(
-                    function(response) {
-                        console.log(response)
-                        $scope.ResponseData['paymentId'] = 'Error, see console';
-                        $scope.ResponseData['loading'] = false;
-                    }
-                );
-        };
-    */
 })
 
 
