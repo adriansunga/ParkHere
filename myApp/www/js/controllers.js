@@ -330,8 +330,8 @@ angular.module('starter.controllers', [])
                             "rating": rating,
                             "ownerEmail": currSpace.get("ownerEmail")
                         })
-                    .then(function(ratings) {
-                        console.log("Set owner rating");
+                    .then(function(msg) {
+                        console.log("Response: " + msg);
                     });
 
                 }
