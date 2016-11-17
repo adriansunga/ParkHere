@@ -40,5 +40,6 @@
   },
   "_source": "https://github.com/Hobbule/ion-google-autocomplete.git",
   "_target": "^0.1.0",
-  "_originalSource": "ion-google-autocomplete"
+  "_originalSource": "ion-google-autocomplete",
+  "_direct": true
 }

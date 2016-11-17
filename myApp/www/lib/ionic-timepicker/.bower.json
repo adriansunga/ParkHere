@@ -35,5 +35,6 @@
   },
   "_source": "https://github.com/rajeshwarpatlolla/ionic-timepicker.git",
   "_target": "^0.6.0",
-  "_originalSource": "ionic-timepicker"
+  "_originalSource": "ionic-timepicker",
+  "_direct": true
 }

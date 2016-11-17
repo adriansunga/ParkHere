@@ -36,5 +36,6 @@
   },
   "_source": "https://github.com/rajeshwarpatlolla/ionic-ratings.git",
   "_target": "^0.3.0",
-  "_originalSource": "ionic-ratings"
+  "_originalSource": "ionic-ratings",
+  "_direct": true
 }

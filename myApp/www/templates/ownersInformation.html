@@ -14,7 +14,10 @@
     </div>
     <div id="ownersRating">
       <p style="color:#000000;">
-        <strong>Owner's rating</strong>: {{owner.get("averageRating")}}</p>
+        <div class="text-center">
+            <h4 style="text-align: center;">Average rating:</h4>
+             <ionic-ratings ratingsobj='ratingsObject' index =0></ionic-ratings>
+        </div>
     </div>
   </ion-content>
 </ion-view>

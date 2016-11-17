@@ -6,6 +6,7 @@ angular.module('starter.controllers', [])
     Parse.initialize("com.team3.parkhere", "medvidobitches");
 
     $scope.data = {};
+    console.log("in login controller");
 
 
     // Parse.Cloud.run('hello').then(function(param) {
@@ -51,7 +52,6 @@ angular.module('starter.controllers', [])
                 user.username = user1.get("name");
                 user.phoneNumber = "" + user1.get("phoneNumber");
                 user.uniqueID = user1.id;
-                user.rating = user1.get("averageRating");
                 if (user1.get("userType") != userType) {
                     div.innerHTML = 'You have not signed up with this user type';
                 } else {
@@ -77,8 +77,6 @@ angular.module('starter.controllers', [])
 })
 
 .service('user', function() {
-
-
     var user = this;
     user = {};
     user.username = '';
@@ -88,28 +86,11 @@ angular.module('starter.controllers', [])
     user.phoneNumber = '';
     user.rating = '';
     user.uniqueID = '';
-    user.stripeAccountID = '';
-
-     var setUsername = function(name) {
-        Parse.User.current().set("username", name);
-        Parse.user.current().save();
-        return name;
-    }
-
-    var setEmail = function(email) {
-        Parse.User.current().set("email", email);
-        Parse.user.current().save();
-        return email;
-    }
-
     return user;
 })
 
 //SignUp Controller
 .controller('signUpCtrl', function($scope, $ionicPopup, $state, user) {
-    var func = function() {
-        return 2;
-    }
     $scope.data = {};
     $scope.signUp = function() {
 
@@ -223,7 +204,7 @@ angular.module('starter.controllers', [])
         });
     };
 
-    
+
 })
 
 .service('parkerSearch', function() {
@@ -236,10 +217,6 @@ angular.module('starter.controllers', [])
     parkerSearch.endTime = new Date();
     parkerSearch.parkingSpaceType = '';
     return parkerSearch;
-
-
-
-
 })
 
 .controller('parkerSearchCtrl', function($scope, $cordovaGeolocation, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, parkerSearch, user) {
@@ -473,12 +450,16 @@ angular.module('starter.controllers', [])
                 $scope.search = address;
                 console.log(address);
                 document.getElementById('searchTextBox').value = address;
+            }else{
+
             }
-        });
+            });
         console.log(currLat);
     }, function(error) {
         console.log("Could not get location");
+
     };
+
     $scope.countryCode = 'US';
 
     $scope.onAddressSelection = function(location) {
@@ -606,7 +587,7 @@ angular.module('starter.controllers', [])
         var address = document.getElementById('searchTextBox').value;
         var parkingSpaceType = $scope.data2.searchType;
         if(parkingSpaceType == null){
-            parkingSpaceType = "Compact";
+            parkingSpaceType = "All";
         }
         parkerSearch.parkingSpaceType = parkingSpaceType;
         var geocoder = new google.maps.Geocoder();
@@ -743,7 +724,13 @@ angular.module('starter.controllers', [])
     $scope.user.name = Parse.User.current().get('name');
     $scope.user.email = Parse.User.current().get('username');
     $scope.user.phoneNumber = Parse.User.current().get('phoneNumber');
-    $scope.user.url = Parse.User.current().get("picture")._url;
+    console.log(Parse.User.current().get("picture"));
+    if(Parse.User.current().get("picture") == 'undefined' || Parse.User.current().get("picture") == null){
+        $scope.user.url = "";
+     }else{
+         $scope.user.url = Parse.User.current().get("picture")._url;
+     }
+
     var sumR = Parse.User.current().get('sumRatings');
     console.log(sumR);
     var numR = Parse.User.current().get('numRatings');
@@ -753,7 +740,7 @@ angular.module('starter.controllers', [])
     }else{
         avRating = parseInt(sumR/numR);
     }
-   
+
     console.log(avRating);
     $scope.ratingsObject = {
         iconOn: 'ion-ios-star',
@@ -811,25 +798,21 @@ angular.module('starter.controllers', [])
 .service('reservationInfo', function() {
     var reservationInfo = this;
     reservationInfo.price = '';
+    reservationInfo.name = '';
     reservationInfo.reserved = [];
-    reservationInfo.spotName = '';
-
-    var setPrice = function(price) {
-        reservationInfo.price = price;
-        return price;
-    }
-
-    var setSpotName = function(sn) {
-        reservationInfo.spotName = sn;
-        return sn;
-    }
-
     return reservationInfo;
 })
 
 .controller('reservationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults, user, reservationInfo) {
 
     $scope.selectedSpace = parkerSearchResults.selectedSpace;
+    $scope.reservation = {};
+    $scope.reservation[false] = "Available";
+    $scope.reservation[true] = "Reserved";
+    $scope.colors = {};
+    $scope.colors[false] = "#008000";
+    $scope.colors[true] = "#ff0000";
+
 
     availableTimes = [];
 
@@ -911,15 +894,18 @@ angular.module('starter.controllers', [])
             // if (!error && checkedTimes.length != 0) {
             if (checkedTimes.length != 0) {
                 var price = parkerSearchResults.selectedSpace.get("price");
+                reservationInfo.name = parkerSearchResults.selectedSpace.get("name");
 
                 // Set info in service so it is available in parker.pay
                 reservationInfo.price = price * checkedTimes.length;
+
+
                 var reservedSpaces = [];
                 for (var i = 0; i < checkedTimes.length; i++) {
                     reservedSpaces.push($scope.availableTimes[checkedTimes[i]]);
                 }
                 reservationInfo.reservedSpaces = reservedSpaces;
-                reservationInfo.spotName = parkerSearchResults.selectedSpace.get("name");
+
                 console.log('price is ' + reservationInfo.price);
                 $state.go("parker.pay");
                 /*var alertPopup = $ionicPopup.alert({
@@ -935,10 +921,12 @@ angular.module('starter.controllers', [])
 })
 
 .controller('upcomingSpacesCtrl', function($scope, $ionicPopup, $state, user) {
+    console.log("inside upcoming with user: " + user.email + " password: " + user.password);
     $scope.listCanSwipe = true;
     var parkingSpace = Parse.Object.extend("ParkingSpace");
     var query = new Parse.Query(parkingSpace);
     query.equalTo("parker", user.email);
+    console.log("username: " + user.email);
     query.ascending("Date");
     query.find({
         success: function(results) {
@@ -981,18 +969,41 @@ angular.module('starter.controllers', [])
 
 .controller('spotOwnerInformationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults) {
     console.log("in spot control page!");
+    var avRating;
 
     var email = parkerSearchResults.selectedSpace.get("ownerEmail");
     console.log("owner email = " + email);
     var users = Parse.Object.extend("User");
     var query = new Parse.Query(users);
     query.equalTo("username", email);
+
     query.find({
         success: function(results) {
             console.log("results: (should just be one) " + results);
             $scope.owner = results[0];
+            var sumRatings = results[0].get('sumRatings');
+            var numRatings = results[0].get('numRatings');
+            if(sumRatings == null || numRatings == null){
+                avRating = 0;
+            }else{
+                avRating = parseInt(sumRatings/numRatings);
+            }
+            console.log(avRating);
         }
-    })
+    });
+
+    $scope.ratingsObject = {
+        iconOn: 'ion-ios-star',
+        iconOff: 'ion-ios-star-outline',
+        iconOnColor: 'rgb(251, 212, 1)',
+        iconOffColor: 'rgb(224, 224, 224)',
+        rating: avRating,
+        minRating: 0,
+        readOnly: true,
+        callback: function(rating) {
+            $scope.ratingsCallback(rating);
+        }
+    };
 })
 
 //getting payment token for owner
@@ -1148,8 +1159,6 @@ angular.module('starter.controllers', [])
                             $scope.ResponseData['paymentId'] = 'Error, see console';
                         };
 
-
-
                     }
                 )
                 .error(
@@ -1167,11 +1176,11 @@ angular.module('starter.controllers', [])
 //where we set up the payment... should be for parker
 .controller('parkerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, reservationInfo, user) {
     var total = reservationInfo.price;
-    var STRIPE_ACCOUNT_ID = "acct_197dO3BnddH3DZLG";
+    var name = reservationInfo.name;
 
     $scope.ProductMeta = {
-        title: reservationInfo.spotName,
-        description: "Yes it really is",
+        title: name,
+        //description: "Yes it really is",
         priceUSD: total,
     };
 
@@ -1204,30 +1213,9 @@ angular.module('starter.controllers', [])
         ); // ./ getStripeToken
 
         function proceedCharge(stripeToken) {
-            /*
-                        $scope.status['message'] = "Processing your payment...";
-                        var stripe = require("stripe")("sk_test_46tPC5KonTnuuvz1dbl0Q7J7");
 
-                        // Get the credit card details submitted by the form
-                        var token = request.body.stripeToken;
 
-                        // Create the charge with Stripe
-                        stripe.charges.create({
-                          amount: total, // amount in cents
-                          currency: "usd",
-                          source: token,
-                          description: "Example charge",
-                          application_fee: total*.1 // amount in cents
-                        }, {
-                        stripe_account: STRIPE_ACCOUNT_ID
-                        //$scope.status['message'] = "Success! Check your Stripe Account";
-                       },
-                       function(err, charge) {
-                         $scope.status['message'] = "Error, check your console";
-                        // check for `err`
-                        // do something with `charge`
-                       }
-                     );*/
+            $scope.status['message'] = "Processing your payment...";
 
             // then chare the user through your custom node.js server (server-side)
             StripeCharge.chargeUser(stripeToken, $scope.ProductMeta).then(
@@ -1360,63 +1348,11 @@ angular.module('starter.controllers', [])
     parkingSpace.uniqueID = '';
     parkingSpace.ownerEmail = '';
     parkingSpace.type = '';
-
-
-    var setURL = function (url){
-        parkingSpace.url = url;
-        return url;
-    }
-
     return parkingSpace;
 })
 
-.controller('ownerHomeCtrl', function($scope, $http, $ionicNavBarDelegate, $ionicPopup, $state, parkingSpace, user) {
-    var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
-    var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
-
-    Parse.initialize("com.team3.parkhere", "medvidobitches");
+.controller('ownerHomeCtrl', function($scope, $ionicNavBarDelegate, $ionicPopup, $state, parkingSpace, user) {
     $ionicNavBarDelegate.showBackButton(false);
-
-    // Obtain all args (key=val) format and store to array
-    var keyvalpair = window.location.search.slice(1).split('&');
-    // Loop through items
-    var x = 0;
-    for (x = 0; x <= keyvalpair.length - 1; x++) {
-        // Split the key from the value
-        var splitted = keyvalpair[x].split('=');
-        var value = splitted[1];
-        if (value != 'undefined') {
-            //var parseUser = Parse.User.current();
-            var data = {
-                grant_type: 'authorization_code',
-                client_secret: API_KEY,
-                code: value,
-            };
-            $http({
-                url: 'https://connect.stripe.com/oauth/token',
-                method: 'POST',
-                data: data,
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    //'Content-Type': 'application/json;charset=UTF-8'
-                },
-            }).success(function(response) {
-                console.log("WOW");
-                console.log(response);
-                //handle success
-                //$location.path('/'); //maybe you want to do this
-            }).error(function(response) {
-                console.log('bad');
-                //handle error
-            });
-            console.log(Parse.User.current().get("name"));
-            //Parse.User.current().set("stripeAccountID", value);
-            //user.stripeAccountID = value;
-            console.log('posted ' + value);
-        }
-    }
-
-
 
     var ownerEmail = user.email;
     $scope.items = [];
@@ -1687,11 +1623,13 @@ angular.module('starter.controllers', [])
     console.log("user", user.email);
 
     var address = "";
-  
+
+    $scope.countryCode = 'US';
     $scope.onAddressSelection = function(location) {
         address = location.formatted_address;
         console.log(address);
         document.getElementById('typedAddress').value = address;
+        $scope.data.address = address;
     };
 
     $scope.addSpace = function() {
@@ -1801,7 +1739,8 @@ angular.module('starter.controllers', [])
                 var spaceToSave = new parkingSpaceParse();
                 spaceToSave.set("Date", new Date(dateToSave));
                 console.log(dateToSave);
-                spaceToSave.set("ownerEmail", user.email);
+                var parseUser = Parse.User.current();;
+                spaceToSave.set("ownerEmail", parseUser.get("username"));
                 spaceToSave.set("name", parkingSpaceName);
                 var point = new Parse.GeoPoint({
                     latitude: latitude,
@@ -1966,14 +1905,10 @@ angular.module('starter.controllers', [])
 
 //map controller
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, parkerSearch) {
-    
-
-    $scope.options = {
+    var options = {
         timeout: 10000,
         enableHighAccuracy: true
     };
-
-    var options = $scope.options;
 
     $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
 

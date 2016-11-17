@@ -7,6 +7,7 @@
 
 
 //noodlio pay ish
+
 var NOODLIO_PAY_API_URL = "https://noodlio-pay.p.mashape.com";
 var NOODLIO_PAY_API_KEY = "hkou9g9rVgmshTeafr21FodTUdsip1Gsko3jsn8G4LLowC6ReO";
 var STRIPE_ACCOUNT_ID = "acct_197dO3BnddH3DZLG";
@@ -83,7 +84,6 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete', 'ngC
         })
         .state('parker.search', {
             url: '/parkerSearch',
-            cache: false,
             views: {
                 'side-menu21': {
                     templateUrl: 'templates/parkingSearch.html',
@@ -251,7 +251,6 @@ angular.module('starter.services', [])
             currency: "usd",
             description: "Your custom description here",
             stripe_account: STRIPE_ACCOUNT_ID,
-            //application_fee: Math.floor(ProductMeta.priceUSD * 100)*.1,
             test: TEST_MODE,
         };
 
@@ -282,7 +281,6 @@ angular.module('starter.services', [])
             name: ProductMeta.title,
             description: ProductMeta.description,
             amount: Math.floor(ProductMeta.priceUSD * 100),
-            image: "img/perry.png",
         };
 
         var handler = StripeCheckout.configure({

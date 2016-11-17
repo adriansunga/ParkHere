@@ -1,206 +1,26 @@
 0 info it worked if it ends with ok
 1 verbose cli [ '/usr/local/bin/node',
 1 verbose cli   '/usr/local/bin/npm',
-1 verbose cli   'install',
-1 verbose cli   '-g',
-1 verbose cli   'karma-cli' ]
-2 info using npm@1.2.18
-3 info using node@v0.10.6
-4 verbose read json /usr/local/lib/package.json
-5 verbose read json /usr/local/lib/package.json
-6 verbose cache add [ 'karma-cli', null ]
-7 verbose cache add name=undefined spec="karma-cli" args=["karma-cli",null]
-8 verbose parsed url { protocol: null,
-8 verbose parsed url   slashes: null,
-8 verbose parsed url   auth: null,
-8 verbose parsed url   host: null,
-8 verbose parsed url   port: null,
-8 verbose parsed url   hostname: null,
-8 verbose parsed url   hash: null,
-8 verbose parsed url   search: null,
-8 verbose parsed url   query: null,
-8 verbose parsed url   pathname: 'karma-cli',
-8 verbose parsed url   path: 'karma-cli',
-8 verbose parsed url   href: 'karma-cli' }
-9 silly lockFile aa100f68-karma-cli karma-cli
-10 verbose lock karma-cli /Users/sungapotamus14/.npm/aa100f68-karma-cli.lock
-11 silly lockFile aa100f68-karma-cli karma-cli
-12 silly lockFile aa100f68-karma-cli karma-cli
-13 verbose addNamed [ 'karma-cli', '' ]
-14 verbose addNamed [ null, '' ]
-15 silly lockFile 8f6f2c72-karma-cli karma-cli@
-16 verbose lock karma-cli@ /Users/sungapotamus14/.npm/8f6f2c72-karma-cli.lock
-17 silly addNameRange { name: 'karma-cli', range: '', hasData: false }
-18 silly addNameRange number 2 { name: 'karma-cli', range: '', hasData: true }
-19 silly addNameRange versions [ 'karma-cli',
-19 silly addNameRange   [ '0.0.1',
-19 silly addNameRange     '0.0.2',
-19 silly addNameRange     '0.0.3',
-19 silly addNameRange     '0.0.4',
-19 silly addNameRange     '0.1.0',
-19 silly addNameRange     '0.1.1',
-19 silly addNameRange     '0.1.2',
-19 silly addNameRange     '1.0.0',
-19 silly addNameRange     '1.0.1' ] ]
-20 verbose addNamed [ 'karma-cli', '1.0.1' ]
-21 verbose addNamed [ '1.0.1', '1.0.1' ]
-22 silly lockFile a1f21cc8-karma-cli-1-0-1 karma-cli@1.0.1
-23 verbose lock karma-cli@1.0.1 /Users/sungapotamus14/.npm/a1f21cc8-karma-cli-1-0-1.lock
-24 verbose read json /Users/sungapotamus14/.npm/karma-cli/1.0.1/package/package.json
-25 silly lockFile a1f21cc8-karma-cli-1-0-1 karma-cli@1.0.1
-26 silly lockFile a1f21cc8-karma-cli-1-0-1 karma-cli@1.0.1
-27 silly lockFile 8f6f2c72-karma-cli karma-cli@
-28 silly lockFile 8f6f2c72-karma-cli karma-cli@
-29 silly resolved [ { name: 'karma-cli',
-29 silly resolved     description: 'The Karma command line interface.',
-29 silly resolved     homepage: 'http://karma-runner.github.io/',
-29 silly resolved     repository:
-29 silly resolved      { type: 'git',
-29 silly resolved        url: 'git://github.com/karma-runner/karma-cli.git' },
-29 silly resolved     bugs: { url: 'https://github.com/karma-runner/karma-cli/issues' },
-29 silly resolved     keywords:
-29 silly resolved      [ 'karma',
-29 silly resolved        'spectacular',
-29 silly resolved        'runner',
-29 silly resolved        'karma',
-29 silly resolved        'js',
-29 silly resolved        'javascript',
-29 silly resolved        'testing',
-29 silly resolved        'test',
-29 silly resolved        'remote',
-29 silly resolved        'execution' ],
-29 silly resolved     author: { name: 'Vojta Jína', email: 'vojta.jina@gmail.com' },
-29 silly resolved     contributors:
-29 silly resolved      [ [Object],
-29 silly resolved        [Object],
-29 silly resolved        [Object],
-29 silly resolved        [Object],
-29 silly resolved        [Object],
-29 silly resolved        [Object],
-29 silly resolved        [Object],
-29 silly resolved        [Object],
-29 silly resolved        [Object] ],
-29 silly resolved     dependencies: { resolve: '^1.1.6' },
-29 silly resolved     devDependencies:
-29 silly resolved      { 'eslint-config-standard': '^4.4.0',
-29 silly resolved        'eslint-plugin-standard': '^1.3.1',
-29 silly resolved        grunt: '^0.4.1',
-29 silly resolved        'grunt-bump': '^0.3.1',
-29 silly resolved        'grunt-conventional-changelog': '^1.2.2',
-29 silly resolved        'grunt-eslint': '^17.0.0',
-29 silly resolved        'grunt-npm': '0.0.2',
-29 silly resolved        'load-grunt-tasks': '^3.2.0' },
-29 silly resolved     preferGlobal: true,
-29 silly resolved     bin: { karma: './bin/karma' },
-29 silly resolved     engines: { node: '0.10 || 0.12 || 4 || 5 || 6' },
-29 silly resolved     version: '1.0.1',
-29 silly resolved     license: 'MIT',
-29 silly resolved     gitHead: '48860704e7f59f8f640f944914af9cfa5282b296',
-29 silly resolved     _id: 'karma-cli@1.0.1',
-29 silly resolved     scripts: {},
-29 silly resolved     _shasum: 'ae6c3c58a313a1d00b45164c455b9b86ce17f960',
-29 silly resolved     _from: 'karma-cli@',
-29 silly resolved     _npmVersion: '3.8.9',
-29 silly resolved     _nodeVersion: '6.2.0',
-29 silly resolved     _npmUser: { name: 'dignifiedquire', email: 'dignifiedquire@gmail.com' },
-29 silly resolved     dist:
-29 silly resolved      { shasum: 'ae6c3c58a313a1d00b45164c455b9b86ce17f960',
-29 silly resolved        tarball: 'https://registry.npmjs.org/karma-cli/-/karma-cli-1.0.1.tgz' },
-29 silly resolved     maintainers: [ [Object], [Object], [Object] ],
-29 silly resolved     _npmOperationalInternal:
-29 silly resolved      { host: 'packages-16-east.internal.npmjs.com',
-29 silly resolved        tmp: 'tmp/karma-cli-1.0.1.tgz_1466955043087_0.47408990492112935' },
-29 silly resolved     directories: {},
-29 silly resolved     _resolved: 'https://registry.npmjs.org/karma-cli/-/karma-cli-1.0.1.tgz',
-29 silly resolved     readme: 'ERROR: No README data found!' } ]
-30 info install karma-cli@1.0.1 into /usr/local/lib
-31 info installOne karma-cli@1.0.1
-32 verbose from cache /Users/sungapotamus14/.npm/karma-cli/1.0.1/package/package.json
-33 info /usr/local/lib/node_modules/karma-cli unbuild
-34 verbose read json /usr/local/lib/node_modules/karma-cli/package.json
-35 info preuninstall karma-cli@1.0.1
-36 info uninstall karma-cli@1.0.1
-37 verbose true,/usr/local/lib/node_modules,/usr/local/lib/node_modules unbuild karma-cli@1.0.1
-38 verbose /usr/local/bin,[object Object] binRoot
-39 info postuninstall karma-cli@1.0.1
-40 verbose tar unpack /Users/sungapotamus14/.npm/karma-cli/1.0.1/package.tgz
-41 silly lockFile 0e5318cd-local-lib-node-modules-karma-cli /usr/local/lib/node_modules/karma-cli
-42 verbose lock /usr/local/lib/node_modules/karma-cli /Users/sungapotamus14/.npm/0e5318cd-local-lib-node-modules-karma-cli.lock
-43 silly lockFile 9f014d36--npm-karma-cli-1-0-1-package-tgz /Users/sungapotamus14/.npm/karma-cli/1.0.1/package.tgz
-44 verbose lock /Users/sungapotamus14/.npm/karma-cli/1.0.1/package.tgz /Users/sungapotamus14/.npm/9f014d36--npm-karma-cli-1-0-1-package-tgz.lock
-45 silly gunzTarPerm modes [ '755', '644' ]
-46 silly gunzTarPerm extractEntry package.json
-47 silly gunzTarPerm extractEntry LICENSE
-48 silly gunzTarPerm extractEntry gruntfile.js
-49 silly gunzTarPerm extractEntry CHANGELOG.md
-50 silly gunzTarPerm extractEntry bin/karma
-51 silly gunzTarPerm extractEntry lib/log.js
-52 verbose read json /usr/local/lib/node_modules/karma-cli/package.json
-53 silly lockFile 0e5318cd-local-lib-node-modules-karma-cli /usr/local/lib/node_modules/karma-cli
-54 silly lockFile 0e5318cd-local-lib-node-modules-karma-cli /usr/local/lib/node_modules/karma-cli
-55 silly lockFile 9f014d36--npm-karma-cli-1-0-1-package-tgz /Users/sungapotamus14/.npm/karma-cli/1.0.1/package.tgz
-56 silly lockFile 9f014d36--npm-karma-cli-1-0-1-package-tgz /Users/sungapotamus14/.npm/karma-cli/1.0.1/package.tgz
-57 info preinstall karma-cli@1.0.1
-58 verbose from cache /usr/local/lib/node_modules/karma-cli/package.json
-59 verbose readDependencies using package.json deps
-60 verbose from cache /usr/local/lib/node_modules/karma-cli/package.json
-61 verbose readDependencies using package.json deps
-62 verbose cache add [ 'resolve@^1.1.6', null ]
-63 verbose cache add name=undefined spec="resolve@^1.1.6" args=["resolve@^1.1.6",null]
-64 verbose parsed url { protocol: null,
-64 verbose parsed url   slashes: null,
-64 verbose parsed url   auth: null,
-64 verbose parsed url   host: null,
-64 verbose parsed url   port: null,
-64 verbose parsed url   hostname: null,
-64 verbose parsed url   hash: null,
-64 verbose parsed url   search: null,
-64 verbose parsed url   query: null,
-64 verbose parsed url   pathname: 'resolve@^1.1.6',
-64 verbose parsed url   path: 'resolve@^1.1.6',
-64 verbose parsed url   href: 'resolve@^1.1.6' }
-65 verbose cache add name="resolve" spec="^1.1.6" args=["resolve","^1.1.6"]
-66 verbose parsed url { protocol: null,
-66 verbose parsed url   slashes: null,
-66 verbose parsed url   auth: null,
-66 verbose parsed url   host: null,
-66 verbose parsed url   port: null,
-66 verbose parsed url   hostname: null,
-66 verbose parsed url   hash: null,
-66 verbose parsed url   search: null,
-66 verbose parsed url   query: null,
-66 verbose parsed url   pathname: '^1.1.6',
-66 verbose parsed url   path: '^1.1.6',
-66 verbose parsed url   href: '^1.1.6' }
-67 verbose addNamed [ 'resolve', '^1.1.6' ]
-68 verbose addNamed [ null, null ]
-69 silly lockFile 68328635-resolve-1-1-6 resolve@^1.1.6
-70 verbose lock resolve@^1.1.6 /Users/sungapotamus14/.npm/68328635-resolve-1-1-6.lock
-71 info addNameTag [ 'resolve', '^1.1.6' ]
-72 silly lockFile 68328635-resolve-1-1-6 resolve@^1.1.6
-73 silly lockFile 68328635-resolve-1-1-6 resolve@^1.1.6
-74 verbose about to build /usr/local/lib/node_modules/karma-cli
-75 info /usr/local/lib/node_modules/karma-cli unbuild
-76 verbose from cache /usr/local/lib/node_modules/karma-cli/package.json
-77 info preuninstall karma-cli@1.0.1
-78 info uninstall karma-cli@1.0.1
-79 verbose true,/usr/local/lib/node_modules,/usr/local/lib/node_modules unbuild karma-cli@1.0.1
-80 verbose /usr/local/bin,[object Object] binRoot
-81 info postuninstall karma-cli@1.0.1
-82 error Error: No compatible version found: resolve@'^1.1.6'
-82 error Valid install targets:
-82 error ["0.0.0","0.0.1","0.0.2","0.0.3","0.0.4","0.1.0","0.1.2","0.1.3","0.2.0","0.2.1","0.2.2","0.2.3","0.2.4","0.2.5","0.2.6","0.2.7","0.2.8","0.3.0","0.3.1","0.4.0","0.4.1","0.4.2","0.4.3","0.5.0","0.5.1","0.6.0","0.6.1","0.6.2","0.6.3","0.7.0","0.7.1","0.7.2","0.7.3","0.7.4","1.0.0","1.1.0","1.1.2","1.1.3","1.1.4","1.1.5","1.1.6","1.1.7"]
-82 error     at installTargetsError (/usr/local/lib/node_modules/npm/lib/cache.js:685:10)
-82 error     at /usr/local/lib/node_modules/npm/lib/cache.js:607:10
-82 error     at saved (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/get.js:138:7)
-82 error     at Object.oncomplete (fs.js:107:15)
-83 error If you need help, you may report this log at:
-83 error     <http://github.com/isaacs/npm/issues>
-83 error or email it to:
-83 error     <npm-@googlegroups.com>
-84 error System Darwin 16.1.0
-85 error command "/usr/local/bin/node" "/usr/local/bin/npm" "install" "-g" "karma-cli"
-86 error cwd /Users/sungapotamus14/workspace/cs310/ParkHere/myApp
-87 error node -v v0.10.6
-88 error npm -v 1.2.18
-89 verbose exit [ 1, true ]
+1 verbose cli   'run',
+1 verbose cli   'dashboard' ]
+2 info using npm@2.15.9
+3 info using node@v4.6.0
+4 verbose stack Error: missing script: dashboard
+4 verbose stack     at run (/usr/local/lib/node_modules/npm/lib/run-script.js:142:19)
+4 verbose stack     at /usr/local/lib/node_modules/npm/lib/run-script.js:58:5
+4 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:356:5
+4 verbose stack     at checkBinReferences_ (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:320:45)
+4 verbose stack     at final (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:354:3)
+4 verbose stack     at then (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:124:5)
+4 verbose stack     at ReadFileContext.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:295:20)
+4 verbose stack     at ReadFileContext.callback (/usr/local/lib/node_modules/npm/node_modules/graceful-fs/graceful-fs.js:78:16)
+4 verbose stack     at FSReqWrap.readFileAfterOpen [as oncomplete] (fs.js:303:13)
+5 verbose cwd /Users/elizabethworstell/Desktop/Github/ParkHere/myApp
+6 error Darwin 14.3.0
+7 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "run" "dashboard"
+8 error node v4.6.0
+9 error npm  v2.15.9
+10 error missing script: dashboard
+11 error If you need help, you may report this error at:
+11 error     <https://github.com/npm/npm/issues>
+12 verbose exit [ 1, true ]
