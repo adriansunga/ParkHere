@@ -47,7 +47,6 @@ angular.module('starter.controllers', [])
                 user.username = user1.get("name");
                 user.phoneNumber = "" + user1.get("phoneNumber");
                 user.uniqueID = user1.id;
-                user.rating = user1.get("averageRating");
                 if (user1.get("userType") != userType) {
                     div.innerHTML = 'You have not signed up with this user type';
                 } else {
@@ -847,18 +846,41 @@ angular.module('starter.controllers', [])
 
 .controller('spotOwnerInformationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults) {
     console.log("in spot control page!");
-
+    var avRating;
+    
     var email = parkerSearchResults.selectedSpace.get("ownerEmail");
     console.log("owner email = " + email);
     var users = Parse.Object.extend("User");
     var query = new Parse.Query(users);
     query.equalTo("username", email);
+
     query.find({
         success: function(results) {
             console.log("results: (should just be one) " + results);
             $scope.owner = results[0];
+            var sumRatings = results[0].get('sumRatings');
+            var numRatings = results[0].get('numRatings');
+            if(sumRatings == null || numRatings == null){
+                avRating = 0;
+            }else{
+                avRating = parseInt(sumRatings/numRatings);
+            }
+            console.log(avRating);
         }
-    })
+    });
+
+    $scope.ratingsObject = {
+        iconOn: 'ion-ios-star',
+        iconOff: 'ion-ios-star-outline',
+        iconOnColor: 'rgb(251, 212, 1)',
+        iconOffColor: 'rgb(224, 224, 224)',
+        rating: avRating,
+        minRating: 0,
+        readOnly: true,
+        callback: function(rating) {
+            $scope.ratingsCallback(rating);
+        }
+    };
 })
 
 //getting payment token for owner
