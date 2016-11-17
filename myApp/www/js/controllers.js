@@ -18,7 +18,7 @@ angular.module('starter.controllers', [])
         var currObjID = currUser.get("objectId");
         if(currObjID == null) {
             console.log("Curr user doesn't exist");
-            currUser.logOut();
+            Parse.User.logOut();
         } else {
             console.log("Curr user exists!");
             var userType = currUser.get("userType");
