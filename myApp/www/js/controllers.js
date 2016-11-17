@@ -1563,7 +1563,8 @@ angular.module('starter.controllers', [])
                 var spaceToSave = new parkingSpaceParse();
                 spaceToSave.set("Date", new Date(dateToSave));
                 console.log(dateToSave);
-                spaceToSave.set("ownerEmail", user.email);
+                var parseUser = Parse.User.current();;
+                spaceToSave.set("ownerEmail", parseUser.get("username"));
                 spaceToSave.set("name", parkingSpaceName);
                 var point = new Parse.GeoPoint({
                     latitude: latitude,
