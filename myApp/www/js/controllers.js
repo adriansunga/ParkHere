@@ -15,22 +15,13 @@ angular.module('starter.controllers', [])
 
     var currUser = Parse.User.current();
     if (currUser != null) {
-        var currObjID = currUser.get("objectId");
-        if(currObjID == null) {
-            console.log("Curr user doesn't exist");
-            Parse.User.logOut();
+        var userType = currUser.get("userType");
+
+        if (userType == 'parker') {
+            $state.go('parker.search');
         } else {
-            console.log("Curr user exists!");
-            var userType = currUser.get("userType");
-
-            if (userType == 'parker') {
-                $state.go('parker.search');
-            } else {
-                $state.go('owner.home');
-            }
+            $state.go('owner.home');
         }
-
-        
     }
 
     $scope.login = function() {
@@ -267,6 +258,7 @@ angular.module('starter.controllers', [])
             ///!!!!!!!!!!!!
             //!!!!!!!!!!!!!
             //CHANGE BACK TO GREATER THAN
+            //less than is for testing purposes
             //!!!!!!!!!!!!!
             //!!!!!!!!!!!!!
 
@@ -334,97 +326,44 @@ angular.module('starter.controllers', [])
             confirmPopup.then(function(rating) {
                 if(rating) {
                     console.log("Setting owner rating");
+
+                    var ownerEmail = currSpace.get('ownerEmail');
                     Parse.Cloud.run('setOwnerRating', 
                         { 
-                            "rating": rating,
-                            "ownerEmail": currSpace.get("ownerEmail")
+                            rating: rating,
+                            ownerEmail: ownerEmail
                         })
                     .then(function(msg) {
                         console.log("Response: " + msg);
                     });
-
                 }
-
-                // if (rating) {
-                //     console.log("rating: " + rating);
-                //     //get owner of parking space
-                //     //var owner;
-
-                //     //var User = Parse.Object.extend("User");
-                //     var query = new Parse.Query(Parse.User);
-                //     query.equalTo("username", currSpace.get("ownerEmail"));
-                //     query.first({
-                //         success: function(owner) {
-                //             //owner = result;
-                //             var sumRatings = owner.get("sumRatings");
-                //             var numRatings = owner.get("numRatings");
-
-                //             if(sumRatings == undefined) {
-                //                 //console.log("sumratings is undefined");
-                //                 sumRatings = rating;
-                //             } else {
-                //                 sumRatings += rating;
-                //             }
-
-                //             if(numRatings == undefined) {
-                //                 console.log("numratings is undefined");
-                //                 numRatings = 1;
-                //             } else {
-                //                 numRatings++;
-                //             }
-
-                //             // owner.increment("numRatings");
-                //             // owner.save(null, {
-                //             //     success: function(owner) {
-                //             //         console.log("successful save!");
-                //             //     },
-                //             //     error: function(error) {
-                //             //         //alert("Error: " + error.code + " " + error.message);
-                //             //         console.log("Error: " + error.code + " " + error.message);
-                //             //     }
-                //             // });
-
-                //             console.log(sumRatings);
-                //             console.log(numRatings);
-
-                //             console.log(owner.get("objectId"));
-
-                //             if(owner instanceof Parse.User) {
-                //                 console.log("Owner is of type user!");
-                //             } else {
-                //                 console.log("Owner IS NOT of type user :(");
-                //             }
-
-                //             owner.set("sumRatings", sumRatings);
-                //             //owner.set("numRatings", numRatings);
-                //             //owner.increment("sumRatings");
-
-                //             owner.save(null, {
-                //                 success: function(owner) {
-                //                     console.log("successful save!");
-                //                 },
-                //                 error: function(error, owner) {
-                //                     console.log(owner);
-                //                     //alert("Error: " + error.code + " " + error.message);
-                //                     console.log("Error: " + error.code + " " + error.message);
-                //                 }
-                //             });
-
-
-                //         },
-                //         error: function(error) {
-                //             //alert("Error: " + error.code + " " + error.message);
-                //             console.log("Error: " + error.code + " " + error.message);
-                //         }
-                //     });
-
-
-
-                // } else {
-                //     console.log("Error getting rating");
-                // }
             });
         }
+
+        //Prune parkings space
+        var newUnratedSpaces = [];
+        for(var i = 0; i < unratedSpaces.length; i++) {
+            var toAdd = true;
+            for(var j = 0; j < uniqueSpaces.length; j++) {
+                if(isSameSpace(unratedSpaces[i],uniqueSpaces[j])) {
+                    toAdd = false;
+                }
+            }
+
+            if(toAdd) {
+                newUnratedSpaces.push(unratedSpaces[i]);
+            }
+        }
+        //Replace unratedSpaces on DB with new array
+        Parse.User.current().set("unratedSpaces", newUnratedSpaces);
+        Parse.User.current().save(null, {
+            success: function() {
+                console.log("Successfully deleted rated spaces");
+            },
+            error: function() {
+                console.log("Failed to delete rated spaces :(");
+            }
+        });
     }
 
 
