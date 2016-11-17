@@ -24,7 +24,7 @@ angular.module('starter.controllers', [])
         var username = "" + $scope.data.username;
         var password = "" + $scope.data.password;
         var userType = document.querySelector('input[name = "loginType"]:checked');
-        console.log(username); 
+        console.log(username);
         console.log(password);
         var div = document.getElementById('invalid');
         if (userType == null) {
@@ -199,7 +199,7 @@ angular.module('starter.controllers', [])
         });
     };
 
-    
+
 })
 
 .service('parkerSearch', function() {
@@ -226,7 +226,7 @@ angular.module('starter.controllers', [])
             console.log(expDate);
             console.log(currDate);
 
-            
+
 
             if(currDate.getTime() > expDate.getTime()) { //expired
 
@@ -287,7 +287,7 @@ angular.module('starter.controllers', [])
             if (res) {
                 for (var i = 0; i < uniqueSpaces.length; i++) {
 
-           
+
                  }
             } else {
                 console.log('You are not sure');
@@ -296,7 +296,7 @@ angular.module('starter.controllers', [])
         console.log(uniqueSpaces.length);
 
         }
-        
+
 
 
 
@@ -604,12 +604,12 @@ angular.module('starter.controllers', [])
     $scope.user.email = Parse.User.current().get('username');
     $scope.user.phoneNumber = Parse.User.current().get('phoneNumber');
     console.log(Parse.User.current().get("picture"));
-    if(Parse.User.current().get("picture") == 'undefined' || Parse.User.current().get("picture") == null){     
+    if(Parse.User.current().get("picture") == 'undefined' || Parse.User.current().get("picture") == null){
         $scope.user.url = "";
      }else{
          $scope.user.url = Parse.User.current().get("picture")._url;
      }
-   
+
     var sumR = Parse.User.current().get('sumRatings');
     console.log(sumR);
     var numR = Parse.User.current().get('numRatings');
@@ -619,7 +619,7 @@ angular.module('starter.controllers', [])
     }else{
         avRating = parseInt(sumR/numR);
     }
-   
+
     console.log(avRating);
     $scope.ratingsObject = {
         iconOn: 'ion-ios-star',
@@ -737,7 +737,7 @@ angular.module('starter.controllers', [])
                 } else {
                     checkedTimes.push(i);
                 }
-                 
+
             }
         }
 
@@ -767,7 +767,7 @@ angular.module('starter.controllers', [])
 
             // }
 
-           
+
             // SO FAR SO GOOD
             // if (!error && checkedTimes.length != 0) {
             if(checkedTimes.length != 0) {
@@ -788,7 +788,7 @@ angular.module('starter.controllers', [])
                 /*var alertPopup = $ionicPopup.alert({
                   title: "Your spaces have been reserved!",
                 });*/
-            } 
+            }
             // else if (checkedTimes.length != 0) {
             // var alertPopup = $ionicPopup.alert({
             //     title: "You cannot reserve a parking space that is already reserved ",
@@ -847,7 +847,7 @@ angular.module('starter.controllers', [])
 .controller('spotOwnerInformationCtrl', function($scope, $ionicPopup, $state, parkerSearchResults) {
     console.log("in spot control page!");
     var avRating;
-    
+
     var email = parkerSearchResults.selectedSpace.get("ownerEmail");
     console.log("owner email = " + email);
     var users = Parse.Object.extend("User");
@@ -886,7 +886,18 @@ angular.module('starter.controllers', [])
 //getting payment token for owner
 .controller('ownerPayCtrl', function($scope, $ionicPopup, $state, StripeCharge, $ionicNavBarDelegate, $http) {
     console.log("in owner payment");
-
+    Parse.Cloud.run('payRequest', {
+         success:
+         function(response) {
+           console.log("success: " + response);
+         },
+         error:
+        function(response) {
+            console.log("error: " + response);
+          }
+        });
+      }
+/*
     var CLIENT_ID = 'ca_9UHlLmqGjG3bprqMMYz1GpJrXGvpX3ZG';
     var API_KEY = 'sk_test_46tPC5KonTnuuvz1dbl0Q7J7';
 
@@ -1015,7 +1026,7 @@ angular.module('starter.controllers', [])
                 }
             );
     };
-
+*/
 })
 
 
@@ -1110,7 +1121,7 @@ angular.module('starter.controllers', [])
                                 }
                             });
                         }
-                        
+
                         //$state.go('parker.upcomingSpaces');
 
                     } else {
