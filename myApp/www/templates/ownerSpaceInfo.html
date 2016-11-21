@@ -10,7 +10,7 @@
                 <span class="input-label">Price/hour</span>
                 <input type="text" placeholder="${{parkingSpace.price}}/hour" ng-model="space.price">
         </label>
-        <button id="login-button1" class="button button-positive button-block" ng-click="updatePrice()">Update Price</button>
+       
         <h3 id="ownerSpaceInfo-heading3" style="color:#000000;"></h3>
         <div style="margin: 0px; line-height: 250px; text-align: center;">
             <i class="icon " style="font-size: 64px; vertical-align: middle;" > <img style="width: 200px;" ng-src="{{ parkingSpace.url }}"></i> <!-- //{{ trustSrc(parkingSpace.url) }}-->
@@ -27,8 +27,11 @@
             <p> {{parkingSpace.notes}}</p>
         </div>
         </br>
+         <button id="ownerAddSpace-button4" class="button  button-balanced button-block icon ion-android-add-circle" ng-click="openTimePicker()">Add Additional Timeslot</button>
+         <ion-list id="addSpaceList"></ion-list>
         <button id="parkingSearch-button" class="button button-balanced  button-block" ng-click = "getTimeSpaces()">See Time Slots</button>
-         <div id="timeSlots" style="color:#000000;font-size:14px;">
+         <div id="timeSlots" style="color:#000000;font-size:14px;"></div>
+          <button id="login-button1" class="button button-positive button-block" ng-click="updateSpace()">Update Space</button>
         </div>
     </ion-content>
 </ion-view>

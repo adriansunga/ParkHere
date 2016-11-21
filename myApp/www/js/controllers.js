@@ -1287,7 +1287,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('ownerSpaceInfoCtrl', function($scope, $ionicPopup, $state, $stateParams, parkingSpace, user, $sce) {
+.controller('ownerSpaceInfoCtrl', function($scope, $ionicPopup, $state, $stateParams, parkingSpace, user, ionicDatePicker, ionicTimePicker, $sce) {
     $scope.parkingSpace = parkingSpace;
     $scope.space = {};
     console.log("in owner space id " + parkingSpace.uniqueID);
@@ -1302,38 +1302,140 @@ angular.module('starter.controllers', [])
             parkingSpace.type = qSpace.get("type");
             console.log("parking space pic in obj" + parkingSpace.url);
             parkingSpace.address = qSpace.get("address");
-            /*var geoPoint = qSpace.get("location");
-          var latlng = {lat: geoPoint.latitude, lng: geoPoint.longitude};
-          var geocoder = new google.maps.Geocoder();
-          geocoder.geocode({'location': latlng}, function(results, status) {
-          if (status === 'OK') {
-            if (results[1]) {
-              //console.log(results[1]);
-              parkingSpace.address = results[1].formatted_address;
-            } else {
-              console.log('No results found');
-            }
-          } else {
-            console.log('Geocoder failed due to: ' + status);
-          }
-        });*/
         },
         error: function(object, error) {
             console.log("find error: " + error);
         }
     });
-    $scope.updatePrice = function() {
+    
+    var timeSlots = 0;
+
+    var startDate;
+    var startTime;
+    var endDate;
+    var endTime;
+    var allTimeSlots = [];
+
+    $scope.openTimePicker = function() {
+        //date picker
+        //variables we need to send to the back end
+
+        var startDateObj = {
+            callback: function(val) { //Mandatory
+
+                startDate = new Date(val);
+                console.log('Return value from the datepicker popup is : ' + val, new Date(val));
+                ionicTimePicker.openTimePicker(setFirstTime);
+            },
+
+            from: new Date(),
+            inputDate: new Date(),
+            mondayFirst: true,
+            setLabel: 'Set Start Date'
+        };
+
+        ionicDatePicker.openDatePicker(startDateObj);
+
+
+        //time picker
+
+        console.log("Open timepicker");
+        var setFirstTime = {
+            callback: function(val) { //Mandatory
+                if (typeof(val) === 'undefined') {
+                    console.log('Time not selected');
+                } else {
+                    /*console.log('Selected epoch is : ', val, 'and the time is ',
+                     selectedTime.getUTCHours(), 'H :', selectedTime.getUTCMinutes(), 'M');*/
+                    startTime = new Date(val * 1000);
+                    var endDateObj = {
+                        callback: function(val) { //Mandatory
+
+                            endDate = new Date(val);
+                            console.log('Return value from the datepicker popup is : ' + val, new Date(val));
+                            ionicTimePicker.openTimePicker(setSecondTime);
+                        },
+
+                        from: startDate,
+                        inputDate: startDate,
+                        mondayFirst: true,
+                        setLabel: 'Set End Date'
+                    };
+                    ionicDatePicker.openDatePicker(endDateObj);
+                }
+            },
+            inputTime: ((new Date()).getHours() * 60 * 60),
+            format: 24,
+            step: 60,
+            setLabel: 'Set Start Time'
+        };
+        var setSecondTime = {
+            callback: function(val) { //Mandatory
+                if (typeof(val) === 'undefined') {
+                    console.log('Time not selected');
+                } else {
+                    endTime = new Date(val * 1000);
+                    if (startTime.getUTCMinutes() < 10) {
+                        var numMinutes = '0' + startTime.getUTCMinutes();
+                    } else {
+                        var numMinutes = startTime.getUTCMinutes();
+                    }
+                    if (endTime.getUTCMinutes() < 10) {
+                        var endNumMinutes = '0' + endTime.getUTCMinutes();
+                    } else {
+                        var endNumMinutes = endTime.getUTCMinutes();
+                    }
+                    var addDiv = document.getElementById('addSpaceList');
+                    startDate.setHours(startDate.getHours() + startTime.getHours());
+                    endDate.setHours(endDate.getHours() + endTime.getHours());
+                    console.log(startDate + " end " + endDate);
+                    if (endDate <= startDate) {
+                        //popup modal
+                        var alertPopup = $ionicPopup.alert({
+                            title: "Your end date and time must be after your start",
+                            //template: 'It might taste good'
+                        });
+                        return;
+                    }
+                    timeSlots = timeSlots + 1;
+                    //should check if times overlap here
+                    var startDateStr = (startDate.getMonth() + 1) + '/' + startDate.getDate() + '/' + startDate.getFullYear();
+                    var endDateStr = (endDate.getMonth() + 1) + '/' + endDate.getDate() + '/' + endDate.getFullYear();
+                    addDiv.innerHTML += '<ion-item class="item-thumbnail-left"> <h4>Timeslot: ' + timeSlots + '</h4> <p>Start: ' + startDateStr + " " + startTime.getUTCHours() + ':' + numMinutes + '</p> <p>End: ' + endDateStr + " " + endTime.getUTCHours() + ':' + endNumMinutes + '</p></ion-item>';
+                    var dict = {
+                        'startDate': startDate,
+                        'startTime': startTime.getUTCHours(),
+                        'endDate': endDate,
+                        'endTime': endTime.getUTCHours()
+                    };
+                    allTimeSlots.push(dict);
+                    console.log(allTimeSlots);
+                }
+            },
+            inputTime: ((new Date()).getHours() * 60 * 60),
+            format: 24,
+            step: 60,
+            setLabel: 'Set End Time'
+        };
+    }
+    var oldSpace;
+    $scope.updateSpace = function() {
         console.log("in update price");
         var allTimesQuery = new Parse.Query(parkingSpaceParse);
         allTimesQuery.equalTo("name", parkingSpace.title);
         allTimesQuery.equalTo("ownerEmail", parkingSpace.ownerEmail);
         var today = new Date();
         today.setHours(0, 0, 0, 0);
+        //find all times greater to today that are not reserves and update the price
         allTimesQuery.greaterThanOrEqualTo("Date", today);
         allTimesQuery.equalTo("reserved", false);
-        allTimesQuery.find({
+        var price;
+        if($scope.space.price != null){
+            price = $scope.space.price;
+            console.log("does not equal null");
+            allTimesQuery.find({
             success: function(results) {
-
+                oldSpace = results[0];
                 for (var i = 0; i < results.length; i++) {
                     console.log(results[i]);
                     results[i].set("price", $scope.space.price);
@@ -1346,9 +1448,113 @@ angular.module('starter.controllers', [])
             error: function(error) {
                 document.getElementById("invalid").innerHTML = "Something went wrong, please try again";
             }
-        });
+            });
+        }else{
+            console.log("DOES null");
+            allTimesQuery.find({
+            success: function(results) {
+                 oldSpace = results[0];
+                 console.log(oldSpace);
+                 price = oldSpace.get("price");
+                 addMoreSpaces();
+                 document.getElementById("invalid").innerHTML = "Space successfully uploaded";
+                 document.getElementById('addSpaceList').innerHTML = "";
+            },
+            error: function(error) {
+                document.getElementById("invalid").innerHTML = "Something went wrong, please try again";
+            }
+            });
+        }
+        function sameDate(date1, date2) {
+            console.log("in same date");
+                    if (date1.getDate() == date2.getDate() &&
+                        date1.getMonth() == date2.getMonth() &&
+                        date1.getFullYear() == date2.getFullYear()) {
+                        console.log("returning true");
+                        return true;
+                    }
+                    console.log("returning false");
+                    return false;
+                }
+         function saveSpace(dateToSave, time) {
+                console.log("in saveSpace");
+                console.log(oldSpace);
+                console.log(dateToSave);
+                var spaceToSave = new parkingSpaceParse();
+                spaceToSave.set("Date", new Date(dateToSave));
+                console.log(dateToSave);
+                var parseUser = Parse.User.current();
+                console.log(parseUser);
+                spaceToSave.set("ownerEmail", parseUser.get("username"));
+                spaceToSave.set("name", oldSpace.get("name"));
+                spaceToSave.set("location", oldSpace.get("location"));
+                spaceToSave.set("picture", oldSpace.get("picture"));
+                spaceToSave.set("price", price);
+                spaceToSave.set("type", oldSpace.get("type"));
+                spaceToSave.set("notes", oldSpace.get("notes"));
+                spaceToSave.set("Hour", time);
+                spaceToSave.set("address", oldSpace.get("address"));
+                spaceToSave.set("parker", "");
+                spaceToSave.set("reserved", false);
+                console.log("set everything");
+                spaceToSave.save(null, {
+                    success: function(spaceToSave) {
+                        console.log("space save success");
+                        document.getElementById("invalid").innerHTML = "Space successfully uploaded";
+                        document.getElementById('addSpaceList').innerHTML = "";
+                    },
+                    error: function(spaceToSave, error) {
+                        console.log("space save failure");
+                        console.log(error);
+                        document.getElementById("invalid").innerHTML = "Failed to update space. Please try again";
+                    }
+                });
+            }
+        function addMoreSpaces(){
+            console.log("in add more spaces");
+                for (var i = 0; i < allTimeSlots.length; i++) {
+                    var timeDict = allTimeSlots[i];
+                    console.log(timeDict);
+                    //start and end on same day
 
-    }
+                    if (sameDate(timeDict["startDate"], timeDict["endDate"])) {
+                        //hours from startTime to end time
+                        for (var time = timeDict["startTime"]; time <= timeDict["endTime"]; time++) {
+                            console.log("saving date");
+                            console.log(timeDict["startDate"]);
+                            saveSpace(timeDict["startDate"], time);
+                        }
+                    } else { //not on the same day
+                        for (var d = timeDict["startDate"]; d <= timeDict["endDate"]; d.setDate(d.getDate() + 1)) {
+                            //if start date
+                            if (sameDate(d, timeDict["startDate"])) {
+                                //only do the ours from start time
+                                for (var time = timeDict["startTime"]; time <= 24; time++) {
+                                    console.log("saving date");
+                                    console.log(timeDict["startDate"]);
+                                    saveSpace(timeDict["startDate"], time);
+                                }
+                            } else if (sameDate(d, timeDict["endDate"])) { //end date
+                                for (var time = 0; time <= timeDict["endTime"]; time++) {
+                                    console.log("saving date");
+                                    console.log(timeDict["endDate"]);
+                                    saveSpace(timeDict["endDate"], time);
+                                }
+                            } else { //not start date
+                                for (var time = 0; time <= 24; time++) {
+                                    console.log("saving date");
+                                    console.log(d);
+                                    saveSpace(d, time);
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+
 
     $scope.getTimeSpaces = function() {
         var allTimesQuery = new Parse.Query(parkingSpaceParse);
@@ -1411,7 +1617,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('ownerAddSpaceCtrl', function($scope, $ionicNavBarDelegate, $ionicPopup, $state, ionicTimePicker, ionicDatePicker, user) {
+.controller('ownerAddSpaceCtrl', function($scope, $ionicNavBarDelegate, $ionicPopup, $state, ionicTimePicker, ionicDatePicker,  user) {
     //controller is not being added
     $ionicNavBarDelegate.showBackButton(false);
     $scope.data = {};
