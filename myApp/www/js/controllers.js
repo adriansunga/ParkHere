@@ -1420,6 +1420,33 @@ angular.module('starter.controllers', [])
     }
     var oldSpace;
     $scope.updateSpace = function() {
+
+        //delete all the spaces checked
+        var checkedBoxes = document.querySelectorAll('input[name=timeCheck]:checked');
+        //console.log(checkedBoxes);
+        for(var i = 0; i < checkedBoxes.length; i++){
+            console.log(checkedBoxes[i]);
+            var date = new Date(checkedBoxes[i].getAttribute('data-date'));
+            console.log(date);
+            var hour = parseInt(checkedBoxes[i].getAttribute('data-hour'));
+            console.log(hour);
+            var deleteQuery = new Parse.Query(parkingSpaceParse);
+            deleteQuery.equalTo("name", parkingSpace.title);
+            console.log(parkingSpace.title);
+            console.log(parkingSpace.ownerEmail);
+            deleteQuery.equalTo("ownerEmail", parkingSpace.ownerEmail);
+            deleteQuery.equalTo("Date", date);
+            deleteQuery.equalTo("Hour", hour);
+            console.log(deleteQuery);
+            deleteQuery.find({
+                success: function(results){
+                    console.log(results[0]);
+                    results[0].destroy({});
+                }
+            });
+        }
+        document.getElementById("timeSlots").innerHTML = "";
+        //update the prices
         console.log("in update price");
         var allTimesQuery = new Parse.Query(parkingSpaceParse);
         allTimesQuery.equalTo("name", parkingSpace.title);
@@ -1443,10 +1470,10 @@ angular.module('starter.controllers', [])
                 }
                 parkingSpace.price = $scope.space.price;
                 $scope.parkingSpace = parkingSpace;
-                document.getElementById("invalid").innerHTML = "Price updated for unreserved spaces";
+                document.getElementById("invalid2").innerHTML = "Price updated for unreserved spaces";
             },
             error: function(error) {
-                document.getElementById("invalid").innerHTML = "Something went wrong, please try again";
+                document.getElementById("invalid2").innerHTML = "Something went wrong, please try again";
             }
             });
         }else{
@@ -1457,11 +1484,11 @@ angular.module('starter.controllers', [])
                  console.log(oldSpace);
                  price = oldSpace.get("price");
                  addMoreSpaces();
-                 document.getElementById("invalid").innerHTML = "Space successfully uploaded";
+                 document.getElementById("invalid2").innerHTML = "Space successfully uploaded";
                  document.getElementById('addSpaceList').innerHTML = "";
             },
             error: function(error) {
-                document.getElementById("invalid").innerHTML = "Something went wrong, please try again";
+                document.getElementById("invalid2").innerHTML = "Something went wrong, please try again";
             }
             });
         }
@@ -1500,13 +1527,13 @@ angular.module('starter.controllers', [])
                 spaceToSave.save(null, {
                     success: function(spaceToSave) {
                         console.log("space save success");
-                        document.getElementById("invalid").innerHTML = "Space successfully uploaded";
+                        document.getElementById("invalid2").innerHTML = "Space successfully uploaded";
                         document.getElementById('addSpaceList').innerHTML = "";
                     },
                     error: function(spaceToSave, error) {
                         console.log("space save failure");
                         console.log(error);
-                        document.getElementById("invalid").innerHTML = "Failed to update space. Please try again";
+                        document.getElementById("invalid2").innerHTML = "Failed to update space. Please try again";
                     }
                 });
             }
@@ -1567,6 +1594,7 @@ angular.module('starter.controllers', [])
         //in array, if parker has reserved hour, put in parker name, if there is an hour but no one reserved, 0
         var dateToList = {};
         var sortedDates = [];
+        availableTimes = [];
         allTimesQuery.find({
             success: function(results) {
                 // Do something with the returned Parse.Object values
@@ -1593,16 +1621,16 @@ angular.module('starter.controllers', [])
                 }
                 console.log(sortedDates);
                 sortedDates.sort();
-                var htmlString = "";
+                var htmlString = "<h4>Check timeslots you would like to delete</h4>";
                 for (var i = 0; i < sortedDates.length; i++) {
                     htmlString += "<h5> Hours for " + sortedDates[i].toString().split(":")[0].slice(0, -3) + ":</h5>"
                     var dateList = dateToList[sortedDates[i]];
                     for (var j = 0; j < dateList.length; j++) {
                         if (dateList[j] == '0') {
-                            htmlString += "<p>" + j + ":00: not reserved</p>";
+                            htmlString += "<input type='checkbox' name='timeCheck' data-date='"+sortedDates[i].toString().split(":")[0].slice(0, -3).substring(4) +"' data-hour='"+j +"'>" + j + ":00: not reserved </br>";
                         } else if (dateList[j] != null) {
-                            htmlString += "<p>" + j + ":00: " + dateList[j] + "</p>";
-                        }
+                            htmlString += "<input type='checkbox' disabled readonly>" + j + ":00: " + dateList[j] + "</br>";
+                        }    
                     }
                 }
                 console.log(htmlString);

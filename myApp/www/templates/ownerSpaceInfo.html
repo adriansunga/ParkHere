@@ -5,7 +5,7 @@
     <ion-content padding="true" class="has-header">
         <h1 id="ownerSpaceInfo-heading1" style="color:#000000;">{{parkingSpace.title}}</h1>
         <!--<h3 id="ownerSpaceInfo-heading2" style="color:#000000;">${{parkingSpace.price}}/hour</h3>-->
-        <div id="invalid" style="color: red;"></div>
+        <div id="invalid2" style="color: red;"></div>
         <label class="item item-input" id="ownerAddSpace-input12">
                 <span class="input-label">Price/hour</span>
                 <input type="text" placeholder="${{parkingSpace.price}}/hour" ng-model="space.price">
@@ -29,8 +29,9 @@
         </br>
          <button id="ownerAddSpace-button4" class="button  button-balanced button-block icon ion-android-add-circle" ng-click="openTimePicker()">Add Additional Timeslot</button>
          <ion-list id="addSpaceList"></ion-list>
-        <button id="parkingSearch-button" class="button button-balanced  button-block" ng-click = "getTimeSpaces()">See Time Slots</button>
+        <button id="parkingSearch-button" class="button button-balanced  button-block" ng-click = "getTimeSpaces()">Edit Time Slots</button>
          <div id="timeSlots" style="color:#000000;font-size:14px;"></div>
+
           <button id="login-button1" class="button button-positive button-block" ng-click="updateSpace()">Update Space</button>
         </div>
     </ion-content>
