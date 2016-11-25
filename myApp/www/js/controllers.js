@@ -1983,10 +1983,13 @@ angular.module('starter.controllers', [])
                       console.log("newlong: " + newLng);
                       // var latLngPair = {newLat : newLng};
                       var inArray = false;
-                      for (var obj in reservedLocations) {
-                        if (obj.name.equals(results[i].get("name"))) {
+                      for (var j = 0; j < reservedLocations.length; j++) {
+                        console.log("name is: " +reservedLocations[j].name );
+                        console.log("other name is: "  + results[i].get("name"));
+                        if ((reservedLocations[j].name)==(results[i].get("name"))) {
+                          console.log("names are equal");
                           if (results[i].get("reserved")) {
-                            obj.numReserved = parseInt(obj.numReserved) + 1;
+                            reservedLocations[j].numReserved = parseInt(reservedLocations[j].numReserved) + 1;
                           }
                           inArray = true;
                         }
@@ -2000,45 +2003,31 @@ angular.module('starter.controllers', [])
                           "latitude": newLat, "longitude": newLng,
                           "numReserved": reservations});
                       }
-                      // if (!(latLngPair in locationReservationsDict)) {
-                      // //
-                      // // }
-                      // if (results[i].get("reserved") == 'True') {
-                      //   console.log("it's reserved ");
-                      //   var numReservations = parseInt(obj.numReserved);
-                      //   numReservations++;
-                      //   obj.numReserved = numReservations;
-                      //   inArray = true;
-                      //
-                      // }
                       console.log("at end of for loop");
-
-
-                        // if (usedNames.has(results[i].get("name"))) {
-                        //     continue;
-                        // }
-                        // usedNames.add(results[i].get("name"));
-                        // var newLat = results[i].get("location")._latitude;
-                        // console.log(results[i].get("location")._latitude);
-                        // var newLng = results[i].get("location")._longitude;
-                        // var newLatLng = new google.maps.LatLng(newLat, newLng);
-                        // console.log(newLatLng);
-                        // console.log(results[i]);
-                        // image = '../img/car_0.png';
-                        // var newMarker = new google.maps.Marker({
-                        //     map: $scope.map,
-                        //     animation: google.maps.Animation.DROP,
-                        //     icon: image,
-                        //     position: newLatLng
-                        // });
-
                     }
 
                     for (var i = 0; i < reservedLocations.length; i++) {
                       console.log("lat : " + reservedLocations[i].latitude);
                       var newLatLng = new google.maps.LatLng(parseFloat(reservedLocations[i].latitude), parseFloat(reservedLocations[i].longitude));
                       console.log("number of reservations: " + reservedLocations[i].numReserved);
-                      image = '../img/car_0.png';
+                      var reservations = reservedLocations[i].numReserved;
+                      switch(true) {
+                        case reservations == 0:
+                          image = '../img/car_0.png';
+                          break;
+                        case reservations < 5:
+                          image = '../img/car_1.png';
+                          break;
+                        case reservations < 10:
+                          image = '../img/car_2.png';
+                          break;
+                        case reservations < 20:
+                          image = '../img/car_3.png';
+                          break;
+                        default: // 20 or more
+                          image = '../img/car_4.png';
+                      }
+
                       console.log("lat/long key value: " + newLatLng.latitude + " " + newLatLng.longitude);
                       var newMarker = new google.maps.Marker({
                           map: $scope.map,
