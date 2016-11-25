@@ -82,6 +82,16 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete', 'ngC
                 }
             }
         })
+        .state('parker.priorBookings', {
+            url: '/priorBookings',
+            cache: false,
+            views: {
+                'side-menu21': {
+                    templateUrl: 'templates/priorBookings.html',
+                    controller: 'PriorBookingsCtrl'
+                }
+            }
+        })
         .state('parker.search', {
             url: '/parkerSearch',
             views: {
