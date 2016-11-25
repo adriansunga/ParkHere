@@ -156,6 +156,17 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete', 'ngC
             }
 
         })
+        .state('owner.addSpaceOptions', {
+            url: '/addSpace',
+            cache: false,
+            views: {
+                'side-menu21': {
+                    templateUrl: 'templates/ownerAddSpaceOptions.html',
+                    controller: 'ownerAddSpaceOptionsCtrl'
+                }
+            }
+
+        })
         .state('owner.spaceInfo', {
             url: '/spaceInfo',
             cache: false,

@@ -1287,6 +1287,81 @@ angular.module('starter.controllers', [])
 
 })
 
+.controller('ownerAddSpaceOptionsCtrl', function($scope, $ionicNavBarDelegate, $ionicPopup, $state, parkingSpace, user) {
+
+    var ownerEmail = user.email;
+    $scope.items = [];
+    var usedSpaces = new Set();
+    //need to get all parking spaces
+    //get all parking spaces where email == ownerEmail and endDate >= today
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    //if(Parse == null){
+    //FOR TESTING
+    //  Parse.initialize("com.team3.parkhere");
+    //Parse.serverURL = 'http://138.68.43.212:1337/parse';
+    //}
+    var parkingSpaceParse = Parse.Object.extend("ParkingSpace");
+    var pSpaceQuery = new Parse.Query(parkingSpaceParse);
+    //spaces owned by this person
+    pSpaceQuery.equalTo("ownerEmail", ownerEmail);
+    pSpaceQuery.greaterThanOrEqualTo("Date", today);
+    pSpaceQuery.ascending("Date");
+    pSpaceQuery.find({
+        success: function(results) {
+            //results give me the object ids
+            console.log("owner home " + results);
+            for (var i = 0; i < results.length; i++) {
+                var objID = results[i].id;
+                //don't need to relook if already has key
+                var query = new Parse.Query(parkingSpaceParse);
+                query.get(objID, {
+                    success: function(parkingSpace) {
+                        if (usedSpaces.has(parkingSpace.get('name'))) {
+                            return;
+                        }
+                        console.log(parkingSpace);
+                        usedSpaces.add(parkingSpace.get('name'));
+                        console.log("in get obj " + parkingSpace.id);
+                        var dict = {
+                            "id": i,
+                            "name": parkingSpace.get('name'),
+                            "price": parkingSpace.get("price"),
+                            "image": parkingSpace.get('picture')._url,
+                            "uniqueID": parkingSpace.id,
+                            "email": user.email
+
+                        }
+                        console.log("dict " + dict);
+                        $scope.$apply(function() {
+                            $scope.items.push(dict);
+                        });
+                        console.log("scope items " + $scope.items);
+                        console.log($scope.items);
+                    },
+                    error: function(object, error) {}
+                });
+            }
+        }
+    });
+
+    $scope.edit = function(item) {
+        console.log("edit item returned", item);
+        parkingSpace.title = item.name;
+        parkingSpace.price = item.price;
+        parkingSpace.uniqueID = item.uniqueID;
+        parkingSpace.ownerEmail = ownerEmail;
+        console.log("in edit function", parkingSpace.title);
+        $state.go("owner.spaceInfo");
+    };
+
+    $scope.addNewSpace = function() {
+        $state.go("owner.addSpace");
+    }
+
+
+})
+
 .controller('ownerSpaceInfoCtrl', function($scope, $ionicPopup, $state, $stateParams, parkingSpace, user, ionicDatePicker, ionicTimePicker, $sce) {
     $scope.parkingSpace = parkingSpace;
     $scope.space = {};

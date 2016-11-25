@@ -1,10 +1,8 @@
 
-<ion-view title="Owner Home" id="page7">
-    <ion-nav-buttons side="right" class="has-header">
-        <button class="button button-icon icon ion-android-add" ui-sref="owner.addSpaceOptions"></button>
-    </ion-nav-buttons>
+<ion-view title="Choose from an existing space or create a new one!" id="page25">
     <ion-content padding="true" class="has-header">
         <div class="item item-body" id="ownerHome-list-item-container1">
+            <button id="newSpace" ng-click = addNewSpace() class="button button-positive  button-block">Create new parking space</button>
             <ion-list id="ownerHome-list4" >
                 <ion-item  class="item-thumbnail-left" ng-repeat="item in items" 
                   item="item" ng-click="edit(item)"  class="item-remove-animate">
@@ -13,9 +11,7 @@
                         <p>${{item.price}}/hour</p>
                         <div id="divhidden" style="display: none;">{{item.uniqueID}}</div>
                         <div id="divhidden2" style="display: none;">{{item.email}}</div>
-                    <ion-option-button class="button-positive" ng-click="edit(item)">View</ion-option-button>
-                   <ion-option-button id="deleteButton" class="button-assertive"
-                             ng-click="onItemDelete(item)">Delete</ion-option-button>
+                    <ion-option-button class="button-positive" ng-click="edit(item)">Add time slots</ion-option-button>
                 </ion-item>
             </ion-list>
         </div>
