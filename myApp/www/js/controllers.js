@@ -262,7 +262,7 @@ angular.module('starter.controllers', [])
             //!!!!!!!!!!!!!
             //!!!!!!!!!!!!!
 
-            if (currDate.getTime() > expDate.getTime()) { //expired 
+            if (currDate.getTime() > expDate.getTime()) { //expired
                 if(uniqueSpaces.length == 0) { //uniqueSpaces is empty
                     uniqueSpaces.push(currSpace);
                 } else {
@@ -289,7 +289,7 @@ angular.module('starter.controllers', [])
 
         console.log("UniqueSpaces length: " + uniqueSpaces.length);
 
-        for (var i = 0; i < uniqueSpaces.length; i++) { 
+        for (var i = 0; i < uniqueSpaces.length; i++) {
             var currSpace = uniqueSpaces[i];
 
             var confirmPopup = $ionicPopup.show({
@@ -328,8 +328,8 @@ angular.module('starter.controllers', [])
                     console.log("Setting owner rating");
 
                     var ownerEmail = currSpace.get('ownerEmail');
-                    Parse.Cloud.run('setOwnerRating', 
-                        { 
+                    Parse.Cloud.run('setOwnerRating',
+                        {
                             rating: rating,
                             ownerEmail: ownerEmail
                         })
@@ -1382,7 +1382,7 @@ angular.module('starter.controllers', [])
             console.log("find error: " + error);
         }
     });
-    
+
     var timeSlots = 0;
 
     var startDate;
@@ -1705,7 +1705,7 @@ angular.module('starter.controllers', [])
                             htmlString += "<input type='checkbox' name='timeCheck' data-date='"+sortedDates[i].toString().split(":")[0].slice(0, -3).substring(4) +"' data-hour='"+j +"'>" + j + ":00: not reserved </br>";
                         } else if (dateList[j] != null) {
                             htmlString += "<input type='checkbox' disabled readonly>" + j + ":00: " + dateList[j] + "</br>";
-                        }    
+                        }
                     }
                 }
                 console.log(htmlString);
@@ -2009,6 +2009,128 @@ angular.module('starter.controllers', [])
 
 })
 
+//map controller
+.controller('PriorBookingsCtrl', function($scope, $state, $cordovaGeolocation, parkerSearch) {
+    var options = {
+        timeout: 10000,
+        enableHighAccuracy: true
+    };
+
+    $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
+
+        var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        var mapOptions = {
+            center: latLng,
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+        $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        google.maps.event.addListenerOnce($scope.map, 'idle', function() {
+          var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+          var marker = new google.maps.Marker({
+              map: $scope.map,
+              animation: google.maps.Animation.DROP,
+              icon: image,
+              position: latLng
+          });
+            //get all the parking spaces within three miles of current location
+            var myGeoPoint = new Parse.GeoPoint({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+            });
+            console.log(myGeoPoint);
+            var parkingSpace = Parse.Object.extend("ParkingSpace");
+            var query = new Parse.Query(parkingSpace);
+            query.withinMiles("location", myGeoPoint, 3);
+            console.log("do i get here? right before query.find");
+            query.find({
+                success: function(results) {
+                    console.log("Total: " + results.length);
+                    // var usedNames = new Set();
+                    var reservedLocations = [];
+                    // console.log("parking space objects: " + JSON.stringify(results));
+                    for (var i = 0; i < results.length; i++) {
+
+                      var newLat = results[i].get("location")._latitude;
+                      var newLng = results[i].get("location")._longitude;
+                      console.log("newlat: " + newLat);
+                      console.log("newlong: " + newLng);
+                      // var latLngPair = {newLat : newLng};
+                      var inArray = false;
+                      for (var j = 0; j < reservedLocations.length; j++) {
+                        console.log("name is: " +reservedLocations[j].name );
+                        console.log("other name is: "  + results[i].get("name"));
+                        if ((reservedLocations[j].name)==(results[i].get("name"))) {
+                          console.log("names are equal");
+                          if (results[i].get("reserved")) {
+                            reservedLocations[j].numReserved = parseInt(reservedLocations[j].numReserved) + 1;
+                          }
+                          inArray = true;
+                        }
+                      }
+                      if (!inArray) {
+                        var reservations = 0;
+                        if (results[i].get("reserved")) {
+                          reservations = 1;
+                        }
+                        reservedLocations.push({"name": results[i].get("name"),
+                          "latitude": newLat, "longitude": newLng,
+                          "numReserved": reservations});
+                      }
+                      console.log("at end of for loop");
+                    }
+
+                    for (var i = 0; i < reservedLocations.length; i++) {
+                      console.log("lat : " + reservedLocations[i].latitude);
+                      var newLatLng = new google.maps.LatLng(parseFloat(reservedLocations[i].latitude), parseFloat(reservedLocations[i].longitude));
+                      console.log("number of reservations: " + reservedLocations[i].numReserved);
+                      var reservations = reservedLocations[i].numReserved;
+                      switch(true) {
+                        case reservations == 0:
+                          image = '../img/car_0.png';
+                          break;
+                        case reservations < 5:
+                          image = '../img/car_1.png';
+                          break;
+                        case reservations < 10:
+                          image = '../img/car_2.png';
+                          break;
+                        case reservations < 20:
+                          image = '../img/car_3.png';
+                          break;
+                        default: // 20 or more
+                          image = '../img/car_4.png';
+                      }
+
+                      console.log("lat/long key value: " + newLatLng.latitude + " " + newLatLng.longitude);
+                      var newMarker = new google.maps.Marker({
+                          map: $scope.map,
+                          animation: google.maps.Animation.DROP,
+                          icon: image,
+                          position: newLatLng
+                      });
+                    }
+                },
+                error: function(error) {
+                    alert("Error when getting objects!");
+                }
+            });
+
+            var infoWindow = new google.maps.InfoWindow({
+                content: "Current Location"
+            });
+
+            google.maps.event.addListener(marker, 'click', function() {
+                infoWindow.open($scope.map, marker);
+            });
+
+        });
+
+    }, function(error) {
+        console.log("Could not get location");
+    });
+})
 
 //map controller
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, parkerSearch) {
@@ -2037,8 +2159,8 @@ angular.module('starter.controllers', [])
             });
             //get all the parking spaces within three miles of current location
             var myGeoPoint = new Parse.GeoPoint({
-                latitude: latitude,
-                longitude: longitude
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
             });
             console.log(myGeoPoint);
             var parkingSpace = Parse.Object.extend("ParkingSpace");
