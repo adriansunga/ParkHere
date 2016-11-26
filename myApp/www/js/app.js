@@ -32,9 +32,9 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete', 'ngC
                 // org.apache.cordova.statusbar required
                 StatusBar.styleDefault();
             }
-    Parse.initialize("com.team3.parkhere", "medvidobitches");
-    Parse.serverURL = 'http://138.68.43.212:1337/parse';
-    var currentUser = Parse.User.current();
+            Parse.initialize("com.team3.parkhere", "medvidobitches");
+            Parse.serverURL = 'http://138.68.43.212:1337/parse';
+            var currentUser = Parse.User.current();
 
         });
     })
