@@ -1,8 +1,29 @@
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['ngSanitize'])
 
 //Splash Controller
-.controller('SplashCtrl', function($scope, $state) {
+.controller('SplashCtrl', function($scope, $state, $sce) {
     Parse.initialize("com.team3.parkhere", "medvidobitches");
+
+    // var isWebView = ionic.Platform.isWebView();
+    // var isIPad = ionic.Platform.isIPad();
+    // var isIOS = ionic.Platform.isIOS();
+    // var isAndroid = ionic.Platform.isAndroid();
+    // var isWindowsPhone = ionic.Platform.isWindowsPhone();
+
+    // var before = "<div><ion-spinner icon=";
+    // var type = "";
+    // var after = "></ion-spinner></div>";
+
+    // if(isAndroid)  type = "\"android\"";
+    // else if(isIOS) type = "\"ios\"";
+    // else  type = "\"spiral\"";
+
+    // var html = before.concat(type).concat(after);
+
+    // $scope.loadSpinnerHTML = $sce.trustAsHtml(html);
+    // console.log("SPINNER TYPE: " + html);
+
+    // $scope.loadSpinnerHTML = "<div><ion-spinner icon=\"android\"></ion-spinner></div>";
 
     setTimeout(manageSession, 2500);
 
