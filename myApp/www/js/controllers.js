@@ -1,9 +1,31 @@
 angular.module('starter.controllers', [])
 
+//Splash Controller
+.controller('SplashCtrl', function($scope, $state) {
+    Parse.initialize("com.team3.parkhere", "medvidobitches");
+
+    setTimeout(manageSession, 2500);
+
+    function manageSession () {
+        var currUser = Parse.User.current();
+        if (currUser != null) {
+            var userType = currUser.get("userType");
+
+            if (userType == 'parker') {
+                $state.go('parker.search');
+            } else {
+                $state.go('owner.home');
+            }
+        } else {
+            $state.go('login');
+        }
+    }
+    
+})
 
 //LogIn Controller
 .controller('LoginCtrl', function($scope, $ionicPopup, $state, user) {
-    Parse.initialize("com.team3.parkhere", "medvidobitches");
+    
 
     $scope.data = {};
     console.log("in login controller");
@@ -13,16 +35,7 @@ angular.module('starter.controllers', [])
     //     console.log(param);
     // });
 
-    var currUser = Parse.User.current();
-    if (currUser != null) {
-        var userType = currUser.get("userType");
-
-        if (userType == 'parker') {
-            $state.go('parker.search');
-        } else {
-            $state.go('owner.home');
-        }
-    }
+    
 
     $scope.login = function() {
 

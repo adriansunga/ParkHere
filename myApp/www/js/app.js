@@ -56,7 +56,11 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete', 'ngC
     };
 
     $stateProvider
-
+        .state('splash', {
+            url: '/splash',
+            templateUrl: 'templates/splash.html',
+            controller: 'SplashCtrl'
+        }) 
         .state('login', {
             url: '/login',
             templateUrl: 'templates/login.html',
@@ -236,7 +240,7 @@ angular.module('starter', ['ionic', 'ui.router', 'ion-google-autocomplete', 'ngC
             },
         })
 
-    $urlRouterProvider.otherwise('/login');
+    $urlRouterProvider.otherwise('/splash');
 
 });
 
